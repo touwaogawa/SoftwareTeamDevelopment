@@ -1,0 +1,2 @@
+# SoftwareTeamDevelopment
+ソフトウェア設計及び実験後期チーム制作用リポジトリ
