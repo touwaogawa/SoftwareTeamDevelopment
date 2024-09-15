@@ -44,7 +44,7 @@ int main() {
         while (true) {
             int valread = read(sock, buffer, 1024);
             if (valread > 0) {
-                std::cout << "メッセージ: " << buffer << std::endl;
+                std::cout << " ありがとうございました。" << buffer << std::endl;
             }
         }
     }).detach();
