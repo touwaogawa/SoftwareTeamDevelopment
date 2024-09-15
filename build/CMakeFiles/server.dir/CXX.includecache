@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/hgfs/software/後期/SoftwareTeamDevelopment/src/server/server.cpp
+iostream
+-
+thread
+-
+vector
+-
+string
+-
+cstring
+-
+arpa/inet.h
+-
+unistd.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+
