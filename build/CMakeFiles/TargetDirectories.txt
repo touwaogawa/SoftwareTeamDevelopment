@@ -1,4 +1,0 @@
-/mnt/hgfs/software/後期/SoftwareTeamDevelopment/build/CMakeFiles/rebuild_cache.dir
-/mnt/hgfs/software/後期/SoftwareTeamDevelopment/build/CMakeFiles/edit_cache.dir
-/mnt/hgfs/software/後期/SoftwareTeamDevelopment/build/CMakeFiles/server.dir
-/mnt/hgfs/software/後期/SoftwareTeamDevelopment/build/CMakeFiles/client.dir
