@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include "math.h"
+#include "../../../common/src/math/common_math.h"
 
 class Game
 {
