@@ -1,0 +1,38 @@
+﻿  Actor.cpp
+  CameraActor.cpp
+  CircleComponent.cpp
+  Component.cpp
+  Game.cpp
+  Main.cpp
+  Math.cpp
+  Mesh.cpp
+C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\Mesh.cpp(116,74): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\Mesh.cpp(116,53): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\Mesh.cpp(116,32): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+  MeshComponent.cpp
+  MoveComponent.cpp
+  PlaneActor.cpp
+  Renderer.cpp
+  Shader.cpp
+  SpriteComponent.cpp
+  Texture.cpp
+  VertexArray.cpp
+  コードを生成中...
+SOIL.lib(image_DXT.obj) : warning LNK4099: PDB '' が 'SOIL.lib(image_DXT.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+SOIL.lib(image_helper.obj) : warning LNK4099: PDB '' が 'SOIL.lib(image_helper.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+SOIL.lib(SOIL.obj) : warning LNK4099: PDB '' が 'SOIL.lib(SOIL.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+SOIL.lib(stb_image_aug.obj) : warning LNK4099: PDB '' が 'SOIL.lib(stb_image_aug.obj)' で、または '' に見つかりません。デバッグ情報がないものとして、オブジェクトにリンクします。
+  Game.vcxproj -> C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\Debug\Game.exe
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\libfreetype-6.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\libogg-0.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\libpng16-16.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\libvorbis-0.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\libvorbisfile-3.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\SDL2.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\SDL2_image.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\SDL2_mixer.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\SDL2_ttf.dll
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\SDL\lib\win\x86\zlib1.dll
+  10 個のファイルをコピーしました
+  C:\Users\ssp10\Downloads\code-master\code-master\Chapter06\\..\external\GLEW\lib\win\x86\glew32.dll
+  1 個のファイルをコピーしました
