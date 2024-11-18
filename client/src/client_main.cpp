@@ -1,13 +1,12 @@
-#include "client_game_system.h"
-
+#include "client_game.h"
+#include <iostream>
 int main(int argc, char** argv)
 {
-	Game game;
-	bool success = game.Initialize();
-	if (success)
-	{
-		game.RunLoop();
-	}
-	game.Shutdown();
-	return 0;
+    Game game;
+    bool success = game.Initialize();
+    if (success) {
+        game.RunLoop();
+    }
+    game.Shutdown();
+    return 0;
 }

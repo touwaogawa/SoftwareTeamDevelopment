@@ -7,18 +7,21 @@ SRCDIR = src
 OBJDIR = obj
 
 # ソースファイルとオブジェクトファイル
-SOURCES = $(SRCDIR)/client_main.cpp $(SRCDIR)/client_game_system/game.cpp $(SRCDIR)/client_renderer.cpp
+SOURCES = $(SRCDIR)/client_main.cpp $(SRCDIR)/client_game.cpp $(SRCDIR)/client_renderer.cpp
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
+# コンパイルオプション
+OPTION = -lSDL2 -lSDL2_image
+
 # 出力のターゲット
-TARGET = $(OBJDIR)/main
+TARGET = main
 
 # 全体ビルドターゲット
 all: $(TARGET)
 
 # リンクターゲット
 $(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $(TARGET) -lSDL2
+	$(CXX) $(OBJECTS) -o $(TARGET) $(OPTION)
 
 # コンパイル
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
