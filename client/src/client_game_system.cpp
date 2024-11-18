@@ -1,4 +1,5 @@
 #include "client_game_system.h"
+#include "client_renderer.h"
 #include <iostream>
 
 Game::Game()
@@ -12,7 +13,7 @@ bool Game::Initialize(){
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return false;
-	}
+	} 
     return true;
 }
 
@@ -67,7 +68,7 @@ void Game::UpdateGame()
 
 void Game::GenerateOutput()
 {
-
+	mRenderer->Draw();
 }
 
 void Game::LoadData()

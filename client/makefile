@@ -1,35 +1,31 @@
-# Makefile for building the project
-
-# Compiler and flags
+# コンパイラとオプション
 CXX = g++
 CXXFLAGS = -Wall -std=c++11
-LDFLAGS = -lm -lSDL2
 
-# Directories
+# ディレクトリ設定
 SRCDIR = src
 OBJDIR = obj
-OBJGAME = $(OBJDIR)/game_system
 
-# Source files
-SOURCES = $(SRCDIR)/client_main.cpp $(SRCDIR)/game_system/client_game_system.cpp
+# ソースファイルとオブジェクトファイル
+SOURCES = $(SRCDIR)/client_main.cpp $(SRCDIR)/client_game_system/game.cpp $(SRCDIR)/client_renderer.cpp
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-# Output binary
-TARGET = main
+# 出力のターゲット
+TARGET = $(OBJDIR)/main
 
-# Targets
+# 全体ビルドターゲット
 all: $(TARGET)
 
-# Linking the final executable
+# リンクターゲット
 $(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
+	$(CXX) $(OBJECTS) -o $(TARGET) -lSDL2
 
-# Compile each source file into object files
+# コンパイル
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(OBJDIR)/game_system  # Ensure the game_system directory exists
+	@mkdir -p $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean up object files and the target
+# クリーンターゲット
 clean:
 	rm -rf $(OBJDIR) $(TARGET)
 
