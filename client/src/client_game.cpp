@@ -1,6 +1,9 @@
 #include "client_game.h"
 #include "client_renderer.h"
+#include "scenes/client_title_scene.h"
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 Game::Game()
     : mIsRunning(true)
@@ -25,10 +28,28 @@ bool Game::Initialize()
 
 void Game::RunLoop()
 {
+    const int TARGET_FPS        = 60;                // 目標FPS
+    const int TARGET_FRAME_TIME = 1000 / TARGET_FPS; // 1フレームにかかる時間（ミリ秒）
+    // ループの開始時間
+    auto lastTime = std::chrono::high_resolution_clock::now();
+
     while (mIsRunning) {
         ProcessInput();
         UpdateGame();
-        GenerateOutput();
+        RenderScene();
+        // 経過時間を計測
+        auto currentTime   = std::chrono::high_resolution_clock::now();
+        auto frameDuration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
+
+        // 次のフレームまでの待機時間を計算
+        int delayTime = TARGET_FRAME_TIME - frameDuration;
+
+        // 次のフレームまで待機（遅延を入れる）
+        if (delayTime > 0) {
+            SDL_Delay(delayTime); // 指定時間だけ待機
+        }
+
+        lastTime = currentTime; // 現在の時間を次のフレームの基準に
     }
 }
 
@@ -53,12 +74,10 @@ void Game::ProcessInput()
 }
 void Game::UpdateGame()
 {
-    // 16ms待機
-    SDL_Delay(16);
-    // std::cout << "UpdateGame" << std::endl;
+    mCurrentScene->Update();
 }
 
-void Game::GenerateOutput()
+void Game::RenderScene()
 {
     mRenderer->Draw();
 }

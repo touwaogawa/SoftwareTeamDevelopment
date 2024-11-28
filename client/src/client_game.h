@@ -1,25 +1,26 @@
 #pragma once
+#include "client_renderer.h"     //
+#include "scenes/client_scene.h" // シーン基底クラスをインクルード
 #include <SDL2/SDL.h>
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 #include <vector>
-#include "../../common/src/math/common_math.h"
 
-class Game
-{
+class Game {
 public:
-	Game();
-	bool Initialize();
-	void RunLoop();
-	void Shutdown();
+    Game();
+    bool Initialize();
+    void RunLoop();
+    void Shutdown();
+
+    void ChangeScene(const std::string& sceneName); // シーンを切り替える
 
 private:
-	void ProcessInput();
-	void UpdateGame();
-	void GenerateOutput();
-	bool mIsRunning;
-	
-	class Renderer* mRenderer;
+    void ProcessInput();
+    void UpdateGame();
+    void RenderScene();
 
+    bool mIsRunning;
+    std::unordered_map<std::string, Scene*> mScenes; // シーンのコレクション
+    Scene* mCurrentScene;                            // 現在のシーン
 };
-

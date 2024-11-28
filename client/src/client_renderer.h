@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------
 
 #pragma once
-#include "../../common/src/math/common_math.h"
+#include "../../common/src/common_math.h"
 #include <SDL2/SDL.h>
 #include <string>
 #include <unordered_map>
@@ -22,6 +22,7 @@ public:
     void Shutdown();
 
     void Draw();
+    void CreateTextureFromPath(const char* filePath);
 
 private:
     bool InitWindowSize();
@@ -30,20 +31,23 @@ private:
     // Game
     class Game* mGame;
 
-    // 現在のウィンドウサイズ
+    // 実際のウィンドウサイズ
     int mWindowWidth;
     int mWindowHeight;
 
     // ゲーム画面テクスチャをレンダラーに貼るときのサイズ
-    int mScreenDstWidth;
-    int mScreenDstHeight;
+    SDL_Rect mScreenSize;
 
     // ゲーム画面テクスチャを作る時点でのサイズ
-    int mScreenSrcWidth;
-    int mScreenSrcHeight;
+    int mVirtualScreenWidth;
+    int mVirtualScreenHeight;
 
     // Window
     SDL_Window* mWindow;
     // Renderer
     SDL_Renderer* mRenderer;
+
+    //
+    SDL_Texture* m2dTexture;
+    SDL_Texture* m3dTexture;
 };
