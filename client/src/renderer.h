@@ -20,10 +20,8 @@ public:
 
     bool Initialize();
     void Shutdown();
-    void Draw();
 
     void AddSprite();
-    bool CreateTextureFromPath(const char* filePath);
 
 private:
     bool InitWindowSize(int* window_w, int* window_h);

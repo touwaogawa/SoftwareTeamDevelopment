@@ -8,18 +8,29 @@
 
 class Game {
 public:
+    typedef enum {
+        TITLE,
+        HOME,
+        BATTLE,
+        RESULT,
+        SCENE_MAX
+    } Scenes;
+
     Game();
+
     bool Initialize();
     void RunLoop();
     void Shutdown();
 
+    void LoadScene(Scenes scene);
+    void UnLoadScene();
+    Scene* GetScene() const;
     void ChangeScene(const std::string& sceneName); // シーンを切り替える
 
 private:
     bool mIsRunning;
 
-    std::unordered_map<std::string, Scene*> mScenes; // シーンのコレクション
-    Scene* mCurrentScene;                            // 現在のシーン
+    Scene* mCurrentScene; // 現在のシーン
 
     Renderer mRenderer;
 

@@ -82,33 +82,8 @@ bool Renderer::Initialize()
 
 void Renderer::Shutdown()
 {
-    SDL_DestroyRenderer(mRenderer);
+    SDL_GL_DeleteContext(mContext);
     SDL_DestroyWindow(mWindow);
-}
-
-void Renderer::Draw()
-{
-    mGame->
-        // ウィンドウに表示
-        SDL_GL_SwapWindow(mWindow);
-}
-bool Renderer::CreateTextureFromPath(const char* filePath)
-{
-    // 画像の読み込み
-    SDL_Surface* surface = IMG_Load(filePath); // 実行ファイルの場所から見たパス
-    if (!surface) {
-        SDL_Log("IMG_Load Error: %s", IMG_GetError());
-        Shutdown();
-        return false;
-    }
-    texture = SDL_CreateTextureFromSurface(mRenderer, surface);
-    SDL_FreeSurface(surface); // サーフェイスは不要になったので解放
-
-    if (!texture) {
-        SDL_Log("SDL_CreateTextureFromSurface Error: %s", IMG_GetError());
-        Shutdown();
-        return false;
-    }
 }
 
 bool Renderer::InitWindowSize(int* window_w, int* window_h)

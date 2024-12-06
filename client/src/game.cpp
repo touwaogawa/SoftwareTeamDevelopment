@@ -52,8 +52,20 @@ void Game::RunLoop()
     }
 }
 
+void Game::Shutdown()
+{
+    mRenderer.Shutdown();
+    SDL_Quit();
+}
+
+Scene* Game::GetScene() const
+{
+    return mCurrentScene;
+}
 void Game::ProcessInput()
 {
+    mCurrentScene->ProcessInput();
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         // std::cout << "Event Type: " << event.type << std::endl;
@@ -78,7 +90,7 @@ void Game::UpdateGame()
 
 void Game::RenderScene()
 {
-    mRenderer->Draw();
+    mCurrentScene->Draw();
 }
 
 void Game::Shutdown()
