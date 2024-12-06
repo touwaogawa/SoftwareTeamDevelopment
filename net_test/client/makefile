@@ -11,7 +11,7 @@ OPTION =
 #-I../include -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -pthread
 
 # 出力のターゲット
-TARGET = Main
+TARGET = client_main
 
 # 全体ビルドターゲット
 all: $(TARGET)
