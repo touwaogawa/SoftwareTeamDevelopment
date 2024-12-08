@@ -10,12 +10,11 @@ int main(int argc, char* argv[])
         client_id = std::atoi(argv[1]);
     }
 
-    Network& net = Network::GetInstance();
-    if (!net.Connect(port, client_id)) {
+    if (!Network::Connect(port, client_id)) {
         std::cout << "接続できませんでした" << std::endl;
         return 0;
     }
 
-    net.ShutDown();
+    Network::ShutDown();
     return 0;
 }
