@@ -1,15 +1,14 @@
 #include "transform_component.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "../../common/src/common_math.h"
 
 namespace {
-glm::mat3 ValuesToMatrix(glm::vec2 scale, float rotation, glm::vec2 position);
-glm::vec2 MatrixToPosition(glm::mat3 mat);
-glm::vec2 MatrixToScale(glm::mat3 mat);
-float MatrixToRotation(glm::mat3 mat, glm::vec2 scale);
+Matrix4 ValuesToMatrix(Vector3 scale, Quaternion rotation, Vector3 position);
+Vector3 MatrixToPosition(Matrix4 mat);
+Vector3 MatrixToScale(Matrix4 mat);
+Quaternion MatrixToRotation(Matrix4 mat, Vector3 scale);
 }
 
-Transform2::Transform2(GameObject* owner, Transform2* parent)
+Transform::Transform(GameObject* owner, Transform* parent)
     : Component(owner)
     , mParent(parent) // 親を設定
 {
@@ -18,111 +17,111 @@ Transform2::Transform2(GameObject* owner, Transform2* parent)
         mParent->mChildren.push_back(this);
     }
 }
-Transform2::~Transform2()
+Transform::~Transform()
 {
     mParent->RemoveChild(this);
 }
 
 // getter setter local
-const glm::vec2& Transform2::GetLocalPosition() const
+const Vector3& Transform::GetLocalPosition() const
 {
     return mLocalPosition;
 }
-void Transform2::SetLocalPosition(glm::vec2 position)
+void Transform::SetLocalPosition(Vector3 position)
 {
     mLocalPosition = position;
     AdoptTransformFromLocalValue();
-    for (Transform2* child : mChildren) {
+    for (Transform* child : mChildren) {
         child->AdoptTransformFromLocalValue();
     }
 }
-float Transform2::GetLocaRotation() const
+Quaternion Transform::GetLocaRotation() const
 {
     return mLocalRotation;
 }
-void Transform2::SetLocalRotation(float rotation)
+void Transform::SetLocalRotation(Quaternion rotation)
 {
     mLocalRotation = rotation;
     AdoptTransformFromLocalValue();
-    for (Transform2* child : mChildren) {
+    for (Transform* child : mChildren) {
         child->AdoptTransformFromLocalValue();
     }
 }
-const glm::vec2& Transform2::GetLocalScale() const
+const Vector3& Transform::GetLocalScale() const
 {
     return mLocalScale;
 }
-void Transform2::SetLocalScale(glm::vec2 scale)
+void Transform::SetLocalScale(Vector3 scale)
 {
     mLocalScale = scale;
     AdoptTransformFromLocalValue();
-    for (Transform2* child : mChildren) {
+    for (Transform* child : mChildren) {
         child->AdoptTransformFromLocalValue();
     }
 }
-const glm::mat3& Transform2::GetLocalMatrix() const
+const Matrix4& Transform::GetLocalMatrix() const
 {
     return mLocalMatrix;
 }
-void Transform2::SetLocalMatrix(glm::mat3 matrix)
+void Transform::SetLocalMatrix(Matrix4 matrix)
 {
     mLocalMatrix = matrix;
     AdoptTransformFromLocalMatrix();
-    for (Transform2* child : mChildren) {
+    for (Transform* child : mChildren) {
         child->AdoptTransformFromLocalValue();
     }
 }
 
 // getter setter world
-const glm::vec2& Transform2::GetWorldPosition() const
+const Vector3& Transform::GetWorldPosition() const
 {
     return mWorldPosition;
 }
-void Transform2::SetWorldPosition(glm::vec2 position)
+void Transform::SetWorldPosition(Vector3 position)
 {
     mWorldPosition = position;
     AdoptTransformFromWorldValue();
-    for (Transform2* child : mChildren) {
+    for (Transform* child : mChildren) {
         child->AdoptTransformFromLocalValue();
     }
 }
-float Transform2::GetLocaRotation() const
+Quaternion Transform::GetLocaRotation() const
 {
     return mWorldRotation;
 }
-void Transform2::SetWorldRotation(float rotation)
+void Transform::SetWorldRotation(Quaternion rotation)
 {
     mWorldRotation = rotation;
     AdoptTransformFromWorldValue();
-    for (Transform2* child : mChildren) {
+    for (Transform* child : mChildren) {
         child->AdoptTransformFromLocalValue();
     }
 }
-const glm::vec2& Transform2::GetWorldScale() const
+const Vector3& Transform::GetWorldScale() const
 {
     return mWorldScale;
 }
-void Transform2::SetWorldScale(glm::vec2 scale)
+void Transform::SetWorldScale(Vector3 scale)
 {
     mWorldScale = scale;
     AdoptTransformFromWorldValue();
-    for (Transform2* child : mChildren) {
+    for (Transform* child : mChildren) {
         child->AdoptTransformFromLocalValue();
     }
 }
-const glm::mat3& Transform2::GetWorldMatrix() const
+const Matrix4& Transform::GetWorldMatrix() const
 {
     return mWorldMatrix;
 }
-void Transform2::SetWorldMatrix(glm::mat3 matrix)
+void Transform::SetWorldMatrix(Matrix4 matrix)
 {
     mWorldMatrix = matrix;
     AdoptTransformFromWorldMatrix();
-    for (Transform2* child : mChildren) {
+    for (Transform* child : mChildren) {
         child->AdoptTransformFromLocalValue();
     }
 }
-void Transform2::MoveParent(Transform2* parent)
+void Transform::MoveParent(Transform* parent)
 {
     if (mParent != nullptr) {
         mParent->RemoveChild(this);
@@ -133,27 +132,27 @@ void Transform2::MoveParent(Transform2* parent)
 }
 
 // 親子関係public
-Transform2* Transform2::GetParent() const
+Transform* Transform::GetParent() const
 {
     return mParent;
 }
-void MoveParent(Transform2* parent)
+void MoveParent(Transform* parent)
 {
 }
 
-std::vector<Transform2*> Transform2::GetChildren() const
+std::vector<Transform*> Transform::GetChildren() const
 {
     return mChildren;
 }
 
 // 親子関係private
-void Transform2::AddChild(Transform2* child)
+void Transform::AddChild(Transform* child)
 {
     mChildren.push_back(child);
 }
 
 //
-void Transform2::AdoptTransformFromLocalValue()
+void Transform::AdoptTransformFromLocalValue()
 {
     // local values > local matrix
     mLocalMatrix = ValuesToMatrix(mLocalScale, mLocalRotation, mLocalPosition);
@@ -167,7 +166,7 @@ void Transform2::AdoptTransformFromLocalValue()
     mWorldRotation = MatrixToRotation(mWorldMatrix, mWorldScale);
 }
 
-void Transform2::AdoptTransformFromLocalMatrix()
+void Transform::AdoptTransformFromLocalMatrix()
 {
     // local matrix > local values
     mLocalPosition = MatrixToPosition(mLocalMatrix);
@@ -183,7 +182,7 @@ void Transform2::AdoptTransformFromLocalMatrix()
     mWorldRotation = MatrixToRotation(mWorldMatrix, mWorldScale);
 }
 
-void Transform2::AdoptTransformFromWorldValue()
+void Transform::AdoptTransformFromWorldValue()
 {
     // world values > world matrix
     mWorldMatrix = ValuesToMatrix(mWorldScale, mWorldRotation, mWorldPosition);
@@ -197,7 +196,7 @@ void Transform2::AdoptTransformFromWorldValue()
     mLocalRotation = MatrixToRotation(mLocalMatrix, mLocalScale);
 }
 
-void Transform2::AdoptTransformFromWorldMatrix()
+void Transform::AdoptTransformFromWorldMatrix()
 {
     // world matrix > world values
     mWorldPosition = MatrixToPosition(mWorldMatrix);
@@ -214,43 +213,43 @@ void Transform2::AdoptTransformFromWorldMatrix()
 }
 
 namespace {
-glm::mat3 ValuesToMatrix(glm::vec2 scale, float rotation, glm::vec2 position)
+Matrix4 ValuesToMatrix(Vector3 scale, Quaternion rotation, Vector3 position)
 {
     // スケール行列
-    glm::mat3 scaleMatrix = glm::mat3(1.0f); // 単位行列
-    scaleMatrix[0][0]     = scale.x;         // X軸のスケール
-    scaleMatrix[1][1]     = scale.y;         // Y軸のスケール
+    Matrix4 scaleMatrix = Matrix4(1.0f); // 単位行列
+    scaleMatrix[0][0]   = scale.x;       // X軸のスケール
+    scaleMatrix[1][1]   = scale.y;       // Y軸のスケール
 
     // 回転行列
-    glm::mat3 rotationMatrix(1.0f);       // 単位行列
+    Matrix4 rotationMatrix(1.0f);         // 単位行列
     rotationMatrix[0][0] = cos(rotation); // X軸の回転
     rotationMatrix[0][1] = -sin(rotation);
     rotationMatrix[1][0] = sin(rotation); // Y軸の回転
     rotationMatrix[1][1] = cos(rotation);
 
     // 平行移動行列
-    glm::mat3 translationMatrix = glm::mat3(1.0f); // 単位行列
-    translationMatrix[2][0]     = position.x;
-    translationMatrix[2][1]     = position.y;
+    Matrix4 translationMatrix = Matrix4(1.0f); // 単位行列
+    translationMatrix[2][0]   = position.x;
+    translationMatrix[2][1]   = position.y;
 
     // 順序：スケール → 回転 → 平行移動
     return translationMatrix * rotationMatrix * scaleMatrix;
 }
 
-glm::vec2 MatrixToPosition(glm::mat3 mat)
+Vector3 MatrixToPosition(Matrix4 mat)
 {
-    return glm::vec2(mat[0][2], mat[1][2]);
+    return Vector3(mat[0][2], mat[1][2]);
 }
 
-glm::vec2 MatrixToScale(glm::mat3 mat)
+Vector3 MatrixToScale(Matrix4 mat)
 {
-    glm::vec2 scale;
-    scale.x = glm::length(glm::vec2(mat[0][0], mat[1][0]));
-    scale.y = glm::length(glm::vec2(mat[0][1], mat[1][1]));
+    Vector3 scale;
+    scale.x = glm::length(Vector3(mat[0][0], mat[1][0]));
+    scale.y = glm::length(Vector3(mat[0][1], mat[1][1]));
     return scale;
 }
 
-float MatrixToRotation(glm::mat3 mat, glm::vec2 scale)
+Quaternion MatrixToRotation(Matrix4 mat, Vector3 scale)
 {
     mat[0][0] /= scale.x;
     mat[1][0] /= scale.x;

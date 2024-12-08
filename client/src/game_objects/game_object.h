@@ -14,5 +14,15 @@ public:
     // コンポーネント
     Transform2 transform; // トランスフォームコンポーネント
 
+    template <typename T>
+    T& GetComponent() const;
+
+    template <typename T>
+    T& AddComponent();
+
+    bool GetActive() const;
+    void SetActive();
+
 private:
+    bool isActive;
 };

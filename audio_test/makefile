@@ -3,12 +3,13 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++17 -g  # 最新のC++標準とデバッグオプション
 
 # ソースファイルとオブジェクトファイル
-SOURCES = $(wildcard *.cpp)
+# SOURCES = $(wildcard *.cpp)
+SOURCES = main.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 # コンパイルオプション
 INCLUDES = -I../include
-LIBS = -lfmod
+LIBS = -lfmod -lSDL2
 
 # 出力のターゲット
 TARGET = main

@@ -12,6 +12,12 @@ public:
     {
     }
 
+    template <typename T>
+    T* GetComponent() const;
+    template <typename T>
+    T* GetComponents() const;
+
 protected:
     GameObject* mOwner;
+    Transform2
 };
