@@ -6,7 +6,10 @@
 
 class Input {
 public:
-    Input();
+    // 初期化
+    static bool Init();
+    // 終了
+    static void ShutDown();
 
     // 接続に成功したら trueを返す
     static bool ConnectController();
