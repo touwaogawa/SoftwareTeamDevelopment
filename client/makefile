@@ -3,15 +3,16 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++11
 
 # ディレクトリ設定
-SRCDIR = src
+SRCDIR = .
 OBJDIR = obj
 
 # ソースファイルとオブジェクトファイル
-SOURCES = $(SRCDIR)/client_main.cpp $(SRCDIR)/client_game.cpp $(SRCDIR)/client_renderer.cpp
+SOURCES = $(wildcard $(SRCDIR)/**/*.cpp)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 # コンパイルオプション
-OPTION = -lSDL2 -lSDL2_image
+INCLUDE = -I../include
+LIB = -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -pthread 
 
 # 出力のターゲット
 TARGET = main
@@ -21,7 +22,7 @@ all: $(TARGET)
 
 # リンクターゲット
 $(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $(TARGET) $(OPTION)
+	$(CXX) $(OBJECTS) -o $(TARGET) $(INCLUDE) $(LIB)
 
 # コンパイル
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
