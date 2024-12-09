@@ -273,10 +273,18 @@ int main()
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        glm::mat4 secondModel = glm::mat4(4.0f);
+        secondModel           = glm::rotate(secondModel, glm::radians(20.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        secondModel           = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -2.0f, 0.0f));
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(secondModel));
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
         glBindVertexArray(0);
 
         // ライトのプロパティ
-        glUniform3f(glGetUniformLocation(shader.Program, "lightPos"), 1.2f, 1.0f, 2.0f);
+        glUniform3f(glGetUniformLocation(shader.Program, "lightPos"), 1.2f, 4.0f, 2.0f);
         glUniform3f(glGetUniformLocation(shader.Program, "viewPos"), view[3][0], view[3][1], view[3][2]);
 
         // 色の設定
