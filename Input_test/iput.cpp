@@ -76,6 +76,10 @@ bool Input::GetButton(std::string buttonName) {
     if (buttonName == "B") return mJoyCon_t.button.btn.B;
     if (buttonName == "X") return mJoyCon_t.button.btn.X;
     if (buttonName == "Y") return mJoyCon_t.button.btn.Y;
+    if (buttonName == "SL") return mJoyCon_t.button.btn.SL_r;
+    if (buttonName == "SR") return mJoyCon_t.button.btn.SR_r;
+    if (buttonName == "Y") return mJoyCon_t.button.btn.Home;
+    if (buttonName == "Y") return mJoyCon_t.button.btn.Plus;
     return false;
 }
 
@@ -84,6 +88,10 @@ bool Input::GetButtonDown(std::string buttonName) {
     if (buttonName == "B") return mJoyCon_t.button.btn.B && !mPrevJoyCon_t.button.btn.B;
     if (buttonName == "X") return mJoyCon_t.button.btn.X && !mPrevJoyCon_t.button.btn.X;
     if (buttonName == "Y") return mJoyCon_t.button.btn.Y && !mPrevJoyCon_t.button.btn.Y;
+    if (buttonName == "SL") return mJoyCon_t.button.btn.SL_r && !mPrevJoyCon_t.button.btn.SL_r;
+    if (buttonName == "SR") return mJoyCon_t.button.btn.SR_r && !mPrevJoyCon_t.button.btn.SR_r;
+    if (buttonName == "Home") return mJoyCon_t.button.btn.Home && !mPrevJoyCon_t.button.btn.Home;
+    if (buttonName == "Plus") return mJoyCon_t.button.btn.Plus && !mPrevJoyCon_t.button.btn.Plus;
     return false;
 }
 
@@ -92,5 +100,15 @@ bool Input::GetButtonUp(std::string buttonName) {
     if (buttonName == "B") return !mJoyCon_t.button.btn.B && mPrevJoyCon_t.button.btn.B;
     if (buttonName == "X") return !mJoyCon_t.button.btn.X && mPrevJoyCon_t.button.btn.X;
     if (buttonName == "Y") return !mJoyCon_t.button.btn.Y && mPrevJoyCon_t.button.btn.Y;
+    if (buttonName == "SL") return mJoyCon_t.button.btn.SL_r && mPrevJoyCon_t.button.btn.SL_r;
+    if (buttonName == "SR") return mJoyCon_t.button.btn.SR_r && mPrevJoyCon_t.button.btn.SR_r;
+    if (buttonName == "Home") return mJoyCon_t.button.btn.Home && mPrevJoyCon_t.button.btn.Home;
+    if (buttonName == "Plus") return mJoyCon_t.button.btn.Plus && mPrevJoyCon_t.button.btn.Plus;
+    return false;
+}
+
+float Input::GetAxis(std::string axisName) {
+    if (axisName == "JcRStickX") return mJoyCon_t.stick.x;
+    if (axisName == "JcRStickY") return mJoyCon_t.stick.y;
     return false;
 }

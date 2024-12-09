@@ -34,6 +34,12 @@ int main(int argc, char* argv[])
             std::cout << "button b" << std::endl;
             frag = false;
         }
+        if(Input::GetButtonDown("Home")){
+            std::cout << "buttonHome" << std::endl;
+        }
+        if(Input::GetAxis("JcRStickX")){
+            std::cout << "スティックｘ" << std::endl;
+        }
     }
     Input::ShutDown();
 
