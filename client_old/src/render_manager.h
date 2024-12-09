@@ -13,13 +13,14 @@
 #include <unordered_map>
 #include <vector>
 
-class Renderer {
+class RenderManager {
 public:
-    Renderer(class Game* game, int virtual_screen_w, int virtual_screen_h);
-    ~Renderer();
+    RenderManager(class Game* game, int virtual_screen_w, int virtual_screen_h);
+    ~RenderManager();
 
     bool Initialize();
     void Shutdown();
+
     void Draw();
     void AddSprite();
 

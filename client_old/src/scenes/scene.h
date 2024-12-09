@@ -3,7 +3,10 @@
 // インターフェース
 class Scene {
 public:
-    virtual void Awake();
+    Scene();
+    // ロード
+    virtual void Load();
+    // 最初のフレーム
     virtual void Start();
     // 入力と状態が決まった後
     virtual void Update();

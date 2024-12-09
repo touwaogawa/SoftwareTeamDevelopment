@@ -6,7 +6,7 @@
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
-#include "renderer.h"
+#include "render_manager.h"
 #include "game.h"
 #include <GL/glew.h>
 #include <SDL2/SDL_image.h>
@@ -14,18 +14,18 @@
 
 SDL_Texture* texture;
 
-Renderer::Renderer(Game* game, int virtual_screen_w, int virtual_screen_h)
+RenderManager::RenderManager(Game* game, int virtual_screen_w, int virtual_screen_h)
     : mGame(game)
     , mVirtualScreenWidth(virtual_screen_w)
     , mVirtualScreenHeight(virtual_screen_h)
 {
 }
 
-Renderer::~Renderer()
+RenderManager::~RenderManager()
 {
 }
 
-bool Renderer::Initialize()
+bool RenderManager::Initialize()
 {
     // 画像の読み込み用にSDL_imageを初期化
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
@@ -52,9 +52,11 @@ bool Renderer::Initialize()
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
     int window_w, window_h; // windowサイズの初期値
-    if (!InitWindowSize(&window_w, &window_h)) {
-        return false;
-    }
+    // if (!InitWindowSize(&window_w, &window_h)) {
+    //     return false;
+    // }
+    window_w = mVirtualScreenWidth;
+    window_h = mVirtualScreenHeight;
 
     mWindow = SDL_CreateWindow("ベイスマッシュ", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, static_cast<int>(window_w), static_cast<int>(window_h), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!mWindow) {
@@ -80,13 +82,17 @@ bool Renderer::Initialize()
     return true;
 }
 
-void Renderer::Shutdown()
+void RenderManager::Shutdown()
 {
     SDL_GL_DeleteContext(mContext);
     SDL_DestroyWindow(mWindow);
 }
 
-bool Renderer::InitWindowSize(int* window_w, int* window_h)
+void RenderManager::Draw()
+{
+}
+
+bool RenderManager::InitWindowSize(int* window_w, int* window_h)
 {
     float scale = 2.0f / 3.0f;
 
@@ -103,7 +109,7 @@ bool Renderer::InitWindowSize(int* window_w, int* window_h)
     return true;
 }
 
-void Renderer::UpdateScreenSize()
+void RenderManager::UpdateScreenSize()
 {
     // ディスプレイモード情報を取得
     SDL_DisplayMode displayMode;

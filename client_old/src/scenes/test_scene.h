@@ -2,9 +2,11 @@
 
 #include "scene.h"
 
-class BattleScene : public Scene {
+class TestScene : public Scene {
 public:
+    TestScene();
     void Load() override;
+    // 最初のフレーム
     void Start() override;
     // 入力と状態が決まった後
     void Update() override;
@@ -12,7 +14,5 @@ public:
     void LateUpdate() override;
 
 private:
-    // player(人、独楽、当たり判定)
-    // 床
-    // 場外判定
+    int mFrameCount;
 };

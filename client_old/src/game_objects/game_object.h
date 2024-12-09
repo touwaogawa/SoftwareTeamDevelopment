@@ -17,12 +17,12 @@ public:
     template <typename T>
     T& GetComponent() const;
 
-    template <typename T>
-    T& AddComponent();
+    void AddComponent(Component* component);
 
     bool GetActive() const;
     void SetActive();
 
 private:
     bool isActive;
+    std::vector<Component*> mComponentList;
 };
