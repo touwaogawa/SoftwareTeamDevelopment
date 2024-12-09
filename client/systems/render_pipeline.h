@@ -2,7 +2,7 @@
 
 class RenderPipeline {
 public:
-    void Draw();
+    static void Draw();
 
 private:
 };

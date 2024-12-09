@@ -9,6 +9,8 @@
 namespace {
 void ProcessInput();
 void Update();
+void Intersect();
+void LateUpdate();
 void Draw();
 }
 Game::Game()
@@ -39,6 +41,8 @@ void Game::RunLoop()
         ProcessInput();
         // ReceiveDatas();
         Update();
+        Intersect();
+        LateUpdate();
         Draw();
         Time::UpdateFrame();
     }
@@ -60,9 +64,19 @@ void ProcessInput()
 }
 void Update()
 {
+    // 入力と状態に基づく物体移動
+}
+void Intersect()
+{
+    // 当たり判定
+}
+void LateUpdate()
+{
+    // 当たり判定に基づく処理
 }
 
 void Draw()
 {
+    RenderPipeline::Draw();
 }
 }

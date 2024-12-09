@@ -12,7 +12,7 @@ public:
     std::string tag;  // タグ
 
     // コンポーネント
-    Transform2 transform; // トランスフォームコンポーネント
+    Transform transform; // トランスフォームコンポーネント
 
     template <typename T>
     T& GetComponent() const;

@@ -38,6 +38,6 @@ private:
     int mCurrentTime; // 色々処理が終わった時間
 
     void ProcessInput();
-    void UpdateGame();
+    void Update();
     void RenderScene();
 };

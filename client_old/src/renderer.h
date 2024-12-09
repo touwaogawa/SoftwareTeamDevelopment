@@ -20,7 +20,7 @@ public:
 
     bool Initialize();
     void Shutdown();
-
+    void Draw();
     void AddSprite();
 
 private:
