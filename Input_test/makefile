@@ -7,11 +7,11 @@ SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:%.cpp=%.o)
 
 # コンパイルオプション
-OPTION = 
+OPTION = -lSDL2 -ljoyconlib -lhidapi-hidraw -lm
 #-I../include -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -pthread
 
 # 出力のターゲット
-TARGET = client_main
+TARGET = main
 
 # 全体ビルドターゲット
 all: $(TARGET)

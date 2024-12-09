@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <string>
-// #include <joyconlib>
+#include <joyconlib.h>
 
 class Input {
 public:
@@ -18,18 +18,21 @@ public:
     static void ProcessInput();
 
     // PCキーボード関係(SDL)
-    static bool GetKey(SDL_KeyCode keyCode);
-    static bool GetKeyDown(SDL_KeyCode keyCode);
-    static bool GetKeyUp(SDL_KeyCode keyCode);
+    static bool GetKey(SDL_Keycode keyCode);
+    static bool GetKeyDown(SDL_Keycode keyCode);
+    static bool GetKeyUp(SDL_Keycode keyCode);
 
     // ゲームパッドとジョイコン共通
-    static bool GetJoyConButton(std::string buttonName);
-    static bool GetJoyConButtonDown(std::string buttonName);
-    static bool GetJoyConButtonUp(std::string buttonName);
+    static bool GetButton(std::string buttonName);
+    static bool GetButtonDown(std::string buttonName);
+    static bool GetButtonUp(std::string buttonName);
     //-1~1の範囲で指定した名前の値が返される。
     static float GetAxis(std::string axisName);
 
 private:
     // ジョイコンはひとつしかつながない前提なのでリストにしない
     //  static joyconlib_t mJoyConLastState;
+    static joyconlib_t mJoyCon_t;
+    static joyconlib_t mPrevJoyCon_t;
+    static SDL_Event mEvent;
 };
