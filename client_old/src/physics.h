@@ -1,2 +1,7 @@
-#pragma once
-#include "collision.h"
+// #pragma once
+// #include "collision.h"
+
+// class Physics {
+// public:
+// void IntersectAllColllider
+// };

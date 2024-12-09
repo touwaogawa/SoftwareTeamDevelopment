@@ -1,35 +1,25 @@
-# コンパイラとオプション
 CXX = g++
-CXXFLAGS = -Wall -std=c++11
+CXXFLAGS = -Wall -std=c++11 -I../include -pthread
+LDFLAGS = -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL
 
-# ディレクトリ設定
-SRCDIR = src
 OBJDIR = obj
 
-# ソースファイルとオブジェクトファイル
-SOURCES = $(wildcard $(SRCDIR)/**/*.cpp)
-OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+SOURCES = $(wildcard *.cpp)
+OBJECTS = $(SOURCES:%.cpp=$(OBJDIR)/%.o)
 
-# コンパイルオプション
-INCLUDE = -I../include
-LIB = -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -pthread 
+TARGET = Main
 
-# 出力のターゲット
-TARGET = main
+all: $(OBJDIR) $(TARGET)
 
-# 全体ビルドターゲット
-all: $(TARGET)
-
-# リンクターゲット
-$(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $(TARGET) $(INCLUDE) $(LIB)
-
-# コンパイル
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+$(OBJDIR):
 	@mkdir -p $(OBJDIR)
+
+$(TARGET): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $@ $(LDFLAGS)
+
+$(OBJDIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# クリーンターゲット
 clean:
 	rm -rf $(OBJDIR) $(TARGET)
 
