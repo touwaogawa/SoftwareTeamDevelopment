@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++11
 
 # ディレクトリ設定
-SRCDIR = .
+SRCDIR = src
 OBJDIR = obj
 
 # ソースファイルとオブジェクトファイル
