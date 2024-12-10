@@ -228,15 +228,20 @@ int main()
     glm::mat4 model = glm::mat4(1.0f);
     model           = glm::rotate(model, glm::radians(20.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-    while (true) {
+    bool frag = true;
+    while (frag) {
         SDL_Event e;
-        static float zzz = -3.0f;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
+                frag = false;
                 break;
             }
             if (e.type == SDL_KEYDOWN) {
 
+                if (e.key.keysym.sym == SDLK_ESCAPE) {
+                    frag = false;
+                    break;
+                }
                 if (e.key.keysym.sym == SDLK_w) {
                     model *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
                 }
