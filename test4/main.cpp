@@ -228,9 +228,16 @@ int main()
     glm::mat4 model = glm::mat4(1.0f);
     model           = glm::rotate(model, glm::radians(20.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
+    glm::mat4 secondModel = glm::mat4(1.0f);
+    secondModel           = glm::rotate(secondModel, glm::radians(20.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    secondModel *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -2.0f, 0.0f));
+    secondModel *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 2.0f, 10.0f));
+
     bool frag = true;
+    // キーの状態を管理するための配列
+    const Uint8* state = SDL_GetKeyboardState(NULL);
+    SDL_Event e;
     while (frag) {
-        SDL_Event e;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 frag = false;
@@ -254,7 +261,20 @@ int main()
                 if (e.key.keysym.sym == SDLK_d) {
                     model *= glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
                 }
+                if (e.key.keysym.sym == SDLK_UP) {
+                    secondModel = glm::translate(secondModel, glm::vec3(0.0f, 0.0f, -1.0f) / 10.0f);
+                }
+                if (e.key.keysym.sym == SDLK_DOWN) {
+                    secondModel = glm::translate(secondModel, glm::vec3(0.0f, 0.0f, 1.0f) / 10.0f);
+                }
+                if (e.key.keysym.sym == SDLK_LEFT) {
+                    secondModel = glm::translate(secondModel, glm::vec3(-1.0f, 0.0f, 0.0f) / 10.0f);
+                }
+                if (state[SDL_SCANCODE_RIGHT]) {
+                    secondModel = glm::translate(secondModel, glm::vec3(1.0f, 0.0f, 0.0f) / 10.0f);
+                }
             }
+
             if (e.type == SDL_WINDOWEVENT) {
                 if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
                     window_w   = e.window.data1;
@@ -272,17 +292,16 @@ int main()
         GLint viewLoc  = glGetUniformLocation(shader.Program, "view");
         GLint projLoc  = glGetUniformLocation(shader.Program, "projection");
 
+        // model
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-        glm::mat4 secondModel = glm::mat4(4.0f);
-        secondModel           = glm::rotate(secondModel, glm::radians(20.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        secondModel           = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -2.0f, 0.0f));
+        // secondModel
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(secondModel));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
@@ -300,7 +319,7 @@ int main()
         glUniform1f(glGetUniformLocation(shader.Program, "ambientStrength"), 0.6f);
 
         SDL_GL_SwapWindow(window);
-        SDL_Delay(10);
+        SDL_Delay(16);
     }
 
     SDL_DestroyWindow(window);
