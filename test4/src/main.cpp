@@ -12,7 +12,7 @@
 
 float window_w = 1920.0f;
 float window_h = 1080.0f;
-int main()
+int main(int argc, char* argv[])
 {
     // SDLの初期化
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -123,6 +123,14 @@ int main()
                 }
                 if (keyboardState[SDL_SCANCODE_R]) {
                     secondModelL *= glm::rotate(glm::mat4(1.0f), glm::radians(20.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                    secondModel = model * secondModelL;
+                }
+                if (keyboardState[SDL_SCANCODE_T]) {
+                    secondModelL *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 2.0f, 10.0f));
+                    secondModel = model * secondModelL;
+                }
+                if (keyboardState[SDL_SCANCODE_Y]) {
+                    secondModelL /= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 2.0f, 10.0f));
                     secondModel = model * secondModelL;
                 }
             }
