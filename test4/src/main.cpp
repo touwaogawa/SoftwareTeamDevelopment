@@ -1,3 +1,4 @@
+#include "mesh.h"
 #include "shader.h"
 #include "time.h"
 #include "vertexArray.h"
@@ -41,7 +42,25 @@ int main(int argc, char* argv[])
     Shader shader;
     shader.Load("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
 
-    VertexArray cubeVAO(vertices, 36, VertexArray::Layout::PosNorm, indices, 36);
+    // obj読み込み
+    // Mesh human;
+    // if (!human.LoadObjFile("assets/models/BaseHuman.obj")) {
+    //     std::cout << "failed load obj file " << std::endl;
+    //     return 0;
+    // }
+    Mesh cubeMesh;
+    if (!cubeMesh.LoadObjFile("assets/models/Cube.obj")) {
+        std::cout << "failed load obj file " << std::endl;
+        return 0;
+    }
+    // Mesh HexagramMesh;
+    // if (!HexagramMesh.LoadObjFile("assets/models/Hexagram.obj")) {
+    //     std::cout << "failed load obj file " << std::endl;
+    //     return 0;
+    // }
+
+    // モデルの頂点情報
+    // VertexArray cubeVAO(vertices, 36, VertexArray::Layout::PosNorm, indices, 36);
 
     // 投影行列
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), window_w / window_h, 0.1f, 100.0f);
@@ -151,22 +170,6 @@ int main(int argc, char* argv[])
         GLint viewLoc  = glGetUniformLocation(shader.GetProgram(), "view");
         GLint projLoc  = glGetUniformLocation(shader.GetProgram(), "projection");
 
-        // model
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-        cubeVAO.Bind();
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-        // secondModel
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(secondModel));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-        // cubeVAO.Bind();
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-        glBindVertexArray(0);
-
         // ライトのプロパティ
         glUniform3f(glGetUniformLocation(shader.GetProgram(), "lightPos"), 1.2f, 4.0f, 2.0f);
         glUniform3f(glGetUniformLocation(shader.GetProgram(), "viewPos"), view[3][0], view[3][1], view[3][2]);
@@ -177,6 +180,24 @@ int main(int argc, char* argv[])
 
         // アンビエントライトの強度
         glUniform1f(glGetUniformLocation(shader.GetProgram(), "ambientStrength"), 0.6f);
+
+        // model
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        // cubeMesh.GetVAO()->Bind();
+        cubeMesh.GetVAO()->Bind();
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        // secondModel
+        // human.GetVAO()->Bind();
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(secondModel));
+        // glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        // glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        // cubeVAO.Bind();
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        glBindVertexArray(0);
 
         SDL_GL_SwapWindow(window);
         Time::UpdateFrame();
