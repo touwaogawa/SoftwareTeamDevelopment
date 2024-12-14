@@ -125,8 +125,8 @@ private:
     Vector3 mPosition;
     Quaternion mRotation;
     float mScale;
+    class Game* mGame;
     bool mRecomputeTransform;
 
     std::vector<Component*> mComponents;
-    class Game* mGame;
 };

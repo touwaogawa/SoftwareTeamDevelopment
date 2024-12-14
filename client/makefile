@@ -1,36 +1,48 @@
 # コンパイラとオプション
 CXX = g++
-CXXFLAGS = -Wall -std=c++11
+CXXFLAGS = -Wall -std=c++14
 
 # ディレクトリ設定
-SRCDIR = .
+SRCDIR = src
 OBJDIR = obj
 
 # ソースファイルとオブジェクトファイル
-SOURCES = $(wildcard $(SRCDIR)/**/*.cpp)
-OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+SOURCES = $(shell find $(SRCDIR) -name "*.cpp")
+SOURCES_NOTDIR = $(notdir $(SOURCES))
+SOURCES_DIRS = $(dir $(SOURCES))  # 各ソースファイルのディレクトリ部分
+OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))  # ディレクトリ構造を保ったままオブジェクトファイルを作成
 
 # コンパイルオプション
-INCLUDE = -I../include
-LIB = -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -pthread 
+INCLUDE = -I../include -pthread
+LIBRARY = -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -lGLU -ljoyconlib -lhidapi-hidraw -lm
+
 
 # 出力のターゲット
 TARGET = main
 
 # 全体ビルドターゲット
-all: $(TARGET)
+all: $(OBJDIR) $(TARGET)
 
-# リンクターゲット
-$(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $(TARGET) $(INCLUDE) $(LIB)
-
-# コンパイル
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+# obj ディレクトリがない場合は作成
+$(OBJDIR):
 	@mkdir -p $(OBJDIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# ターゲットの作成
+$(TARGET): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $@ $(LIBRARY)
+
+# ソースファイルをオブジェクトファイルに変換
+# すべての .o ファイルを obj フォルダ内の同じ層に作成する
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(dir $@)  # obj/ディレクトリ内にサブディレクトリを作成
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 # クリーンターゲット
 clean:
-	rm -rf $(OBJDIR) $(TARGET)
+	rm -f $(OBJECTS) $(TARGET)
 
 .PHONY: all clean
+
+show:
+	@echo "Sources: $(SOURCES)"
+	@echo "Objects: $(OBJECTS)"
