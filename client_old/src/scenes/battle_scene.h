@@ -4,7 +4,7 @@
 
 class BattleScene : public Scene {
 public:
-    void Awake() override;
+    void Load() override;
     void Start() override;
     // 入力と状態が決まった後
     void Update() override;

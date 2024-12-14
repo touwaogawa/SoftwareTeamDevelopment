@@ -432,7 +432,7 @@ bool Renderer::LoadShaders()
 
     // Create basic mesh shader
     mMeshShader = new Shader();
-    if (!mMeshShader->Load("Shaders/Phong.vert", "Shaders/GBufferWrite.frag")) {
+    if (!mMeshShader->Load("Shaders/Phong.vert", "Shaders/Phong.frag")) {
         return false;
     }
 

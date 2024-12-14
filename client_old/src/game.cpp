@@ -1,14 +1,14 @@
 #include "game.h"
-#include "collision.h"
 #include "input.h"
-#include "renderer.h"
-#include "scenes/battle_scene.h"
+#include "physics.h"
+#include "render_manager.h"
+// #include "scenes/battle_scene.h"
 #include "time.h"
 #include <iostream>
 #include <thread>
 Game::Game()
     : mIsRunning(true)
-    , mRenderer(this, 1920, 1080)
+    , mRenderManager(this, 1920, 1080)
 {
 }
 
@@ -19,11 +19,12 @@ bool Game::Initialize()
         return false;
     }
 
-    if (!mRenderer.Initialize()) {
+    if (!mRenderManager.Initialize()) {
         SDL_Log("Failed to initialize renderer");
         return false;
     }
-    LoadScene(Scenes::BATTLE);
+
+    LoadScene(&mTestScene);
     Time::Init(60);
     return true;
 }
@@ -40,10 +41,15 @@ void Game::RunLoop()
 
 void Game::Shutdown()
 {
-    mRenderer.Shutdown();
+    mRenderManager.Shutdown();
     SDL_Quit();
 }
 
+void Game::LoadScene(Scene* scene)
+{
+    mCurrentScene = scene;
+    mCurrentScene->Load();
+}
 Scene* Game::GetScene() const
 {
     return mCurrentScene;
@@ -55,15 +61,14 @@ void Game::ProcessInput()
 void Game::Update()
 {
     mCurrentScene->Update();
-
-    Collision::Intersect();
+    Physics::DynamicIntersect();
     mCurrentScene->LateUpdate();
 }
 
 void Game::RenderScene()
 {
 
-    mRenderer.Draw();
+    mRenderManager.Draw();
 }
 
 void Game::Shutdown()
