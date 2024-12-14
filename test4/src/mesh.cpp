@@ -82,30 +82,7 @@ bool Mesh::LoadObjFile(const std::string& fileName)
         verts.push_back(texCoords[faceIdx.y - 1].y);
         //  indicesには頂点情報を使う
         indices.push_back(idx++);
-        // std::cout << faceIdx.x << faceIdx.y << faceIdx.z << std::endl;
     }
-
-    // for (size_t i = 0; i < verts.size();) {
-    //     std::cout << verts[i++] << ", ";
-    //     std::cout << verts[i++] << ", ";
-    //     std::cout << verts[i++] << ", ";
-    //     std::cout << verts[i++] << ", ";
-    //     std::cout << verts[i++] << ", ";
-    //     std::cout << verts[i++] << ", ";
-    // std::cout << verts[i++] << ", ";
-    // std::cout << verts[i++] << ", ";
-    //     std::cout << std::endl;
-    // }
-    // std::cout << "indices" << std::endl;
-    // for (size_t i = 0; i < indices.size();) {
-    //     std::cout << indices[i++] << ", ";
-    //     std::cout << indices[i++] << ", ";
-    //     std::cout << indices[i++] << ", ";
-    //     std::cout << std::endl;
-    // }
-    // VertexArrayのコンストラクタ呼び出し
-    // std::cout << verts.size() / 6 << std::endl;
-    // std::cout << indices.size() << std::endl;
 
     mVertexArray = new VertexArray(verts.data(), verts.size() / 6, VertexArray::Layout::PosNormTex, indices.data(), indices.size());
 

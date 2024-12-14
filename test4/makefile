@@ -7,8 +7,8 @@ SRCDIR = src
 OBJDIR = obj
 
 # ソースファイルとオブジェクトファイル
-SOURCES = $(wildcard $(SRCDIR)/*.cpp) 
-OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+SOURCES = $(wildcard $(SRCDIR)/**/*.cpp)
+OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o,  $(notdir $(SOURCES)))
 
 # コンパイルオプション
 INCLUDE = -I../include -pthread
@@ -29,8 +29,9 @@ $(TARGET): $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $@ $(LIBRARY)
 
 # ソースファイルをオブジェクトファイルに変換
+# すべての .o ファイルを obj フォルダ内の同じ層に作成する
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $(OBJDIR)/$(notdir $@)
 
 # クリーンターゲット
 clean:

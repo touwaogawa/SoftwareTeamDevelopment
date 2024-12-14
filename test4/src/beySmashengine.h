@@ -1,0 +1,8 @@
+#pragma once
+
+#include "components/behaviour.h"
+#include "components/meshRenderer.h"
+#include "components/transform.h"
+#include "gameObject.h"
+#include "input.h"
+#include "time.h"

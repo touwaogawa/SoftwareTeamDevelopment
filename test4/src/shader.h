@@ -1,5 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include <GL/glew.h>
 #include <string>
@@ -19,5 +18,3 @@ private:
         GLuint& outShader);
     GLuint mProgram;
 };
-
-#endif
