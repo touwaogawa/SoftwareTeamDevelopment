@@ -34,7 +34,7 @@ private:
     //  static joyconlib_t mJoyConLastState;
     static SDL_Event mEvent;
     static const Uint8* mKeyboardState;
-    static const Uint8* mPrevKeyboardState;
+    static Uint8 mPrevKeyboardState[SDL_NUM_SCANCODES];
     static joyconlib_t mPrevJoyCon_t;
     static joyconlib_t mJoyCon_t;
 };

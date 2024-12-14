@@ -37,7 +37,7 @@ void MeshRenderer::Draw(Shader* shader)
 
     Matrix4 model = mOwner->GetTransform()->GetWorldMatrix();
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.GetAsFloatPtr());
-    // std::cout << "test" << model.mat[3][0] << std::endl;
+
     mMesh->GetVAO()->Bind();
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 

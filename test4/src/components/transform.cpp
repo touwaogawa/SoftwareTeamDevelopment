@@ -3,6 +3,8 @@
 #include "../gameObject.h"
 #include "../math.h"
 #include <algorithm>
+//
+#include <iostream>
 Transform::Transform(GameObject* owner, Transform* parent)
     : Component(owner)
     , mParent(nullptr)
@@ -48,6 +50,7 @@ void Transform::SetWorldMatrix(Matrix4 matrix)
 {
     mWorldMatrix = matrix;
     AdoptfromWorldMatrix();
+    AdoptParentTransformForAllChildren();
 }
 Vector3 Transform::GetWorldPosition()
 {
@@ -56,7 +59,10 @@ Vector3 Transform::GetWorldPosition()
 void Transform::SetWorldPosition(Vector3 position)
 {
     mWorldPosition = position;
+    //
+    // std::cout << mWorldPosition.x << std::endl;
     AdoptfromWorldValue();
+    AdoptParentTransformForAllChildren();
 }
 void Transform::SetWorldPosition(float x, float y, float z)
 {
@@ -64,6 +70,7 @@ void Transform::SetWorldPosition(float x, float y, float z)
     mWorldPosition.y = y;
     mWorldPosition.z = z;
     AdoptfromWorldValue();
+    AdoptParentTransformForAllChildren();
 }
 Vector3 Transform::GetWorldScale()
 {
@@ -75,11 +82,13 @@ void Transform::SetWorldScale(float x, float y, float z)
     mWorldScale.y = y;
     mWorldScale.z = z;
     AdoptfromWorldValue();
+    AdoptParentTransformForAllChildren();
 }
 void Transform::SetWorldScale(Vector3 scale)
 {
     mWorldScale = scale;
     AdoptfromWorldValue();
+    AdoptParentTransformForAllChildren();
 }
 void Transform::SetWorldScale(float scale)
 {
@@ -87,6 +96,7 @@ void Transform::SetWorldScale(float scale)
     mWorldScale.y = scale;
     mWorldScale.z = scale;
     AdoptfromWorldValue();
+    AdoptParentTransformForAllChildren();
 }
 Quaternion Transform::GetWorldRotation()
 {
@@ -96,6 +106,7 @@ void Transform::SetWorldRotation(Quaternion rotation)
 {
     mWorldRotation = rotation;
     AdoptfromWorldValue();
+    AdoptParentTransformForAllChildren();
 }
 
 Vector3 Transform::GetWorldEulerAngles()
@@ -107,11 +118,12 @@ void Transform::SetWorldEulerAngles(Vector3 eulerAngles)
     mWorldEulerAngles = eulerAngles;
     mWorldRotation    = Quaternion(mWorldEulerAngles);
     AdoptfromWorldValue();
+    AdoptParentTransformForAllChildren();
 }
 
 void Transform::TransformationWorldMatrix(Matrix4 translationMat)
 {
-    mWorldMatrix *= translationMat;
+    mWorldMatrix = translationMat * mWorldMatrix;
     AdoptfromWorldMatrix();
 }
 
@@ -124,6 +136,7 @@ void Transform::SetLocalMatrix(Matrix4 matrix)
 {
     mLocalMatrix = matrix;
     AdoptfromLocalMatrix();
+    AdoptParentTransformForAllChildren();
 }
 Vector3 Transform::GetLocalPosition()
 {
@@ -133,6 +146,7 @@ void Transform::SetLocalPosition(Vector3 position)
 {
     mLocalPosition = position;
     AdoptfromLocalValue();
+    AdoptParentTransformForAllChildren();
 }
 void Transform::SetLocalPosition(float x, float y, float z)
 {
@@ -140,6 +154,7 @@ void Transform::SetLocalPosition(float x, float y, float z)
     mLocalPosition.y = y;
     mLocalPosition.z = z;
     AdoptfromLocalValue();
+    AdoptParentTransformForAllChildren();
 }
 Vector3 Transform::GetLocalScale()
 {
@@ -147,22 +162,25 @@ Vector3 Transform::GetLocalScale()
 }
 void Transform::SetLocalScale(float x, float y, float z)
 {
-    mWorldScale.x = x;
-    mWorldScale.y = y;
-    mWorldScale.z = z;
+    mLocalScale.x = x;
+    mLocalScale.y = y;
+    mLocalScale.z = z;
     AdoptfromLocalValue();
+    AdoptParentTransformForAllChildren();
 }
 void Transform::SetLocalScale(Vector3 scale)
 {
-    mWorldScale = scale;
+    mLocalScale = scale;
     AdoptfromLocalValue();
+    AdoptParentTransformForAllChildren();
 }
 void Transform::SetLocalScale(float scale)
 {
-    mWorldScale.x = scale;
-    mWorldScale.y = scale;
-    mWorldScale.z = scale;
+    mLocalScale.x = scale;
+    mLocalScale.y = scale;
+    mLocalScale.z = scale;
     AdoptfromLocalValue();
+    AdoptParentTransformForAllChildren();
 }
 Quaternion Transform::GetLocalRotation()
 {
@@ -172,6 +190,7 @@ void Transform::SetLocalRotation(Quaternion rotation)
 {
     mLocalRotation = rotation;
     AdoptfromLocalValue();
+    AdoptParentTransformForAllChildren();
 }
 
 Vector3 Transform::GetLocalEulerAngles()
@@ -183,11 +202,12 @@ void Transform::SetLocalEulerAngles(Vector3 eulerAngles)
     mLocalEulerAngles = eulerAngles;
     mLocalRotation    = Quaternion(mLocalEulerAngles);
     AdoptfromLocalValue();
+    AdoptParentTransformForAllChildren();
 }
 
 void Transform::TransformationLocalMatrix(Matrix4 translationMat)
 {
-    mLocalMatrix *= translationMat;
+    mLocalMatrix = translationMat * mLocalMatrix;
     AdoptfromLocalMatrix();
 }
 
@@ -211,10 +231,6 @@ void Transform::AdoptfromWorldMatrix()
         mLocalRotation,
         mLocalScale,
         mLocalEulerAngles);
-
-    for (Transform* child : mChildren) {
-        child->AdoptParentTransform();
-    }
 }
 void Transform::AdoptfromLocalMatrix()
 {
@@ -235,14 +251,10 @@ void Transform::AdoptfromLocalMatrix()
         mLocalRotation,
         mLocalScale,
         mLocalEulerAngles);
-
-    for (Transform* child : mChildren) {
-        child->AdoptParentTransform();
-    }
 }
 void Transform::AdoptfromWorldValue()
 {
-    mWorldMatrix = Matrix4::CreateScale(mWorldScale) * Matrix4::CreateFromQuaternion(mWorldRotation) * Matrix4::CreateTranslation(mWorldPosition);
+    mWorldMatrix = Matrix4::CreateTranslation(mWorldPosition) * Matrix4::CreateFromQuaternion(mWorldRotation) * Matrix4::CreateScale(mWorldScale);
 
     if (mParent == nullptr) {
         mLocalMatrix = mWorldMatrix;
@@ -255,14 +267,10 @@ void Transform::AdoptfromWorldValue()
         mLocalRotation,
         mLocalScale,
         mLocalEulerAngles);
-
-    for (Transform* child : mChildren) {
-        child->AdoptParentTransform();
-    }
 }
 void Transform::AdoptfromLocalValue()
 {
-    mLocalMatrix = Matrix4::CreateScale(mLocalScale) * Matrix4::CreateFromQuaternion(mLocalRotation) * Matrix4::CreateTranslation(mLocalPosition);
+    mLocalMatrix = Matrix4::CreateTranslation(mLocalPosition) * Matrix4::CreateFromQuaternion(mLocalRotation) * Matrix4::CreateScale(mLocalScale);
 
     if (mParent == nullptr) {
         mWorldMatrix = mLocalMatrix;
@@ -275,10 +283,6 @@ void Transform::AdoptfromLocalValue()
         mWorldRotation,
         mWorldScale,
         mWorldEulerAngles);
-
-    for (Transform* child : mChildren) {
-        child->AdoptParentTransform();
-    }
 }
 
 void Transform::AdoptParentTransform()
@@ -293,7 +297,10 @@ void Transform::AdoptParentTransform()
         mWorldRotation,
         mWorldScale,
         mWorldEulerAngles);
+}
 
+void Transform::AdoptParentTransformForAllChildren()
+{
     for (Transform* child : mChildren) {
         child->AdoptParentTransform();
     }

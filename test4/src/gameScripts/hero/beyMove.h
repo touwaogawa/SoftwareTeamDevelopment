@@ -1,9 +1,9 @@
 #pragma once
 #include "../../components/behaviour.h"
-class HeroMove : public Behaviour {
+class BeyMove : public Behaviour {
 public:
-    explicit HeroMove(GameObject* owner);
-    ~HeroMove() override = default;
+    explicit BeyMove(GameObject* owner);
+    ~BeyMove() override = default;
 
     void Start() override;
     void Update() override;

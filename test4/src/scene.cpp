@@ -3,7 +3,8 @@
 #include "gameObject.h"
 #include "renderer.h"
 #include <algorithm>
-
+//
+#include <iostream>
 Scene::Scene()
 {
     mRenderer = new Renderer();

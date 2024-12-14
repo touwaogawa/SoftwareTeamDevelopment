@@ -14,6 +14,10 @@ GameObject::GameObject(Scene* scene, Transform* parent, Behaviour* behaviour)
     if (mTransform->GetParent() == nullptr) {
         mScene->AddRootObject(this);
     }
+    mScene->AddGameObject(this);
+    if (mBehaviour != nullptr) {
+        AddComponent(mBehaviour);
+    }
 }
 
 GameObject::~GameObject()

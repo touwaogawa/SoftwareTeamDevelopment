@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+//
+#include <glm/gtc/type_ptr.hpp>
 
 SDL_Window* Renderer::mWindow    = nullptr;
 SDL_GLContext Renderer::mContext = nullptr;
@@ -22,7 +24,9 @@ Renderer::~Renderer()
 }
 bool Renderer::Init(float window_w, float window_h)
 {
-    mWindow = SDL_CreateWindow("OpenGL Cube", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, static_cast<int>(window_w), static_cast<int>(window_h), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    mWindowWidth  = window_w;
+    mWindowHeight = window_h;
+    mWindow       = SDL_CreateWindow("OpenGL Cube", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, static_cast<int>(mWindowWidth), static_cast<int>(mWindowHeight), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!mWindow) {
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         return false;
@@ -33,6 +37,7 @@ bool Renderer::Init(float window_w, float window_h)
         std::cout << "OpenGL context could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         return false;
     }
+
     return true;
 }
 
@@ -53,11 +58,17 @@ bool Renderer::Load()
 }
 void Renderer::Draw()
 {
-    // glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -10.0f));
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+
+    mMeshShader->Use();
+    glm::mat4 view       = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -10.0f));
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), mWindowWidth / mWindowHeight, 0.1f, 100.0f);
 
     // ライトのプロパティ
     glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "lightPos"), 1.2f, 4.0f, 2.0f);
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "viewPos"), mView.mat[3][0], mView.mat[3][1], mView.mat[3][2]);
+    // glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "viewPos"), mView.mat[3][0], mView.mat[3][1], mView.mat[3][2]);
+    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "viewPos"), 0.0f, 0.0f, -10.0f);
 
     // 色の設定
     glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "lightColor"), 1.0f, 1.0f, 1.0f);
@@ -68,17 +79,23 @@ void Renderer::Draw()
 
     GLint viewLoc = glGetUniformLocation(mMeshShader->GetProgram(), "view");
     GLint projLoc = glGetUniformLocation(mMeshShader->GetProgram(), "projection");
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, mView.GetAsFloatPtr());
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, mProjection.GetAsFloatPtr());
+
+    // glUniformMatrix4fv(viewLoc, 1, GL_FALSE, mView.GetAsFloatPtr());
+    // glUniformMatrix4fv(projLoc, 1, GL_FALSE, mProjection.GetAsFloatPtr());
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
     // 各メッシュ
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
         meshRenderer->Draw(mMeshShader);
     }
+
     // 表示
     SDL_GL_SwapWindow(mWindow);
 }
 Mesh* Renderer::GetMesh(const std::string& fileName)
 {
+
     Mesh* m   = nullptr;
     auto iter = mMeshes.find(fileName);
     if (iter != mMeshes.end()) {

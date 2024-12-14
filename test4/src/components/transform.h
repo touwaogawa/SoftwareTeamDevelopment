@@ -65,8 +65,9 @@ private:
     void AdoptfromLocalMatrix();
     void AdoptfromWorldValue();
     void AdoptfromLocalValue();
-
     void AdoptParentTransform();
+    void AdoptParentTransformForAllChildren();
+
     static void ConvertMatrixToValues(
         const Matrix4& matrix,
         Vector3& posOut,

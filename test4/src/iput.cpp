@@ -1,14 +1,15 @@
 #include "input.h"
 #include <SDL2/SDL.h>
+#include <cstring>
 #include <joyconlib.h>
 #include <string>
 
 // ジョイコンの状態を保持する変数
-joyconlib_t Input::mJoyCon_t           = {};
-joyconlib_t Input::mPrevJoyCon_t       = {};
-SDL_Event Input::mEvent                = {};
-const Uint8* Input::mKeyboardState     = nullptr;
-const Uint8* Input::mPrevKeyboardState = nullptr;
+joyconlib_t Input::mJoyCon_t                       = {};
+joyconlib_t Input::mPrevJoyCon_t                   = {};
+SDL_Event Input::mEvent                            = {};
+const Uint8* Input::mKeyboardState                 = nullptr;
+Uint8 Input::mPrevKeyboardState[SDL_NUM_SCANCODES] = { 0 };
 
 // 初期化
 bool Input::Init()
@@ -23,8 +24,9 @@ bool Input::Init()
     //     printf("joycon open failed: %d\n", err);
     //     return false;
     // }
-    mKeyboardState     = SDL_GetKeyboardState(NULL);
-    mPrevKeyboardState = mKeyboardState;
+    mKeyboardState = SDL_GetKeyboardState(NULL);
+    memcpy(mPrevKeyboardState, mKeyboardState, SDL_NUM_SCANCODES);
+
     return true;
 }
 
@@ -53,6 +55,7 @@ bool Input::ConnectController()
 // メンバにキーの状態を更新, 毎フレーム呼ばれる
 bool Input::ProcessInput()
 {
+    memcpy(mPrevKeyboardState, mKeyboardState, SDL_NUM_SCANCODES);
     while (SDL_PollEvent(&mEvent)) {
         switch (mEvent.type) {
         case SDL_QUIT:

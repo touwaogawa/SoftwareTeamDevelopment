@@ -7,3 +7,5 @@
 #include "gameObject.h"
 #include "input.h"
 #include "time.h"
+#include <SDL2/SDL.h>
+#include <iostream>
