@@ -4,6 +4,7 @@
 #include <joyconlib.h>
 #include <string>
 
+
 class Input {
 public:
     // 初期化
