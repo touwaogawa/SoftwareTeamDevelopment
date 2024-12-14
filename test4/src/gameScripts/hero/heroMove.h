@@ -1,13 +1,15 @@
 #pragma once
 #include "../../beySmashEngine.h"
+#include <SDL2/SDL.h>
 
 class HeroMove : public Behaviour {
 public:
-    explicit HeroMove(class GameObject* owner)
+    explicit HeroMove(GameObject* owner)
         : Behaviour(owner)
     {
     }
-    ~HeroMove();
+    ~HeroMove() override = default;
+
     void Start() override
     {
     }

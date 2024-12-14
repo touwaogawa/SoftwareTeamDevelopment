@@ -1,13 +1,14 @@
 #include "input.h"
+#include <SDL2/SDL.h>
 #include <joyconlib.h>
 #include <string>
 
 // ジョイコンの状態を保持する変数
-joyconlib_t Input::mJoyCon_t     = {};
-joyconlib_t Input::mPrevJoyCon_t = {};
-SDL_Event Input::mEvent          = {};
-const Uint8* mKeyboardState      = nullptr;
-const Uint8* mPrevKeyboardState  = nullptr;
+joyconlib_t Input::mJoyCon_t           = {};
+joyconlib_t Input::mPrevJoyCon_t       = {};
+SDL_Event Input::mEvent                = {};
+const Uint8* Input::mKeyboardState     = nullptr;
+const Uint8* Input::mPrevKeyboardState = nullptr;
 
 // 初期化
 bool Input::Init()

@@ -8,6 +8,7 @@
 #include "transform.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 MeshRenderer::MeshRenderer(GameObject* owner)
     : Component(owner)
@@ -18,6 +19,17 @@ MeshRenderer::~MeshRenderer()
 {
     mOwner->GetScene()->GetRenderer()->RemoveMeshRenderer(this);
 }
+
+void MeshRenderer::SetMesh(Mesh* mesh)
+{
+    mMesh = mesh;
+}
+
+void MeshRenderer::Load(const std::string& fileName)
+{
+    Mesh* mesh = mOwner->GetScene()->GetRenderer()->GetMesh(fileName);
+    SetMesh(mesh);
+}
 void MeshRenderer::Draw(Shader* shader)
 {
     shader->Use();
@@ -25,7 +37,7 @@ void MeshRenderer::Draw(Shader* shader)
 
     Matrix4 model = mOwner->GetTransform()->GetWorldMatrix();
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.GetAsFloatPtr());
-
+    // std::cout << "test" << model.mat[3][0] << std::endl;
     mMesh->GetVAO()->Bind();
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 

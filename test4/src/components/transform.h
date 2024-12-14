@@ -5,7 +5,7 @@
 class Transform : public Component {
 public:
     Transform(class GameObject* owner, Transform* parent = nullptr);
-    ~Transform();
+    ~Transform() override;
 
     Transform* GetParent() const;
     void SetParent(Transform* newParent);

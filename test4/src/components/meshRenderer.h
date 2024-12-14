@@ -7,7 +7,8 @@ class MeshRenderer : public Component {
 public:
     explicit MeshRenderer(class GameObject* owner);
     ~MeshRenderer() override;
-    void SetMesh(const std::string& fileName);
+    void SetMesh(class Mesh* mesh);
+    void Load(const std::string& fileName);
     void Draw(class Shader* shader);
 
 private:

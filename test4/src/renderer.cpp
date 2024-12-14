@@ -7,10 +7,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-SDL_Window* mWindow    = nullptr;
-SDL_GLContext mContext = nullptr;
-float mWindowWidth     = 0.0f;
-float mWindowHeight    = 0.0f;
+SDL_Window* Renderer::mWindow    = nullptr;
+SDL_GLContext Renderer::mContext = nullptr;
+float Renderer::mWindowWidth     = 0.0f;
+float Renderer::mWindowHeight    = 0.0f;
 
 Renderer::Renderer()
 {

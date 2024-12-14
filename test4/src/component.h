@@ -3,7 +3,7 @@
 class Component {
 public:
     explicit Component(class GameObject* owner);
-    virtual ~Component() = 0;
+    virtual ~Component();
     class GameObject* GetOwner();
 
 protected:

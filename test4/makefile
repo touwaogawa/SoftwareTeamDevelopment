@@ -7,12 +7,15 @@ SRCDIR = src
 OBJDIR = obj
 
 # ソースファイルとオブジェクトファイル
-SOURCES = $(wildcard $(SRCDIR)/**/*.cpp)
-OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o,  $(notdir $(SOURCES)))
+SOURCES = $(shell find $(SRCDIR) -name "*.cpp")
+SOURCES_NOTDIR = $(notdir $(SOURCES))
+SOURCES_DIRS = $(dir $(SOURCES))  # 各ソースファイルのディレクトリ部分
+OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))  # ディレクトリ構造を保ったままオブジェクトファイルを作成
 
 # コンパイルオプション
 INCLUDE = -I../include -pthread
 LIBRARY = -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -lGLU -ljoyconlib -lhidapi-hidraw -lm
+
 
 # 出力のターゲット
 TARGET = main
@@ -31,10 +34,15 @@ $(TARGET): $(OBJECTS)
 # ソースファイルをオブジェクトファイルに変換
 # すべての .o ファイルを obj フォルダ内の同じ層に作成する
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $(OBJDIR)/$(notdir $@)
+	@mkdir -p $(dir $@)  # obj/ディレクトリ内にサブディレクトリを作成
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 # クリーンターゲット
 clean:
 	rm -f $(OBJECTS) $(TARGET)
 
 .PHONY: all clean
+
+show:
+	@echo "Sources: $(SOURCES)"
+	@echo "Objects: $(OBJECTS)"

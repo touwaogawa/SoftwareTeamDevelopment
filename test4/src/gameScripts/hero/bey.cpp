@@ -8,7 +8,7 @@ Bey::Bey(Scene* scene, Transform* parent)
     , mMeshRenderer(new MeshRenderer(this))
 {
     AddComponent(mMeshRenderer);
-    mMeshRenderer->SetMesh("assets/models/Cube.obj");
+    mMeshRenderer->Load("assets/models/Cube.obj");
 }
 
 Bey::~Bey()

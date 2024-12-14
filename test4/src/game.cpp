@@ -18,7 +18,8 @@ bool Game::Init()
         return false;
     }
     // Inputの初期化
-    // 後で書く
+    Input::Init();
+    Renderer::Init(1920.0f, 1080.0f);
     // GLEWの初期化
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
@@ -26,7 +27,6 @@ bool Game::Init()
         return false;
     }
     // Rendererの初期化
-    Renderer::Init(1920.0f, 1080.0f);
     // Timeの初期化
     Time::Init(60); // 60fps
     return true;
