@@ -84,8 +84,8 @@ bool Mesh::LoadObjFile(const std::string& fileName)
         indices.push_back(idx++);
     }
 
-    mNumVerts    = verts.size() / 6;
-    mVertexArray = new VertexArray(verts.data(), verts.size() / 6, VertexArray::Layout::PosNormTex, indices.data(), indices.size());
+    mNumVerts    = verts.size() / 8;
+    mVertexArray = new VertexArray(verts.data(), verts.size() / 8, VertexArray::Layout::PosNormTex, indices.data(), indices.size());
 
     file.close();
     return true;

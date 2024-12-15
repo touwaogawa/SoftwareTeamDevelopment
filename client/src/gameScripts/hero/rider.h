@@ -6,4 +6,5 @@ public:
     ~Rider() override;
 
 private:
+    class MeshRenderer* mMeshRenderer;
 };

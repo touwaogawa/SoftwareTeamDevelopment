@@ -9,5 +9,5 @@ public:
 
 private:
     GameObject* mBey;
-    // GameObject* mRider;
+    GameObject* mRider;
 };

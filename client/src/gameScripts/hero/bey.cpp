@@ -9,7 +9,7 @@ Bey::Bey(Scene* scene, Transform* parent)
     , mMeshRenderer(new MeshRenderer(this))
 {
     AddComponent(mMeshRenderer);
-    mMeshRenderer->Load("assets/models/BaseHuman.obj");
+    mMeshRenderer->Load("assets/models/Shuriken.obj");
 }
 
 Bey::~Bey()
