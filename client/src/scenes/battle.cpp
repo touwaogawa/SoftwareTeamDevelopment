@@ -1,6 +1,7 @@
 #include "battle.h"
 #include "../gameObject.h"
 #include "../gameScripts/hero/hero.h"
+#include "../gameScripts/stage/stage.h"
 #include "../renderer.h"
 #include <iostream>
 
@@ -20,6 +21,7 @@ bool BattleScene::Load()
         std::cout << "Failed Renderer Load" << std::endl;
         return false;
     }
-    mHelo = new Helo(this, nullptr);
+    mHelo  = new Helo(this, nullptr);
+    mStage = new Stage(this, nullptr);
     return true;
 }

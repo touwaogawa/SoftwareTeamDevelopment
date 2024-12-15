@@ -12,6 +12,7 @@ void HeroMove::Start()
 namespace {
 void show(Transform* transform)
 {
+    std::cout << "heromove" << std::endl;
     Quaternion wq = transform->GetWorldRotation();
     std::cout << " wqx:" << wq.x << " wqy:" << wq.y << " wqz:" << wq.z << " wqw:" << wq.w << std::endl;
     Quaternion lq = transform->GetLocalRotation();
@@ -20,6 +21,10 @@ void show(Transform* transform)
     std::cout << " wposx:" << wpos.x << " wposy:" << wpos.y << " wposz:" << wpos.z << std::endl;
     Vector3 lpos = transform->GetLocalPosition();
     std::cout << " lposx:" << lpos.x << " lposy:" << lpos.y << " lposz:" << lpos.z << std::endl;
+    Vector3 wscale = transform->GetWorldScale();
+    std::cout << " wscalex:" << wscale.x << " wscaley:" << wscale.y << " wscalez:" << wscale.z << std::endl;
+    Vector3 lscale = transform->GetLocalScale();
+    std::cout << " lscalex:" << lscale.x << " lscaley:" << lscale.y << " lscalez:" << lscale.z << std::endl;
     if (transform->GetParent() == nullptr)
         std::cout << "noparent" << std::endl;
 }
@@ -62,6 +67,15 @@ void HeroMove::Update()
         Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
         pos.y -= 0.1f;
         mOwner->GetTransform()->SetWorldPosition(pos);
+    }
+    static float spin = 0.0f;
+    if (Input::GetKey(SDL_SCANCODE_J)) {
+        spin += 0.1f;
+        mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
+    }
+    if (Input::GetKey(SDL_SCANCODE_K)) {
+        spin -= 0.1f;
+        mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
     }
     if (Input::GetKey(SDL_SCANCODE_C)) {
         Vector3 scale = mOwner->GetTransform()->GetWorldScale();

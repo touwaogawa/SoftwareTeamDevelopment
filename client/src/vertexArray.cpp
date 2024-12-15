@@ -21,7 +21,7 @@ VertexArray::VertexArray(const void* verts, unsigned int numVerts, Layout layout
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
     // Specify the vertex attributes
-    if (layout == PosNorm) {
+    if (layout == Layout::PosNorm) {
 
         // Position is 3 floats
         glEnableVertexAttribArray(0);
@@ -30,7 +30,7 @@ VertexArray::VertexArray(const void* verts, unsigned int numVerts, Layout layout
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize,
             reinterpret_cast<void*>(sizeof(float) * 3));
-    } else if (layout == PosNormTex) {
+    } else if (layout == Layout::PosNormTex) {
         // Position is 3 floats
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSize, 0);
@@ -60,9 +60,9 @@ void VertexArray::Bind()
 GLuint VertexArray::GetVertexSize(VertexArray::Layout layout)
 {
     GLuint vertexSize = 8 * sizeof(float);
-    if (layout == PosNorm) {
+    if (layout == Layout::PosNorm) {
         vertexSize = 6 * sizeof(float);
-    } else if (layout == PosNormTex) {
+    } else if (layout == Layout::PosNormTex) {
         vertexSize = 8 * sizeof(float);
     }
     return vertexSize;

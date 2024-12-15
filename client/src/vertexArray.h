@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 class VertexArray {
 public:
-    enum Layout {
+    enum class Layout {
         PosNorm,
         PosNormTex
     };

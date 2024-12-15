@@ -62,8 +62,10 @@ void Renderer::Draw()
     glEnable(GL_DEPTH_TEST);
 
     mMeshShader->Use();
-    glm::mat4 view       = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -10.0f));
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), mWindowWidth / mWindowHeight, 0.1f, 100.0f);
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.5f, -70.0f));
+    view *= glm::rotate(glm::mat4(1.0f), glm::radians(48.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    // view                 = glm::rotate(view, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 projection = glm::perspective(glm::radians(40.0f), mWindowWidth / mWindowHeight, 0.1f, 150.0f);
 
     // ライトのプロパティ
     glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "lightPos"), 1.2f, 4.0f, 2.0f);

@@ -630,17 +630,17 @@ public:
         Matrix4 rot;
         Vector3 scale = GetScale();
 
-        // スケールを除去して回転行列を計算
+        // スケールを除去して回転行列を計算（列優先対応）
         for (int i = 0; i < 3; ++i) {
-            rot.mat[i][0] = mat[i][0] / scale.x;
-            rot.mat[i][1] = mat[i][1] / scale.y;
-            rot.mat[i][2] = mat[i][2] / scale.z;
+            rot.mat[0][i] = mat[0][i] / scale.x; // 1列目
+            rot.mat[1][i] = mat[1][i] / scale.y; // 2列目
+            rot.mat[2][i] = mat[2][i] / scale.z; // 3列目
         }
 
         // 残りの列（平行移動成分など）をゼロにする
         for (int i = 0; i < 3; ++i) {
             rot.mat[i][3] = 0.0f; // 平行移動成分除去
-            rot.mat[3][i] = 0.0f; // 下の行をゼロに
+            rot.mat[3][i] = 0.0f; // 最後の行をゼロに
         }
         rot.mat[3][3] = 1.0f; // 最後の要素は1に設定
 

@@ -1,18 +1,22 @@
 #include "beyMove.h"
 #include "../../beySmashEngine.h"
-
+#include "bey.h"
 BeyMove::BeyMove(GameObject* owner)
     : Behaviour(owner)
+    , mSpinPower(0.0f)
 {
 }
 
 void BeyMove::Start()
 {
+    mSpinPower    = 0.1;
+    mMinSpinPower = 0.1;
 }
 namespace {
 
 void show(Transform* transform)
 {
+    std::cout << "beymove" << std::endl;
     Quaternion wq = transform->GetWorldRotation();
     std::cout << " wqx:" << wq.x << " wqy:" << wq.y << " wqz:" << wq.z << " wqw:" << wq.w << std::endl;
     Quaternion lq = transform->GetLocalRotation();
@@ -28,24 +32,18 @@ void BeyMove::Update()
     if (Input::GetKeyDown(SDL_SCANCODE_O)) {
         show(mOwner->GetTransform());
     }
-    static float spinPower = 0.1;
-    static float spin      = 0.0f;
-
-    if (spinPower > 0.3f)
-        spinPower -= 0.01;
-    if (spinPower < 0.3f)
-        spinPower -= 0.04f;
-    if (spinPower < 0.03f)
-        spinPower = 0.03f;
 
     if (Input::GetKey(SDL_SCANCODE_E)) {
-        if (spinPower < 2.0f)
-            spinPower += 0.03;
+        if (mSpinPower < 1.3f)
+            mSpinPower += 0.005f;
+    } else {
+        if (mSpinPower > mMinSpinPower) {
+            mSpinPower -= 0.001f;
+        } else if (mSpinPower < mMinSpinPower) {
+            mSpinPower = mMinSpinPower;
+        }
     }
 
-    spin += spinPower;
-    if (spin > 2 * Math::Pi)
-        spin = fmod(spin, 2 * Math::Pi);
     if (Input::GetKey(SDL_SCANCODE_LEFT)) {
         Vector3 pos = mOwner->GetTransform()->GetLocalPosition();
         pos.x -= 0.1f;
@@ -67,8 +65,8 @@ void BeyMove::Update()
     //     mOwner->GetTransform()->SetWorldPosition(pos);
     // }
     // std::cout << mOwner->GetTransform()->GetLocalPosition().x << std::endl;
-
-    mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
+    mOwner->GetTransform()->TransformationLocalMatrix(Matrix4::CreateRotationY(mSpinPower));
+    // mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, -spin, 0.0f));
     // Matrix4 rot = Matrix4::CreateScale(mOwner->GetTransform()->GetLocalRotation());
     // Matrix4 scale = Matrix4::CreateScale(mOwner->GetTransform()->GetLocalScale());
     // Vector3 lpos = mOwner->GetTransform()->GetLocalPosition();

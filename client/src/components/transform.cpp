@@ -121,7 +121,7 @@ void Transform::SetWorldEulerAngles(Vector3 eulerAngles)
 
 void Transform::TransformationWorldMatrix(Matrix4 translationMat)
 {
-    mWorldMatrix = translationMat * mWorldMatrix;
+    mWorldMatrix *= translationMat;
     AdoptfromWorldMatrix();
 }
 
@@ -205,7 +205,7 @@ void Transform::SetLocalEulerAngles(Vector3 eulerAngles)
 
 void Transform::TransformationLocalMatrix(Matrix4 translationMat)
 {
-    mLocalMatrix = translationMat * mLocalMatrix;
+    mLocalMatrix *= translationMat;
     AdoptfromLocalMatrix();
 }
 
@@ -216,7 +216,7 @@ void Transform::AdoptfromWorldMatrix()
     if (mParent == nullptr) {
         mLocalMatrix = mWorldMatrix;
     } else {
-        mLocalMatrix = Matrix4::Invert(mParent->mWorldMatrix) * mWorldMatrix;
+        mLocalMatrix = mWorldMatrix * Matrix4::Invert(mParent->mWorldMatrix);
     }
 
     ConvertMatrixToValues(mWorldMatrix,
@@ -236,7 +236,7 @@ void Transform::AdoptfromLocalMatrix()
     if (mParent == nullptr) {
         mWorldMatrix = mLocalMatrix;
     } else {
-        mWorldMatrix = mParent->mWorldMatrix * mLocalMatrix;
+        mWorldMatrix = mLocalMatrix * mParent->mWorldMatrix;
     }
 
     ConvertMatrixToValues(mWorldMatrix,
@@ -252,12 +252,14 @@ void Transform::AdoptfromLocalMatrix()
 }
 void Transform::AdoptfromWorldValue()
 {
-    mWorldMatrix = Matrix4::CreateTranslation(mWorldPosition) * Matrix4::CreateFromQuaternion(mWorldRotation) * Matrix4::CreateScale(mWorldScale);
+    mWorldMatrix = Matrix4::CreateScale(mWorldScale);
+    mWorldMatrix *= Matrix4::CreateFromQuaternion(mWorldRotation);
+    mWorldMatrix *= Matrix4::CreateTranslation(mWorldPosition);
 
     if (mParent == nullptr) {
         mLocalMatrix = mWorldMatrix;
     } else {
-        mLocalMatrix = Matrix4::Invert(mParent->mWorldMatrix) * mWorldMatrix;
+        mLocalMatrix = mWorldMatrix * Matrix4::Invert(mParent->mWorldMatrix);
     }
 
     ConvertMatrixToValues(mLocalMatrix,
@@ -268,14 +270,15 @@ void Transform::AdoptfromWorldValue()
 }
 void Transform::AdoptfromLocalValue()
 {
-    mLocalMatrix = Matrix4::CreateTranslation(mLocalPosition) * Matrix4::CreateFromQuaternion(mLocalRotation) * Matrix4::CreateScale(mLocalScale);
+    mLocalMatrix = Matrix4::CreateScale(mLocalScale);
+    mLocalMatrix *= Matrix4::CreateFromQuaternion(mLocalRotation);
+    mLocalMatrix *= Matrix4::CreateTranslation(mLocalPosition);
 
     if (mParent == nullptr) {
         mWorldMatrix = mLocalMatrix;
     } else {
-        mWorldMatrix = mParent->mWorldMatrix * mLocalMatrix;
+        mWorldMatrix = mLocalMatrix * mParent->mWorldMatrix;
     }
-
     ConvertMatrixToValues(mWorldMatrix,
         mWorldPosition,
         mWorldRotation,
@@ -288,7 +291,7 @@ void Transform::AdoptParentTransform()
     if (mParent == nullptr) {
         mWorldMatrix = mLocalMatrix;
     } else {
-        mWorldMatrix = mParent->mWorldMatrix * mLocalMatrix;
+        mWorldMatrix = mLocalMatrix * mParent->mWorldMatrix;
     }
     ConvertMatrixToValues(mWorldMatrix,
         mWorldPosition,

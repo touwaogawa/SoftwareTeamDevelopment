@@ -10,4 +10,6 @@ public:
     void LateUpdate() override;
 
 private:
+    float mSpinPower;
+    float mMinSpinPower;
 };
