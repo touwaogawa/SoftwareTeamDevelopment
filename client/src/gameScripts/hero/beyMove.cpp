@@ -66,6 +66,10 @@ void BeyMove::Update()
     // }
     // std::cout << mOwner->GetTransform()->GetLocalPosition().x << std::endl;
     mOwner->GetTransform()->TransformationLocalMatrix(Matrix4::CreateRotationY(mSpinPower));
+
+    if (Input::GetButton("A")) {
+        std::cout << "joycona" << std::endl;
+    }
     // mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, -spin, 0.0f));
     // Matrix4 rot = Matrix4::CreateScale(mOwner->GetTransform()->GetLocalRotation());
     // Matrix4 scale = Matrix4::CreateScale(mOwner->GetTransform()->GetLocalScale());

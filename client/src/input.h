@@ -37,4 +37,6 @@ private:
     static Uint8 mPrevKeyboardState[SDL_NUM_SCANCODES];
     static joyconlib_t mPrevJoyCon_t;
     static joyconlib_t mJoyCon_t;
+    static bool isJoyConConnected;
+    static SDL_GameController* mController;
 };

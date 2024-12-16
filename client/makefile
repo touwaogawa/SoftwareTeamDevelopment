@@ -5,6 +5,8 @@ CXXFLAGS = -Wall -std=c++14
 # ディレクトリ設定
 SRCDIR = src
 OBJDIR = obj
+MYINCDIR = -I../include
+MYLIBDIR = -L../lib
 
 # ソースファイルとオブジェクトファイル
 SOURCES = $(shell find $(SRCDIR) -name "*.cpp")
@@ -13,9 +15,8 @@ SOURCES_DIRS = $(dir $(SOURCES))  # 各ソースファイルのディレクト�
 OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))  # ディレクトリ構造を保ったままオブジェクトファイルを作成
 
 # コンパイルオプション
-INCLUDE = -I../include -pthread
-LIBRARY = -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -lGLU -ljoyconlib -lhidapi-hidraw -lm
-
+INCLUDE = $(MYINCDIR) -pthread
+LIBRARY = $(MYLIBDIR) -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLEW -lSOIL -lGLU -ljoyconlib -lhidapi-hidraw -lm
 
 # 出力のターゲット
 TARGET = main
