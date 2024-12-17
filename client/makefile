@@ -23,8 +23,10 @@ TARGET = main
 
 # 全体ビルドターゲット
 all: $(OBJDIR) $(TARGET)
-	LD_LIBRARY_PATH=$(MYLIBDIRDIR)
+	LD_LIBRARY_PATH=../lib:$$LD_LIBRARY_PATH ./$(TARGET)
+	
 # run: $(TARGET)
+# 	./run_program.sh
 
 # obj ディレクトリがない場合は作成
 $(OBJDIR):
