@@ -16,6 +16,7 @@ public:
 
     // メンバにキーの状態を更新, 毎フレーム呼ばれる
     static bool ProcessInput();
+    void SetInput(const joyconlib_t& joyCon, const Uint8& keyBordState);
 
     // PCキーボード関係(SDL)
     static bool GetKey(SDL_Scancode scancode);
@@ -30,8 +31,6 @@ public:
     static float GetAxis(std::string axisName);
 
 private:
-    // ジョイコンはひとつしかつながない前提なのでリストにしない
-    //  static joyconlib_t mJoyConLastState;
     static SDL_Event mEvent;
     static const Uint8* mKeyboardState;
     static Uint8 mPrevKeyboardState[SDL_NUM_SCANCODES];

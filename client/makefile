@@ -23,6 +23,8 @@ TARGET = main
 
 # 全体ビルドターゲット
 all: $(OBJDIR) $(TARGET)
+	LD_LIBRARY_PATH=$(MYLIBDIRDIR)
+# run: $(TARGET)
 
 # obj ディレクトリがない場合は作成
 $(OBJDIR):
