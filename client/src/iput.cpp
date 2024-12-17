@@ -21,10 +21,10 @@ bool Input::Init()
         return false;
     }
 
-    std::cout << "num con" << SDL_NumJoysticks() << std::endl;
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         printf("Joystick %d: %s\n", i, SDL_JoystickNameForIndex(i));
     }
+    std::cout << "num con" << SDL_NumJoysticks() << std::endl;
     if (SDL_IsGameController(0)) { // 0は最初のコントローラ
         mController = SDL_GameControllerOpen(0);
     } else {
