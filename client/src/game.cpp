@@ -44,7 +44,8 @@ void Game::RunLoop()
     }
     mCurrentScene->Start();
     while (frag) {
-        frag = Input::ProcessInput();
+        Input::UpdateInputStatus();
+        frag = mCurrentScene->ProccessInput();
         // 通信
         // 当たり判定
         mCurrentScene->Update();
@@ -52,6 +53,7 @@ void Game::RunLoop()
 
         mCurrentScene->Draw();
         Time::UpdateFrame();
+        mCurrentScene->currentFrame++;
     }
 }
 

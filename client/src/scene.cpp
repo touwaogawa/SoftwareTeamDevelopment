@@ -6,6 +6,7 @@
 //
 #include <iostream>
 Scene::Scene()
+    : currentFrame(0)
 {
     mRenderer = new Renderer();
 }
@@ -27,6 +28,7 @@ void Scene::Start()
             gameObject->GetBehaviour()->Start();
     }
 }
+
 void Scene::Update()
 {
     for (GameObject* gameObject : mGameObjects) {

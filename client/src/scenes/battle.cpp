@@ -1,8 +1,7 @@
 #include "battle.h"
-#include "../gameObject.h"
-#include "../gameScripts/hero/hero.h"
+#include "../beySmashengine.h"
+#include "../gameScripts/player.h"
 #include "../gameScripts/stage/stage.h"
-#include "../renderer.h"
 #include <iostream>
 
 BattleScene::BattleScene()
@@ -12,7 +11,7 @@ BattleScene::BattleScene()
 
 BattleScene::~BattleScene()
 {
-    delete mHelo;
+    delete mPlayer;
 }
 
 bool BattleScene::Load()
@@ -21,7 +20,24 @@ bool BattleScene::Load()
         std::cout << "Failed Renderer Load" << std::endl;
         return false;
     }
-    mHelo  = new Helo(this, nullptr);
-    mStage = new Stage(this, nullptr);
+    mPlayer = new Player(this, nullptr);
+    mStage  = new Stage(this, nullptr);
+    return true;
+}
+
+bool BattleScene::ProccessInput()
+{
+    if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {
+        return false;
+    }
+    if (Input::GetKeyDown(SDL_SCANCODE_A)) {
+        CommandData cd = {
+            CommandType::Attack,
+            Vector2(0.0f, 0.0f),
+            0.0f,
+            currentFrame
+        };
+        mPlayer->commandBuffer.push_front(cd);
+    }
     return true;
 }

@@ -1,3 +1,4 @@
+#include "commandData.h"
 #include "input.h"
 #include <SDL2/SDL.h>
 #include <cstring>
@@ -13,6 +14,7 @@ const Uint8* Input::mKeyboardState                 = nullptr;
 Uint8 Input::mPrevKeyboardState[SDL_NUM_SCANCODES] = { 0 };
 bool Input::isJoyConConnected                      = false;
 SDL_GameController* Input::mController             = nullptr;
+SDL_Joystick* Input::mJoystick                     = nullptr;
 // 初期化
 bool Input::Init()
 {
@@ -23,12 +25,11 @@ bool Input::Init()
 
     for (int i = 0; i < SDL_NumJoysticks(); ++i) {
         printf("Joystick %d: %s\n", i, SDL_JoystickNameForIndex(i));
-    }
-    std::cout << "num con" << SDL_NumJoysticks() << std::endl;
-    if (SDL_IsGameController(0)) { // 0は最初のコントローラ
-        mController = SDL_GameControllerOpen(0);
-    } else {
-        std::cout << "failed open controller" << std::endl;
+        mJoystick = SDL_JoystickOpen(i); // i はジョイスティックのインデックス
+        if (mJoystick == NULL) {
+            std::cout << "Failed to open joystick " << i << ": " << SDL_GetError() << std::endl;
+            return -1;
+        }
     }
 
     mKeyboardState = SDL_GetKeyboardState(NULL);
@@ -40,6 +41,7 @@ bool Input::Init()
 // 終了
 void Input::ShutDown()
 {
+    SDL_JoystickClose(mJoystick);
     if (isJoyConConnected)
         joycon_close(&mJoyCon_t);
     SDL_GameControllerClose(mController);
@@ -62,44 +64,25 @@ bool Input::ConnectController()
 }
 
 // メンバにキーの状態を更新, 毎フレーム呼ばれる
-bool Input::ProcessInput()
+void Input::UpdateInputStatus()
 {
-    memcpy(mPrevKeyboardState, mKeyboardState, SDL_NUM_SCANCODES);
-    while (SDL_PollEvent(&mEvent)) {
-        switch (mEvent.type) {
-        case SDL_QUIT:
-            return false;
-            break;
-        case SDL_KEYDOWN:
-            switch (mEvent.key.keysym.sym) {
-            case SDLK_ESCAPE:
-                return false;
-                break;
-            case SDLK_j:
-                ConnectController();
-                break;
-            default:
-                break;
-            }
-            break;
-        case SDL_CONTROLLERBUTTONDOWN:
-            std::cout << "buttin? " << mEvent.cbutton.button << std::endl;
-            // switch (mEvent.cbutton) {
-            // default:
-            //     break;
-            // }
-            break;
-        default:
-            break;
+    memcpy(mPrevKeyboardState, mKeyboardState, SDL_NUM_SCANCODES); // 前回の状態を更新
+    SDL_PollEvent(&mEvent);                                        // キーボードの状態を取得
+    if (isJoyConConnected) {
+        mPrevJoyCon_t = mJoyCon_t;    // 前回の状態を更新
+        joycon_get_state(&mJoyCon_t); // ジョイコンの状態を取得
+    }
+
+    // ボタンの入力をチェック
+    for (int i = 0; i < SDL_JoystickNumButtons(mJoystick); ++i) {
+        if (SDL_JoystickGetButton(mJoystick, i)) {
+            std::cout << "Button " << i << " pressed!" << std::endl;
         }
     }
-    if (isJoyConConnected) {
-        // 前回の状態を更新
-        mPrevJoyCon_t = mJoyCon_t;
-        // ジョイコンの状態を取得
-        joycon_get_state(&mJoyCon_t);
+    for (int i = 0; i < SDL_JoystickNumAxes(mJoystick); ++i) {
+        Sint16 axis_value = SDL_JoystickGetAxis(mJoystick, i);
+        std::cout << "Axis " << i << " value: " << axis_value << std::endl;
     }
-    return true;
 }
 
 // PCキーボード関係(SDL)

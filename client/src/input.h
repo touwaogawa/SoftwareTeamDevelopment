@@ -3,7 +3,6 @@
 #include <SDL2/SDL.h>
 #include <joyconlib.h>
 #include <string>
-
 class Input {
 public:
     // 初期化
@@ -15,8 +14,7 @@ public:
     static bool ConnectController();
 
     // メンバにキーの状態を更新, 毎フレーム呼ばれる
-    static bool ProcessInput();
-    void SetInput(const joyconlib_t& joyCon, const Uint8& keyBordState);
+    static void UpdateInputStatus();
 
     // PCキーボード関係(SDL)
     static bool GetKey(SDL_Scancode scancode);
@@ -38,4 +36,5 @@ private:
     static joyconlib_t mJoyCon_t;
     static bool isJoyConConnected;
     static SDL_GameController* mController;
+    static SDL_Joystick* mJoystick;
 };

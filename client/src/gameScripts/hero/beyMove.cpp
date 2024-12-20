@@ -29,31 +29,31 @@ void show(Transform* transform)
 }
 void BeyMove::Update()
 {
-    if (Input::GetKeyDown(SDL_SCANCODE_O)) {
-        show(mOwner->GetTransform());
-    }
+    // if (Input::GetKeyDown(SDL_SCANCODE_O)) {
+    //     show(mOwner->GetTransform());
+    // }
 
-    if (Input::GetKey(SDL_SCANCODE_E)) {
-        if (mSpinPower < 1.3f)
-            mSpinPower += 0.005f;
-    } else {
-        if (mSpinPower > mMinSpinPower) {
-            mSpinPower -= 0.001f;
-        } else if (mSpinPower < mMinSpinPower) {
-            mSpinPower = mMinSpinPower;
-        }
-    }
+    // if (Input::GetKey(SDL_SCANCODE_E)) {
+    //     if (mSpinPower < 1.3f)
+    //         mSpinPower += 0.005f;
+    // } else {
+    //     if (mSpinPower > mMinSpinPower) {
+    //         mSpinPower -= 0.001f;
+    //     } else if (mSpinPower < mMinSpinPower) {
+    //         mSpinPower = mMinSpinPower;
+    //     }
+    // }
 
-    if (Input::GetKey(SDL_SCANCODE_LEFT)) {
-        Vector3 pos = mOwner->GetTransform()->GetLocalPosition();
-        pos.x -= 0.1f;
-        mOwner->GetTransform()->SetLocalPosition(pos);
-    }
-    if (Input::GetKey(SDL_SCANCODE_RIGHT)) {
-        Vector3 pos = mOwner->GetTransform()->GetLocalPosition();
-        pos.x += 0.1f;
-        mOwner->GetTransform()->SetLocalPosition(pos);
-    }
+    // if (Input::GetKey(SDL_SCANCODE_LEFT)) {
+    //     Vector3 pos = mOwner->GetTransform()->GetLocalPosition();
+    //     pos.x -= 0.1f;
+    //     mOwner->GetTransform()->SetLocalPosition(pos);
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_RIGHT)) {
+    //     Vector3 pos = mOwner->GetTransform()->GetLocalPosition();
+    //     pos.x += 0.1f;
+    //     mOwner->GetTransform()->SetLocalPosition(pos);
+    // }
     // if (Input::GetKey(SDL_SCANCODE_A)) {
     //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
     //     pos.x -= 1.0f;
@@ -65,11 +65,11 @@ void BeyMove::Update()
     //     mOwner->GetTransform()->SetWorldPosition(pos);
     // }
     // std::cout << mOwner->GetTransform()->GetLocalPosition().x << std::endl;
-    mOwner->GetTransform()->TransformationLocalMatrix(Matrix4::CreateRotationY(mSpinPower));
+    // mOwner->GetTransform()->TransformationLocalMatrix(Matrix4::CreateRotationY(mSpinPower));
 
-    if (Input::GetButton("A")) {
-        std::cout << "joycona" << std::endl;
-    }
+    // if (Input::GetButton("A")) {
+    //     std::cout << "joycona" << std::endl;
+    // }
     // mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, -spin, 0.0f));
     // Matrix4 rot = Matrix4::CreateScale(mOwner->GetTransform()->GetLocalRotation());
     // Matrix4 scale = Matrix4::CreateScale(mOwner->GetTransform()->GetLocalScale());

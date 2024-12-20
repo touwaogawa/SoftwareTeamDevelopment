@@ -2,10 +2,10 @@
 
 #include "../../gameObject.h"
 
-class Helo : public GameObject {
+class Hero : public GameObject {
 public:
-    Helo(Scene* scene, Transform* parent);
-    ~Helo() override;
+    Hero(Scene* scene, Transform* parent);
+    ~Hero() override;
 
 private:
     GameObject* mBey;

@@ -7,8 +7,9 @@ public:
     BattleScene();
     ~BattleScene() override;
     bool Load() override;
+    bool ProccessInput() override;
 
 private:
-    class GameObject* mHelo;
+    class Player* mPlayer;
     class GameObject* mStage;
 };

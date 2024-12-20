@@ -6,7 +6,9 @@ public:
     Scene();
     virtual ~Scene();
     virtual bool Load();
+
     void Start();
+    virtual bool ProccessInput() = 0;
     void Update();
     void LateUpdate();
     void Draw();
@@ -17,6 +19,8 @@ public:
 
     void AddRootObject(class GameObject* gameObject);
     void RemoveRootObject(class GameObject* gameObject);
+
+    int currentFrame;
 
 protected:
     std::vector<class GameObject*> mRootObjects;

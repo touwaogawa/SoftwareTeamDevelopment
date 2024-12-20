@@ -35,62 +35,62 @@ void HeroMove::Update()
     // Quaternion q = mOwner->GetTransform()->GetWorldRotation();
     // std::cout << q.x << q.y << q.z << q.w << std::endl;
 
-    if (Input::GetKeyDown(SDL_SCANCODE_P)) {
-        show(mOwner->GetTransform());
-    }
-    if (Input::GetKey(SDL_SCANCODE_W)) {
-        Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-        pos.z -= 0.1f;
-        mOwner->GetTransform()->SetWorldPosition(pos);
-    }
-    if (Input::GetKey(SDL_SCANCODE_S)) {
-        Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-        pos.z += 0.1f;
-        mOwner->GetTransform()->SetWorldPosition(pos);
-    }
-    if (Input::GetKey(SDL_SCANCODE_A)) {
-        Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-        pos.x -= 0.1f;
-        mOwner->GetTransform()->SetWorldPosition(pos);
-    }
-    if (Input::GetKey(SDL_SCANCODE_D)) {
-        Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-        pos.x += 0.1f;
-        mOwner->GetTransform()->SetWorldPosition(pos);
-    }
-    if (Input::GetKey(SDL_SCANCODE_Q)) {
-        Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-        pos.y += 0.1f;
-        mOwner->GetTransform()->SetWorldPosition(pos);
-    }
-    if (Input::GetKey(SDL_SCANCODE_Z)) {
-        Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-        pos.y -= 0.1f;
-        mOwner->GetTransform()->SetWorldPosition(pos);
-    }
-    static float spin = 0.0f;
-    if (Input::GetKey(SDL_SCANCODE_J)) {
-        spin += 0.1f;
-        mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
-    }
-    if (Input::GetKey(SDL_SCANCODE_K)) {
-        spin -= 0.1f;
-        mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
-    }
-    if (Input::GetKey(SDL_SCANCODE_C)) {
-        Vector3 scale = mOwner->GetTransform()->GetWorldScale();
-        scale.x += 0.1f;
-        scale.y += 0.1f;
-        scale.z += 0.1f;
-        mOwner->GetTransform()->SetWorldScale(scale);
-    }
-    if (Input::GetKey(SDL_SCANCODE_V)) {
-        Vector3 scale = mOwner->GetTransform()->GetWorldScale();
-        scale.x -= 0.1f;
-        scale.y -= 0.1f;
-        scale.z -= 0.1f;
-        mOwner->GetTransform()->SetWorldScale(scale);
-    }
+    // if (Input::GetKeyDown(SDL_SCANCODE_P)) {
+    //     show(mOwner->GetTransform());
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_W)) {
+    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
+    //     pos.z -= 0.1f;
+    //     mOwner->GetTransform()->SetWorldPosition(pos);
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_S)) {
+    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
+    //     pos.z += 0.1f;
+    //     mOwner->GetTransform()->SetWorldPosition(pos);
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_A)) {
+    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
+    //     pos.x -= 0.1f;
+    //     mOwner->GetTransform()->SetWorldPosition(pos);
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_D)) {
+    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
+    //     pos.x += 0.1f;
+    //     mOwner->GetTransform()->SetWorldPosition(pos);
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_Q)) {
+    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
+    //     pos.y += 0.1f;
+    //     mOwner->GetTransform()->SetWorldPosition(pos);
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_Z)) {
+    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
+    //     pos.y -= 0.1f;
+    //     mOwner->GetTransform()->SetWorldPosition(pos);
+    // }
+    // static float spin = 0.0f;
+    // if (Input::GetKey(SDL_SCANCODE_J)) {
+    //     spin += 0.1f;
+    //     mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_K)) {
+    //     spin -= 0.1f;
+    //     mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_C)) {
+    //     Vector3 scale = mOwner->GetTransform()->GetWorldScale();
+    //     scale.x += 0.1f;
+    //     scale.y += 0.1f;
+    //     scale.z += 0.1f;
+    //     mOwner->GetTransform()->SetWorldScale(scale);
+    // }
+    // if (Input::GetKey(SDL_SCANCODE_V)) {
+    //     Vector3 scale = mOwner->GetTransform()->GetWorldScale();
+    //     scale.x -= 0.1f;
+    //     scale.y -= 0.1f;
+    //     scale.z -= 0.1f;
+    //     mOwner->GetTransform()->SetWorldScale(scale);
+    // }
 }
 void HeroMove::LateUpdate()
 {
