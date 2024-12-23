@@ -9,3 +9,8 @@ Player::Player(Scene* scene, Transform* parent)
 Player::~Player()
 {
 }
+
+GameObject* Player::GetHero() const
+{
+    return mHero;
+}

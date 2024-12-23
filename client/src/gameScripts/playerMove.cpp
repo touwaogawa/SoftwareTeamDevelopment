@@ -25,7 +25,7 @@ void PlayerMove::Update()
         // コマンドバッファが空でないとき
         int commandDelay = 1;
         while (commandData.inputFrame <= battleScene->currentFrame - commandDelay) {
-            // commandDelayフレーム前のコマンドを実行
+            // commandDelayフレームより過去のコマンドを実行
             switch (commandData.commandType) {
             case CommandType::Attack:
                 std::cout << "attak!" << std::endl;
@@ -36,8 +36,9 @@ void PlayerMove::Update()
             case CommandType::Jump:
                 std::cout << "jump!" << std::endl;
                 break;
-            case CommandType::Walk:
-                std::cout << "move!" << std::endl;
+            case CommandType::Dash:
+                Hero* hero = static_cast<Hero*>(player->GetHero());
+                hero->std::cout << "move!" << std::endl;
                 break;
             default:
                 std::cout << "command type error" << std::endl;

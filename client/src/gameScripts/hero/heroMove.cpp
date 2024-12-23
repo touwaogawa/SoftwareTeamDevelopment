@@ -1,8 +1,10 @@
 #include "heroMove.h"
 #include "../../beySmashEngine.h"
+#include "hero.h"
 
 HeroMove::HeroMove(GameObject* owner)
     : Behaviour(owner)
+    , mCurrentSpeed(0.0f)
 {
 }
 
@@ -34,6 +36,16 @@ void HeroMove::Update()
 {
     // Quaternion q = mOwner->GetTransform()->GetWorldRotation();
     // std::cout << q.x << q.y << q.z << q.w << std::endl;
+    Hero* hero = static_cast<Hero*>(GetOwner());
+    if (hero->GetStatus() == HeroStatus::Dash) {
+        Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
+        mCurrentSpeed += hero->GetDushAcceleration();
+        if (mCurrentSpeed > hero->GetMaxRunSpeed()) {
+            mCurrentSpeed = hero->GetMaxRunSpeed();
+        }
+        pos.x += mCurrentSpeed + ;
+        mOwner->GetTransform()->SetWorldPosition(pos);
+    }
 
     // if (Input::GetKeyDown(SDL_SCANCODE_P)) {
     //     show(mOwner->GetTransform());

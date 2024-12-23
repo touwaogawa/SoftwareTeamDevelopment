@@ -32,7 +32,8 @@ bool BattleScene::ProccessInput()
     if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {
         return false;
     }
-    if (Input::GetKeyDown(SDL_SCANCODE_A) || Input::GetButtonDown(2)) {
+    if (Input::GetKeyDown(SDL_SCANCODE_A)
+        || Input::GetButtonDown(2)) {
         // 入れたいコマンドデータを作る
         CommandData cd = {
             CommandType::Attack,
@@ -43,7 +44,8 @@ bool BattleScene::ProccessInput()
         // コマンドデータをプレイヤーが持つコマンドバッファに入れる
         mPlayer->commandBuffer.push_front(cd);
     }
-    if (Input::GetKeyDown(SDL_SCANCODE_C) || Input::GetButtonDown(3)) {
+    if (Input::GetKeyDown(SDL_SCANCODE_C)
+        || Input::GetButtonDown(3)) {
         CommandData cd = {
             CommandType::Charge,
             Vector2(0.0f, 0.0f),
@@ -52,7 +54,8 @@ bool BattleScene::ProccessInput()
         };
         mPlayer->commandBuffer.push_front(cd);
     }
-    if (Input::GetKeyDown(SDL_SCANCODE_J) || Input::GetButtonDown(1)) {
+    if (Input::GetKeyDown(SDL_SCANCODE_J)
+        || Input::GetButtonDown(1)) {
         CommandData cd = {
             CommandType::Jump,
             Vector2(0.0f, 0.0f),
@@ -62,13 +65,12 @@ bool BattleScene::ProccessInput()
         mPlayer->commandBuffer.push_front(cd);
     }
     float walkRecoMin = 0.1f; // スティックが反応しないデッドゾーン
-    if (Input::GetKeyDown(SDL_SCANCODE_M)
-        || std::abs(Input::GetAxis(1)) > walkRecoMin
-        || std::abs(Input::GetAxis(2)) > walkRecoMin) {
+    if (float stickAxis = std::sqrt(Input::GetAxis(1) * Input::GetAxis(1) + Input::GetAxis(2) * Input::GetAxis(2));
+        Input::GetKeyDown(SDL_SCANCODE_M) || stickAxis > walkRecoMin) {
         CommandData cd = {
             CommandType::Walk,
             Vector2(Input::GetAxis(1), Input::GetAxis(2)),
-            std::sqrt(Input::GetAxis(1) * Input::GetAxis(1) + Input::GetAxis(2) * Input::GetAxis(2)),
+            stickAxis,
             currentFrame
         };
         mPlayer->commandBuffer.push_front(cd);
