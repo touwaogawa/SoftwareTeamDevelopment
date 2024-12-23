@@ -1,5 +1,5 @@
 #include "battle.h"
-#include "../beySmashengine.h"
+#include "../beySmashEngine.h"
 #include "../gameScripts/player.h"
 #include "../gameScripts/stage/stage.h"
 #include <cmath>
