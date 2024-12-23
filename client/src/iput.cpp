@@ -15,6 +15,10 @@ Uint8 Input::mPrevKeyboardState[SDL_NUM_SCANCODES] = { 0 };
 bool Input::isJoyConConnected                      = false;
 SDL_GameController* Input::mController             = nullptr;
 SDL_Joystick* Input::mJoystick                     = nullptr;
+bool Input::mJoystickButtonState[10]               = { 0 };
+bool Input::mPrevJoystickButtonState[10]           = { 0 };
+float Input::mJoystickAxisState[4]                 = { 0 };
+float Input::mPrevJoystickAxisState[4]             = { 0 };
 // 初期化
 bool Input::Init()
 {
@@ -75,13 +79,13 @@ void Input::UpdateInputStatus()
 
     // ボタンの入力をチェック
     for (int i = 0; i < SDL_JoystickNumButtons(mJoystick); ++i) {
-        if (SDL_JoystickGetButton(mJoystick, i)) {
-            std::cout << "Button " << i << " pressed!" << std::endl;
-        }
+        mPrevJoystickButtonState[i] = mJoystickButtonState[i];             // 前回の状態を更新
+        mJoystickButtonState[i]     = SDL_JoystickGetButton(mJoystick, i); // ゲームパッドの状態を取得
     }
     for (int i = 0; i < SDL_JoystickNumAxes(mJoystick); ++i) {
-        Sint16 axis_value = SDL_JoystickGetAxis(mJoystick, i);
-        std::cout << "Axis " << i << " value: " << axis_value << std::endl;
+        mPrevJoystickAxisState[i] = mJoystickAxisState[i]; // 前回の状態を更新
+        Sint16 axis_value         = SDL_JoystickGetAxis(mJoystick, i);
+        mJoystickAxisState[i]     = static_cast<float>(axis_value) / SDL_MAX_SINT16;
     }
 }
 
@@ -101,8 +105,30 @@ bool Input::GetKeyUp(SDL_Scancode scancode)
     return !mKeyboardState[scancode] && mPrevKeyboardState[scancode];
 }
 
-// ゲームパッドとジョイコン共通
-bool Input::GetButton(std::string buttonName)
+// ganepad用
+bool Input::GetButton(int buttonName)
+{
+    return mJoystickButtonState[buttonName - 1];
+}
+bool Input::GetButtonDown(int buttonName)
+{
+    return mJoystickButtonState[buttonName - 1] && !mPrevJoystickButtonState[buttonName - 1];
+}
+bool Input::GetButtonUp(int buttonName)
+{
+    return !mJoystickButtonState[buttonName - 1] && mPrevJoystickButtonState[buttonName - 1];
+}
+//-1~1の範囲で指定した名前の値が返される。
+float Input::GetAxis(int axisName)
+{
+    return mJoystickAxisState[axisName];
+}
+float Input::GetAxisRel(int axisName)
+{
+    return mJoystickAxisState[axisName] - mPrevJoystickAxisState[axisName];
+}
+// ジョイコン用
+bool Input::GetJCButton(std::string buttonName)
 {
     if (buttonName == "A")
         return mJoyCon_t.button.btn.A;
@@ -123,7 +149,7 @@ bool Input::GetButton(std::string buttonName)
     return false;
 }
 
-bool Input::GetButtonDown(std::string buttonName)
+bool Input::GetJCButtonDown(std::string buttonName)
 {
     if (buttonName == "A")
         return mJoyCon_t.button.btn.A && !mPrevJoyCon_t.button.btn.A;
@@ -144,7 +170,7 @@ bool Input::GetButtonDown(std::string buttonName)
     return false;
 }
 
-bool Input::GetButtonUp(std::string buttonName)
+bool Input::GetJCButtonUp(std::string buttonName)
 {
     if (buttonName == "A")
         return !mJoyCon_t.button.btn.A && mPrevJoyCon_t.button.btn.A;
@@ -165,7 +191,7 @@ bool Input::GetButtonUp(std::string buttonName)
     return false;
 }
 
-float Input::GetAxis(std::string axisName)
+float Input::GetJCAxis(std::string axisName)
 {
     if (axisName == "JcRStickX")
         return mJoyCon_t.stick.x;

@@ -24,11 +24,20 @@ void PlayerMove::Update()
         CommandData commandData = player->commandBuffer.back();
         // コマンドバッファが空でないとき
         int commandDelay = 1;
-        while (commandData.runFrame <= battleScene->currentFrame - commandDelay) {
+        while (commandData.inputFrame <= battleScene->currentFrame - commandDelay) {
             // commandDelayフレーム前のコマンドを実行
             switch (commandData.commandType) {
             case CommandType::Attack:
                 std::cout << "attak!" << std::endl;
+                break;
+            case CommandType::Charge:
+                std::cout << "charge!" << std::endl;
+                break;
+            case CommandType::Jump:
+                std::cout << "jump!" << std::endl;
+                break;
+            case CommandType::Walk:
+                std::cout << "move!" << std::endl;
                 break;
             default:
                 std::cout << "command type error" << std::endl;

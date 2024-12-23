@@ -2,6 +2,7 @@
 #include "../beySmashengine.h"
 #include "../gameScripts/player.h"
 #include "../gameScripts/stage/stage.h"
+#include <cmath>
 #include <iostream>
 
 BattleScene::BattleScene()
@@ -25,16 +26,49 @@ bool BattleScene::Load()
     return true;
 }
 
+// 入力したらどのコマンドが送られるか
 bool BattleScene::ProccessInput()
 {
     if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {
         return false;
     }
-    if (Input::GetKeyDown(SDL_SCANCODE_A)) {
+    if (Input::GetKeyDown(SDL_SCANCODE_A) || Input::GetButtonDown(2)) {
+        // 入れたいコマンドデータを作る
         CommandData cd = {
             CommandType::Attack,
+            Vector2(Input::GetAxis(1), 0.0f),
+            0.0f,
+            currentFrame // これはいじる必要ない
+        };
+        // コマンドデータをプレイヤーが持つコマンドバッファに入れる
+        mPlayer->commandBuffer.push_front(cd);
+    }
+    if (Input::GetKeyDown(SDL_SCANCODE_C) || Input::GetButtonDown(3)) {
+        CommandData cd = {
+            CommandType::Charge,
             Vector2(0.0f, 0.0f),
             0.0f,
+            currentFrame
+        };
+        mPlayer->commandBuffer.push_front(cd);
+    }
+    if (Input::GetKeyDown(SDL_SCANCODE_J) || Input::GetButtonDown(1)) {
+        CommandData cd = {
+            CommandType::Jump,
+            Vector2(0.0f, 0.0f),
+            0.0f,
+            currentFrame
+        };
+        mPlayer->commandBuffer.push_front(cd);
+    }
+    float walkRecoMin = 0.1f; // スティックが反応しないデッドゾーン
+    if (Input::GetKeyDown(SDL_SCANCODE_M)
+        || std::abs(Input::GetAxis(1)) > walkRecoMin
+        || std::abs(Input::GetAxis(2)) > walkRecoMin) {
+        CommandData cd = {
+            CommandType::Walk,
+            Vector2(Input::GetAxis(1), Input::GetAxis(2)),
+            std::sqrt(Input::GetAxis(1) * Input::GetAxis(1) + Input::GetAxis(2) * Input::GetAxis(2)),
             currentFrame
         };
         mPlayer->commandBuffer.push_front(cd);

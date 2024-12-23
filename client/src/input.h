@@ -21,12 +21,21 @@ public:
     static bool GetKeyDown(SDL_Scancode scancode);
     static bool GetKeyUp(SDL_Scancode scancode);
 
-    // ゲームパッドとジョイコン共通
-    static bool GetButton(std::string buttonName);
-    static bool GetButtonDown(std::string buttonName);
-    static bool GetButtonUp(std::string buttonName);
+    // ganepad用
+    static bool GetButton(int buttonName);
+    static bool GetButtonDown(int buttonName);
+    static bool GetButtonUp(int buttonName);
     //-1~1の範囲で指定した名前の値が返される。
-    static float GetAxis(std::string axisName);
+    static float GetAxis(int axisName);
+    static float GetAxisRel(int axisName);
+
+    // joycon用
+
+    static bool GetJCButton(std::string buttonName);
+    static bool GetJCButtonDown(std::string buttonName);
+    static bool GetJCButtonUp(std::string buttonName);
+    //-1~1の範囲で指定した名前の値が返される。
+    static float GetJCAxis(std::string axisName);
 
 private:
     static SDL_Event mEvent;
@@ -37,4 +46,8 @@ private:
     static bool isJoyConConnected;
     static SDL_GameController* mController;
     static SDL_Joystick* mJoystick;
+    static bool mJoystickButtonState[10];
+    static bool mPrevJoystickButtonState[10];
+    static float mJoystickAxisState[4];
+    static float mPrevJoystickAxisState[4];
 };
