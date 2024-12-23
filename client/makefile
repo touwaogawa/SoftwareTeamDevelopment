@@ -17,8 +17,7 @@ OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))  # ディレク
 
 # コンパイルオプション
 INCLUDE = $(MYINCDIR) -pthread
-LIBRARY = $(MYLIBDIR) -Wl,-rpath,'$$ORIGIN/lib'  -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLU -ljoyconlib -lhidapi-hidraw -lm -lGLEW -lSOIL $(MYLIBDIR)/libGLEW.so $(MYLIBDIR)/libGLEW.so.2.1 $(MYLIBDIR)/libGLEW.so.2.1.0 $(MYLIBDIR)/libfmod.so $(MYLIBDIR)/libfmod.so.13 $(MYLIBDIR)/libfmod.so.13.25 $(MYLIBDIR)/libfmodL.so $(MYLIBDIR)/libfmodL.so.13 $(MYLIBDIR)/libfmodL.so.13.25 $(MYLIBDIR)/libSOIL.so $(MYLIBDIR)/libSOIL.so.1 $(MYLIBDIR)/libSOIL.so.1.07-20071110 
-# -lSOIL -lFMOD -lGLEW
+LIBRARY = -Wl,-rpath,'$$ORIGIN/../lib'  -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLU -ljoyconlib -lhidapi-hidraw -lm -lSOIL -lFMOD -lGLEW
 
 # 出力のターゲット
 TARGET = main
