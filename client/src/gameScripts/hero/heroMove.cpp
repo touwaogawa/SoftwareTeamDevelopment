@@ -4,12 +4,12 @@
 
 HeroMove::HeroMove(GameObject* owner)
     : Behaviour(owner)
-    , mCurrentSpeed(0.0f)
 {
 }
 
 void HeroMove::Start()
 {
+    mHero = static_cast<Hero*>(mOwner);
 }
 namespace {
 void show(Transform* transform)
@@ -34,76 +34,27 @@ void show(Transform* transform)
 }
 void HeroMove::Update()
 {
-    // Quaternion q = mOwner->GetTransform()->GetWorldRotation();
-    // std::cout << q.x << q.y << q.z << q.w << std::endl;
-    Hero* hero = static_cast<Hero*>(GetOwner());
-    if (hero->GetStatus() == HeroStatus::Dash) {
-        Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-        mCurrentSpeed += hero->GetDushAcceleration();
-        if (mCurrentSpeed > hero->GetMaxRunSpeed()) {
-            mCurrentSpeed = hero->GetMaxRunSpeed();
-        }
-        pos.x += mCurrentSpeed + ;
-        mOwner->GetTransform()->SetWorldPosition(pos);
-    }
-
-    // if (Input::GetKeyDown(SDL_SCANCODE_P)) {
-    //     show(mOwner->GetTransform());
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_W)) {
-    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-    //     pos.z -= 0.1f;
-    //     mOwner->GetTransform()->SetWorldPosition(pos);
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_S)) {
-    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-    //     pos.z += 0.1f;
-    //     mOwner->GetTransform()->SetWorldPosition(pos);
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_A)) {
-    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-    //     pos.x -= 0.1f;
-    //     mOwner->GetTransform()->SetWorldPosition(pos);
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_D)) {
-    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-    //     pos.x += 0.1f;
-    //     mOwner->GetTransform()->SetWorldPosition(pos);
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_Q)) {
-    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-    //     pos.y += 0.1f;
-    //     mOwner->GetTransform()->SetWorldPosition(pos);
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_Z)) {
-    //     Vector3 pos = mOwner->GetTransform()->GetWorldPosition();
-    //     pos.y -= 0.1f;
-    //     mOwner->GetTransform()->SetWorldPosition(pos);
-    // }
-    // static float spin = 0.0f;
-    // if (Input::GetKey(SDL_SCANCODE_J)) {
-    //     spin += 0.1f;
-    //     mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_K)) {
-    //     spin -= 0.1f;
-    //     mOwner->GetTransform()->SetLocalRotation(Quaternion(0.0f, spin, 0.0f));
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_C)) {
-    //     Vector3 scale = mOwner->GetTransform()->GetWorldScale();
-    //     scale.x += 0.1f;
-    //     scale.y += 0.1f;
-    //     scale.z += 0.1f;
-    //     mOwner->GetTransform()->SetWorldScale(scale);
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_V)) {
-    //     Vector3 scale = mOwner->GetTransform()->GetWorldScale();
-    //     scale.x -= 0.1f;
-    //     scale.y -= 0.1f;
-    //     scale.z -= 0.1f;
-    //     mOwner->GetTransform()->SetWorldScale(scale);
-    // }
+    UpdatePosision();
 }
 void HeroMove::LateUpdate()
 {
+}
+
+// ##############################################
+
+void HeroMove::UpdatePosision()
+{
+    Vector3 pos = mTransform->GetWorldPosition();
+    std::cout << "pos_x: " << pos.x << std::endl;
+    std::cout << "pos_y: " << pos.y << std::endl;
+    Vector2 ma = mHero->currentMoveAxis;
+    float cs   = mHero->currentSpeed;
+    std::cout << "cs " << cs << std::endl;
+    std::cout << "ma_x " << ma.x << std::endl;
+    std::cout << "ma_x " << ma.y << std::endl;
+    pos.x += cs * ma.x;
+    pos.z += cs * ma.y;
+    // pos.x += 0.3;
+    // pos.z += 0.3;
+    mOwner->GetTransform()->SetWorldPosition(pos);
 }

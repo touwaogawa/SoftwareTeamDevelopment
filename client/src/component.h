@@ -8,4 +8,5 @@ public:
 
 protected:
     class GameObject* mOwner;
+    class Transform* mTransform;
 };

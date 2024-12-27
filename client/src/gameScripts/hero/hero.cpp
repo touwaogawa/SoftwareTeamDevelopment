@@ -11,7 +11,8 @@ Hero::Hero(Scene* scene, Transform* parent,
     float initialDushSpeed,
     float dushAcceleration,
     float maxRunSpeed,
-    float traction)
+    float traction,
+    float mass)
     : GameObject(scene, parent, new HeroMove(this))
     , mBey(new Bey(mScene, mTransform))
     , mRider(new Rider(mScene, mTransform))
@@ -21,17 +22,15 @@ Hero::Hero(Scene* scene, Transform* parent,
     , mDushAcceleration(dushAcceleration)
     , mMaxRunSpeed(maxRunSpeed)
     , mTraction(traction)
-    , mHeroStatus(HeroStatus::Idle)
+    , mMass(mass)
+    , currentStatus(HeroStatus::Idle)
+    , currentMoveAxis(0.0f, 0.0f)
+    , currentSpeed(0.0f)
 {
 }
 
 Hero::~Hero()
 {
-}
-
-HeroStatus Hero::GetStatus() const
-{
-    return mHeroStatus;
 }
 
 float Hero::GetWalkAcceleration() const

@@ -26,54 +26,26 @@ bool BattleScene::Load()
     return true;
 }
 
-// 入力したらどのコマンドが送られるか
 bool BattleScene::ProccessInput()
 {
     if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {
         return false;
     }
-    if (Input::GetKeyDown(SDL_SCANCODE_A)
-        || Input::GetButtonDown(2)) {
-        // 入れたいコマンドデータを作る
-        CommandData cd = {
-            CommandType::Attack,
-            Vector2(Input::GetAxis(1), 0.0f),
-            0.0f,
-            currentFrame // これはいじる必要ない
-        };
-        // コマンドデータをプレイヤーが持つコマンドバッファに入れる
-        mPlayer->commandBuffer.push_front(cd);
-    }
-    if (Input::GetKeyDown(SDL_SCANCODE_C)
-        || Input::GetButtonDown(3)) {
-        CommandData cd = {
-            CommandType::Charge,
-            Vector2(0.0f, 0.0f),
-            0.0f,
-            currentFrame
-        };
-        mPlayer->commandBuffer.push_front(cd);
-    }
-    if (Input::GetKeyDown(SDL_SCANCODE_J)
-        || Input::GetButtonDown(1)) {
-        CommandData cd = {
-            CommandType::Jump,
-            Vector2(0.0f, 0.0f),
-            0.0f,
-            currentFrame
-        };
-        mPlayer->commandBuffer.push_front(cd);
-    }
-    float walkRecoMin = 0.1f; // スティックが反応しないデッドゾーン
-    if (float stickAxis = std::sqrt(Input::GetAxis(1) * Input::GetAxis(1) + Input::GetAxis(2) * Input::GetAxis(2));
-        Input::GetKeyDown(SDL_SCANCODE_M) || stickAxis > walkRecoMin) {
-        CommandData cd = {
-            CommandType::Walk,
-            Vector2(Input::GetAxis(1), Input::GetAxis(2)),
-            stickAxis,
-            currentFrame
-        };
-        mPlayer->commandBuffer.push_front(cd);
-    }
+
+    CommandData commandData = {
+        Input::GetButton(2),
+        Input::GetButton(3),
+        Input::GetButton(1) || Input::GetButton(4),
+        Vector2(Input::GetAxis(1), Input::GetAxis(2)),
+        Vector2(Input::GetAxis(3), Input::GetAxis(4)),
+        currentFrame
+    };
+    mPlayer->commandBuffer.push_front(commandData);
+
     return true;
+}
+
+Stage* BattleScene::GetStage() const
+{
+    return mStage;
 }

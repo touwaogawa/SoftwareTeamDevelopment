@@ -1,18 +1,12 @@
 #pragma once
 #include "math.h"
-#include <deque>
-enum class CommandType {
-    Walk,
-    Dash,
-    Attack,
-    Jump,
-    Charge,
-    CommandTypeNum, // コマンドの数
-    CommandEnpty
-};
 struct CommandData {
-    CommandType commandType = CommandType::CommandEnpty; // 無効なコマンド
-    Vector2 vector          = {};                        // ベクトルの初期化
-    float axis              = 0.0f;                      // 軸の初期化
-    int inputFrame          = -1;                        // 無効なフレーム番号
+    bool attack1 = false;
+    bool attack2 = false;
+    bool jump    = false;
+    Vector2 moveAxis;
+    Vector2 subAxis;
+    int frame; // フレーム番号
 };
+
+void CommandDataCout(CommandData cd);

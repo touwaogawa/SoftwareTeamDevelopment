@@ -9,7 +9,9 @@ public:
     bool Load() override;
     bool ProccessInput() override;
 
+    class Stage* GetStage() const;
+
 private:
     class Player* mPlayer;
-    class GameObject* mStage;
+    class Stage* mStage;
 };

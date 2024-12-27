@@ -10,6 +10,7 @@ public:
     ~Player() override;
 
     std::deque<CommandData> commandBuffer;
+    CommandData prevCommandData;
     GameObject* GetHero() const;
 
 private:
