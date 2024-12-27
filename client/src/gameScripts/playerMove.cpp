@@ -30,52 +30,72 @@ void PlayerMove::Update()
         if (commandData.frame <= mBattleScene->currentFrame - commandDelay) {
             // commandDelayフレームより過去のコマンドを実行
             // CommandDataCout(commandData);
-            float stickDeadZone = 0.2;
+            float stickDeadZone = 0.1;
             switch (mHero->currentStatus) {
             case HeroStatus::Idle:
-                std::cout << "idle" << std::endl;
+                // std::cout << "idle" << std::endl;
                 if (commandData.moveAxis.Length() > stickDeadZone) {
                     // 移動スティック倒していた場合
-                    if (commandData.moveAxis.Length() - mPlayer->prevCommandData.moveAxis.Length() < 0.4) {
+                    if (commandData.moveAxis.Length() - mPlayer->prevCommandData.moveAxis.Length() < 0.3) {
                         mHero->currentStatus = HeroStatus::Walking;
                     } else {
-                        mHero->currentStatus = HeroStatus::Running;
+                        mHero->currentStatus = HeroStatus::StartRunning;
+                        mHero->currentSpeed  = mHero->GetInitialDushSpeed();
                     }
-                } else if (0.0f < mHero->currentSpeed) {
-                    // 減速処理
-                    if (mHero->currentSpeed < 0.05f) {
+                } else {
+                    if (mHero->currentSpeed != 0.0f) {
                         mHero->currentSpeed = 0.0f;
-                    } else {
-                        mHero->currentSpeed -= mHero->GetTraction() * mGravity;
-                        if (mHero->currentSpeed < 0.0f) {
-                            mHero->currentSpeed = 0.0f;
-                        }
                     }
                 }
                 break;
             case HeroStatus::Walking:
-                std::cout << "walk" << std::endl;
+                // std::cout << "walk" << std::endl;
                 if (commandData.moveAxis.Length() < stickDeadZone) {
-                    // スティックデッドゾーン
                     mHero->currentStatus = HeroStatus::Idle;
                 } else {
-                    mHero->currentMoveAxis = commandData.moveAxis;
-                    if (mHero->currentSpeed < mHero->GetMaxWalkSpeed()) {
-                        mHero->currentSpeed = std::min(mHero->GetMaxWalkSpeed(), mHero->currentSpeed + mHero->GetWalkAcceleration());
+                    mHeroMove->Walking(commandData.moveAxis);
+                }
+                break;
+            case HeroStatus::StartRunning:
+                // std::cout << "Startrun" << std::endl;
+                if (commandData.moveAxis.Length() < stickDeadZone) {
+                    mHero->currentStatus = HeroStatus::StopRunning;
+                } else {
+                    mHeroMove->StartRunning(commandData.moveAxis);
+                    if (mHero->currentSpeed >= mHero->GetMaxRunSpeed()) {
+                        mHero->currentStatus = HeroStatus::Running;
                     }
                 }
                 break;
             case HeroStatus::Running:
-                std::cout << "run" << std::endl;
+                // std::cout << "run" << std::endl;
+                if (commandData.attack1 && !mPlayer->prevCommandData.attack1) {
+                    mHeroMove->StartRunningAttack(commandData.moveAxis);
+                    mHero->currentStatus = HeroStatus::RunningAttack;
+                    break;
+                }
                 if (commandData.moveAxis.Length() < stickDeadZone) {
-                    // スティックデッドゾーン
-                    mHero->currentStatus = HeroStatus::Idle;
+                    mHero->currentStatus = HeroStatus::StopRunning;
                 } else {
-                    mHero->currentMoveAxis = commandData.moveAxis;
-                    if (mHero->currentSpeed < mHero->GetMaxWalkSpeed()) {
-                        mHero->currentSpeed = std::min(mHero->GetMaxRunSpeed(), mHero->currentSpeed + mHero->GetDushAcceleration());
+                    mHeroMove->Running(commandData.moveAxis);
+                }
+                break;
+            case HeroStatus::StopRunning:
+                // std::cout << "stoprun" << std::endl;
+                if (commandData.moveAxis.Length() >= stickDeadZone) {
+                    mHero->currentStatus = HeroStatus::StartRunning;
+                } else {
+                    mHeroMove->StopRunning(commandData.moveAxis);
+                    if (0.0f == mHero->currentSpeed) {
+                        mHero->currentStatus = HeroStatus::Idle;
                     }
                 }
+                break;
+            case HeroStatus::RunningAttack:
+                // std::cout << "runAtk" << std::endl;
+                if (!mHeroMove->UpdateRunningAttack())
+                    mHero->currentStatus = HeroStatus::Idle;
+
                 break;
             default:
                 break;

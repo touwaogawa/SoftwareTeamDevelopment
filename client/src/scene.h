@@ -5,7 +5,7 @@ class Scene {
 public:
     Scene();
     virtual ~Scene();
-    virtual bool Load();
+    virtual bool Load() = 0;
 
     void Start();
     virtual bool ProccessInput() = 0;

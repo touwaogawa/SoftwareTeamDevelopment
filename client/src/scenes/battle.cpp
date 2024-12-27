@@ -5,8 +5,9 @@
 #include <cmath>
 #include <iostream>
 
-BattleScene::BattleScene()
+BattleScene::BattleScene(int playerNum)
     : Scene()
+    , mPlayerNum(playerNum)
 {
 }
 

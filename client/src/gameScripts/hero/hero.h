@@ -5,18 +5,22 @@
 enum class HeroStatus {
     Idle,
     Walking,
+    StartRunning,
     Running,
+    StopRunning,
+    RunningAttack,
+    PreJump
 
 };
 class Hero : public GameObject {
 public:
     Hero(Scene* scene, Transform* parent,
-        float walkAcceleration = 0.001f,
-        float maxWalkSpeed     = 0.5f,
-        float initialDushSpeed = 0.6f,
-        float dushAcceleration = 0.002f,
-        float maxRunSpeed      = 1.0f,
-        float traction         = 0.5f,
+        float walkAcceleration = 0.05f,
+        float maxWalkSpeed     = 0.1f,
+        float initialDushSpeed = 0.1f,
+        float dushAcceleration = 0.05f,
+        float maxRunSpeed      = 0.25f,
+        float traction         = 0.1f,
         float mass             = 50.0f);
     ~Hero() override;
 

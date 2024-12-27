@@ -12,6 +12,7 @@ public:
     std::deque<CommandData> commandBuffer;
     CommandData prevCommandData;
     GameObject* GetHero() const;
+    void SetID(int id);
 
 private:
     GameObject* mHero;

@@ -16,11 +16,6 @@ Scene::~Scene()
     delete mRenderer;
 }
 
-bool Scene::Load()
-{
-    mRenderer->Load();
-    return false;
-}
 void Scene::Start()
 {
     for (GameObject* gameObject : mGameObjects) {

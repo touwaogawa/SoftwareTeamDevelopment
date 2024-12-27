@@ -3,7 +3,6 @@
 
 Component::Component(GameObject* owner)
     : mOwner(owner)
-    , mTransform(mOwner->GetTransform())
 {
 }
 Component::~Component()

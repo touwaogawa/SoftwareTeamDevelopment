@@ -2,6 +2,7 @@
 #include "input.h"
 #include "renderer.h"
 #include "scene.h"
+#include "sceneManager.h"
 #include "scenes/battle.h"
 #include "time.h"
 #include <GL/glew.h>
@@ -35,25 +36,25 @@ bool Game::Init()
 void Game::RunLoop()
 {
     bool frag     = true;
-    mBattleScene  = new BattleScene();
-    mCurrentScene = mBattleScene;
-
-    if (!mCurrentScene->Load()) {
+    int playerNum = 4;
+    SceneManager::LoadScene(new BattleScene(playerNum));
+    Scene* cScene = SceneManager::GetCurrentScene();
+    if (!cScene->Load()) {
         std::cout << "Failed Scene load" << std::endl;
         return;
     }
-    mCurrentScene->Start();
+    cScene->Start();
     while (frag) {
         Input::UpdateInputStatus();
-        frag = mCurrentScene->ProccessInput();
+        frag = cScene->ProccessInput();
         // 通信
         // 当たり判定
-        mCurrentScene->Update();
-        mCurrentScene->LateUpdate();
+        cScene->Update();
+        cScene->LateUpdate();
 
-        mCurrentScene->Draw();
+        cScene->Draw();
         Time::UpdateFrame();
-        mCurrentScene->currentFrame++;
+        cScene->currentFrame++;
     }
 }
 
