@@ -4,15 +4,13 @@ CXXFLAGS = -Wall -std=c++17 -g
 # -L../lib
 
 # ディレクトリ設定
-SRCDIR = src 
-# ../common/src
+SRCDIR = src
 OBJDIR = obj
 MYINCDIR = -I../include
 MYLIBDIR = -L../lib
 
 # ソースファイルとオブジェクトファイル
 SOURCES = $(shell find $(SRCDIR) -name "*.cpp")
-
 SOURCES_NOTDIR = $(notdir $(SOURCES))
 SOURCES_DIRS = $(dir $(SOURCES))  # 各ソースファイルのディレクトリ部分
 OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))  # ディレクトリ構造を保ったままオブジェクトファイルを作成
@@ -27,6 +25,7 @@ TARGET = main
 # 全体ビルドターゲット
 all: $(OBJDIR) $(TARGET)
 
+# LD_LIBRARY_PATH=../lib:$$LD_LIBRARY_PATH ./$(TARGET)
 
 # obj ディレクトリがない場合は作成
 $(OBJDIR):

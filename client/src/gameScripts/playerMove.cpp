@@ -18,6 +18,11 @@ void PlayerMove::Start()
     mHeroMove            = static_cast<HeroMove*>(mHero->GetBehaviour());
     mGravity             = mBattleScene->GetStage()->GetGravity();
     mHero->currentStatus = HeroStatus::Idle;
+    double radius        = 13.0;
+    double angle         = Math::TwoPi * mPlayer->GetID() / mBattleScene->GetPlayerNum(); // 等間隔の角度（ラジアン）
+    double x             = radius * cos(angle);
+    double y             = radius * sin(angle);
+    mHero->GetTransform()->SetWorldPosition(x, 0.0f, y);
 }
 namespace {
 

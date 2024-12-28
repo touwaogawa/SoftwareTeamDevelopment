@@ -22,7 +22,7 @@ bool TitleScene::ProccessInput()
 {
     if (Input::GetKeyDown(SDL_SCANCODE_RETURN)) {
         int playerNum = 4;
-        SceneManager::LoadScene(new BattleScene(playerNum));
+        SceneManager::LoadScene(new BattleScene(0, playerNum));
     }
     return true;
 }

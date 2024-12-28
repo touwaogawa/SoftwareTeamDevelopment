@@ -6,9 +6,10 @@
 #include <cmath>
 #include <iostream>
 
-BattleScene::BattleScene(int playerNum)
+BattleScene::BattleScene(int myPlayerID, int playerNum)
     : Scene("BattleScene")
     , mPlayerNum(playerNum)
+    , mMyPlayerID(myPlayerID)
 {
 }
 
@@ -22,7 +23,10 @@ bool BattleScene::Load()
         std::cout << "Failed Renderer Load" << std::endl;
         return false;
     }
-    mPlayer = new Player(this, nullptr);
+    for (int i = 0; i < mPlayerNum; i++) {
+        mPlayers.push_back(new Player(this, nullptr, i));
+    }
+    mPlayer = mPlayers[mMyPlayerID];
     mStage  = new Stage(this, nullptr);
     return true;
 }
@@ -44,7 +48,13 @@ bool BattleScene::ProccessInput()
 
     return true;
 }
-
+void BattleScene::ProccessNetowork()
+{
+}
+int BattleScene::GetPlayerNum() const
+{
+    return mPlayerNum;
+}
 Stage* BattleScene::GetStage() const
 {
     return mStage;

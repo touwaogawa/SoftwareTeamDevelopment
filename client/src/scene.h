@@ -7,8 +7,10 @@ public:
     virtual ~Scene();
     virtual bool Load() = 0;
 
-    void Start();
     virtual bool ProccessInput() = 0;
+    virtual void ProccessNetowork();
+
+    void Start();
     void Update();
     void LateUpdate();
     void Draw();

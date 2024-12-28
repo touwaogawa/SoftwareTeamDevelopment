@@ -22,7 +22,10 @@ Scene::~Scene()
     delete mRenderer;
     std::cout << "~scene3" << std::endl;
 }
-
+void Scene::ProccessNetowork()
+{
+    return;
+}
 void Scene::Start()
 {
     for (GameObject* gameObject : mGameObjects) {

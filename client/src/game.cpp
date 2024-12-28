@@ -42,13 +42,14 @@ void Game::RunLoop()
         SceneManager::AdoptSceneChange();
         while (sceneFrag) {
             Scene* cScene = SceneManager::GetCurrentScene();
+            // 受信
+            cScene->ProccessNetowork();
             Input::UpdateInputStatus();
             if (!cScene->ProccessInput()) {
                 sceneFrag = false;
                 gameFrag  = false;
                 break;
             }
-            // 通信
             // 当たり判定
             cScene->Update();
             cScene->LateUpdate();

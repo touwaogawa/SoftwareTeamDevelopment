@@ -8,7 +8,6 @@ int main()
         std::cerr << "ENet initialization failed!" << std::endl;
         return -1;
     }
-    atexit(enet_deinitialize);
 
     // サーバーの作成
     ENetAddress address;
@@ -52,12 +51,15 @@ int main()
         }
 
         // クライアントにメッセージを送信
-        const char* message = "Hello, client!";
-        ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-        enet_host_broadcast(server, 0, packet);
-        enet_host_flush(server); // メッセージを送信
+        for (int i = 0; i < 2; i++) {
+            const char* message = "Hello, client!";
+            ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
+            enet_host_broadcast(server, 0, packet);
+            enet_host_flush(server); // メッセージを送信
+        }
     }
 
     enet_host_destroy(server); // サーバーの破棄
+    enet_deinitialize();
     return 0;
 }
