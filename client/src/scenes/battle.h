@@ -1,5 +1,5 @@
 #pragma once
-#include "../gameScripts/hero/hero.h"
+#include "../../../common/src/gameScripts/hero/hero.h"
 #include "../scene.h"
 #include <vector>
 

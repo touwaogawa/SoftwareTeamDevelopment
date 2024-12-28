@@ -1,6 +1,6 @@
 #include "scene.h"
-#include "components/behaviour.h"
-#include "gameObject.h"
+#include "../../common/src/components/behaviour.h"
+#include "../../common/src/gameObject.h"
 #include "renderer.h"
 #include <algorithm>
 //

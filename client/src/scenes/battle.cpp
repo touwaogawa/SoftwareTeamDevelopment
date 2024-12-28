@@ -1,8 +1,8 @@
 #include "battle.h"
+#include "../../../common/src/gameScripts/player.h"
+#include "../../../common/src/gameScripts/stage/stage.h"
+#include "../../../common/src/sceneManager.h"
 #include "../beySmashEngine.h"
-#include "../gameScripts/player.h"
-#include "../gameScripts/stage/stage.h"
-#include "../sceneManager.h"
 #include <cmath>
 #include <iostream>
 

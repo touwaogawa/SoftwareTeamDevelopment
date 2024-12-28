@@ -1,19 +1,22 @@
 # コンパイラとオプション
 CXX = g++
 CXXFLAGS = -Wall -std=c++17 -g
-# -L../lib
 
 # ディレクトリ設定
-SRCDIR = src
-OBJDIR = obj
+SERVER_SRCDIR = src
+COMMON_SRCDIR = ../common/src
+SERVER_OBJDIR = obj/server
+COMMON_OBJDIR = obj/common
 MYINCDIR = -I../include
 MYLIBDIR = -L../lib
 
 # ソースファイルとオブジェクトファイル
-SOURCES = $(shell find $(SRCDIR) -name "*.cpp")
-SOURCES_NOTDIR = $(notdir $(SOURCES))
-SOURCES_DIRS = $(dir $(SOURCES))  # 各ソースファイルのディレクトリ部分
-OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES))  # ディレクトリ構造を保ったままオブジェクトファイルを作成
+SERVER_SOURCES = $(shell find $(SERVER_SRCDIR) -name "*.cpp")
+COMMON_SOURCES = $(shell find $(COMMON_SRCDIR) -name "*.cpp")
+
+# オブジェクトファイルのパスをディレクトリごとに設定
+SERVER_OBJECTS = $(patsubst $(SERVER_SRCDIR)/%, $(SERVER_OBJDIR)/%, $(SERVER_SOURCES:.cpp=.o))
+COMMON_OBJECTS = $(patsubst $(COMMON_SRCDIR)/%, $(COMMON_OBJDIR)/%, $(COMMON_SOURCES:.cpp=.o))
 
 # コンパイルオプション
 INCLUDE = $(MYINCDIR) -pthread
@@ -23,30 +26,32 @@ LIBRARY = $(MYLIBDIR) -Wl,-rpath,'$$ORIGIN/../lib'  -lSDL2 -lSDL2main -lSDL2_ttf
 TARGET = main
 
 # 全体ビルドターゲット
-all: $(OBJDIR) $(TARGET)
-
-# LD_LIBRARY_PATH=../lib:$$LD_LIBRARY_PATH ./$(TARGET)
+all: $(SERVER_OBJDIR) $(COMMON_OBJDIR) $(TARGET)
 
 # obj ディレクトリがない場合は作成
-$(OBJDIR):
-	@mkdir -p $(OBJDIR)
+$(SERVER_OBJDIR):
+	@mkdir -p $(SERVER_OBJDIR)
 
-# ターゲットの作成
-$(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) -o $@ $(LIBRARY)
+$(COMMON_OBJDIR):
+	@mkdir -p $(COMMON_OBJDIR)
 
 # ソースファイルをオブジェクトファイルに変換
-# すべての .o ファイルを obj フォルダ内の同じ層に作成する
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	@mkdir -p $(dir $@)  # obj/ディレクトリ内にサブディレクトリを作成
+# server/src/ のソースファイルを server/obj/server にオブジェクトファイルを作成
+$(SERVER_OBJDIR)/%.o: $(SERVER_SRCDIR)/%.cpp
+	@mkdir -p $(dir $@)  # obj/server/components のようなサブディレクトリを作成
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
+
+# common/src/ のソースファイルを server/obj/common にオブジェクトファイルを作成
+$(COMMON_OBJDIR)/%.o: $(COMMON_SRCDIR)/%.cpp
+	@mkdir -p $(dir $@)  # obj/common のサブディレクトリを作成
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
+
+# ターゲットの作成
+$(TARGET): $(SERVER_OBJECTS) $(COMMON_OBJECTS)
+	$(CXX) $(SERVER_OBJECTS) $(COMMON_OBJECTS) -o $@ $(LIBRARY)
 
 # クリーンターゲット
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -f $(SERVER_OBJECTS) $(COMMON_OBJECTS) $(TARGET)
 
 .PHONY: all clean
-
-show:
-	@echo "Sources: $(SOURCES)"
-	@echo "Objects: $(OBJECTS)"

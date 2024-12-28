@@ -1,11 +1,11 @@
 #include "meshRenderer.h"
-#include "../component.h"
-#include "../gameObject.h"
+#include "../../../common/src/component.h"
+#include "../../../common/src/components/transform.h"
+#include "../../../common/src/gameObject.h"
 #include "../mesh.h"
 #include "../renderer.h"
 #include "../scene.h"
 #include "../shader.h"
-#include "transform.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
