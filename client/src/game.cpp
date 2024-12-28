@@ -3,7 +3,6 @@
 #include "renderer.h"
 #include "scene.h"
 #include "sceneManager.h"
-// #include "scenes/battle.h"
 #include "scenes/title.h"
 #include "time.h"
 #include <GL/glew.h>
