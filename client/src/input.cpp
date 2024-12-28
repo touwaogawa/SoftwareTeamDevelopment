@@ -1,5 +1,5 @@
-#include "commandData.h"
 #include "input.h"
+#include "commandData.h"
 #include <SDL2/SDL.h>
 #include <cstring>
 #include <iostream>
@@ -121,11 +121,11 @@ bool Input::GetButtonUp(int buttonName)
 //-1~1の範囲で指定した名前の値が返される。
 float Input::GetAxis(int axisName)
 {
-    return mJoystickAxisState[axisName];
+    return mJoystickAxisState[axisName - 1];
 }
 float Input::GetAxisRel(int axisName)
 {
-    return mJoystickAxisState[axisName] - mPrevJoystickAxisState[axisName];
+    return mJoystickAxisState[axisName - 1] - mPrevJoystickAxisState[axisName - 1];
 }
 // ジョイコン用
 bool Input::GetJCButton(std::string buttonName)

@@ -5,22 +5,24 @@
 #include <algorithm>
 //
 #include <iostream>
-Scene::Scene()
+Scene::Scene(std::string name)
     : currentFrame(0)
+    , mName(name)
 {
+    std::cout << "scene1" << std::endl;
     mRenderer = new Renderer();
+    std::cout << "scene2" << std::endl;
 }
 
 Scene::~Scene()
 {
+    std::cout << "~scene1" << std::endl;
+    RemoveAllObject();
+    std::cout << "~scene2" << std::endl;
     delete mRenderer;
+    std::cout << "~scene3" << std::endl;
 }
 
-bool Scene::Load()
-{
-    mRenderer->Load();
-    return false;
-}
 void Scene::Start()
 {
     for (GameObject* gameObject : mGameObjects) {
@@ -74,4 +76,14 @@ void Scene::RemoveRootObject(GameObject* gameObject)
 {
     auto end = std::remove(mRootObjects.begin(), mRootObjects.end(), gameObject);
     mRootObjects.erase(end, mRootObjects.end());
+}
+std::string Scene::GetName() const
+{
+    return mName;
+}
+void Scene::RemoveAllObject()
+{
+    for (GameObject* rootObject : mRootObjects) {
+        RemoveRootObject(rootObject);
+    }
 }

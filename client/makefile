@@ -1,6 +1,6 @@
 # コンパイラとオプション
 CXX = g++
-CXXFLAGS = -Wall -std=c++14 
+CXXFLAGS = -Wall -std=c++17 -g
 # -L../lib
 
 # ディレクトリ設定

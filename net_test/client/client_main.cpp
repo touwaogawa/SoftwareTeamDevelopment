@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[])
 {
-    int client_id = 0; // デフォルトのidは0
+    int client_id = 0;
     int port      = 8888;
     // 引数でIDを決める場合の処理
     if (argc > 1) {

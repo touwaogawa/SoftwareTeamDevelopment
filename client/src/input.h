@@ -30,7 +30,6 @@ public:
     static float GetAxisRel(int axisName);
 
     // joycon用
-
     static bool GetJCButton(std::string buttonName);
     static bool GetJCButtonDown(std::string buttonName);
     static bool GetJCButtonUp(std::string buttonName);

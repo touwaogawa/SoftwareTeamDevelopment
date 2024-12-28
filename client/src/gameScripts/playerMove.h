@@ -10,4 +10,9 @@ public:
     void LateUpdate() override;
 
 private:
+    class BattleScene* mBattleScene;
+    class Player* mPlayer;
+    class Hero* mHero;
+    class HeroMove* mHeroMove;
+    float mGravity;
 };

@@ -2,7 +2,8 @@
 #include "input.h"
 #include "renderer.h"
 #include "scene.h"
-#include "scenes/battle.h"
+#include "sceneManager.h"
+#include "scenes/title.h"
 #include "time.h"
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
@@ -34,26 +35,31 @@ bool Game::Init()
 
 void Game::RunLoop()
 {
-    bool frag     = true;
-    mBattleScene  = new BattleScene();
-    mCurrentScene = mBattleScene;
+    SceneManager::LoadScene(new TitleScene());
+    bool gameFrag = true;
+    while (gameFrag) {
+        bool sceneFrag = true;
+        SceneManager::AdoptSceneChange();
+        while (sceneFrag) {
+            Scene* cScene = SceneManager::GetCurrentScene();
+            Input::UpdateInputStatus();
+            if (!cScene->ProccessInput()) {
+                sceneFrag = false;
+                gameFrag  = false;
+                break;
+            }
+            // 通信
+            // 当たり判定
+            cScene->Update();
+            cScene->LateUpdate();
 
-    if (!mCurrentScene->Load()) {
-        std::cout << "Failed Scene load" << std::endl;
-        return;
-    }
-    mCurrentScene->Start();
-    while (frag) {
-        Input::UpdateInputStatus();
-        frag = mCurrentScene->ProccessInput();
-        // 通信
-        // 当たり判定
-        mCurrentScene->Update();
-        mCurrentScene->LateUpdate();
-
-        mCurrentScene->Draw();
-        Time::UpdateFrame();
-        mCurrentScene->currentFrame++;
+            cScene->Draw();
+            Time::UpdateFrame();
+            cScene->currentFrame++;
+            if (SceneManager::GetiIsChanged()) {
+                break;
+            }
+        }
     }
 }
 

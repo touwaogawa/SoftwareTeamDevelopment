@@ -21,6 +21,8 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+
+    delete mMeshShader;
 }
 bool Renderer::Init(float window_w, float window_h)
 {
