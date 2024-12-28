@@ -2,11 +2,12 @@
 #include "../beySmashEngine.h"
 #include "../gameScripts/player.h"
 #include "../gameScripts/stage/stage.h"
+#include "../sceneManager.h"
 #include <cmath>
 #include <iostream>
 
 BattleScene::BattleScene(int playerNum)
-    : Scene()
+    : Scene("BattleScene")
     , mPlayerNum(playerNum)
 {
 }
@@ -15,7 +16,6 @@ BattleScene::~BattleScene()
 {
     delete mPlayer;
 }
-
 bool BattleScene::Load()
 {
     if (!mRenderer->Load()) {
@@ -32,7 +32,6 @@ bool BattleScene::ProccessInput()
     if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {
         return false;
     }
-
     CommandData commandData = {
         Input::GetButton(2),
         Input::GetButton(3),

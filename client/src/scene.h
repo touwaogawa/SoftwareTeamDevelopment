@@ -1,9 +1,9 @@
 #pragma once
+#include <string>
 #include <vector>
-
 class Scene {
 public:
-    Scene();
+    Scene(std::string name);
     virtual ~Scene();
     virtual bool Load() = 0;
 
@@ -20,10 +20,15 @@ public:
     void AddRootObject(class GameObject* gameObject);
     void RemoveRootObject(class GameObject* gameObject);
 
+    std::string GetName() const;
+
     int currentFrame;
 
 protected:
+    std::string mName;
     std::vector<class GameObject*> mRootObjects;
     std::vector<class GameObject*> mGameObjects;
     class Renderer* mRenderer;
+
+    void RemoveAllObject();
 };
