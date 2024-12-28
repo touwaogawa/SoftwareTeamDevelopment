@@ -1,6 +1,6 @@
 #include "scene.h"
-#include "components/behaviour.h"
-#include "gameObject.h"
+#include "../../common/src/components/behaviour.h"
+#include "../../common/src/gameObject.h"
 #include "renderer.h"
 #include <algorithm>
 //
@@ -22,7 +22,10 @@ Scene::~Scene()
     delete mRenderer;
     std::cout << "~scene3" << std::endl;
 }
-
+void Scene::ProccessNetowork()
+{
+    return;
+}
 void Scene::Start()
 {
     for (GameObject* gameObject : mGameObjects) {

@@ -1,14 +1,14 @@
 #pragma once
 
-#include "commandData.h"
-#include "component.h"
-#include "components/behaviour.h"
+#include "../../common/src/commandData.h"
+#include "../../common/src/component.h"
+#include "../../common/src/components/behaviour.h"
+#include "../../common/src/components/transform.h"
+#include "../../common/src/gameObject.h"
+#include "../../utils/src/input.h"
+#include "../../utils/src/time.h"
 #include "components/meshRenderer.h"
-#include "components/transform.h"
-#include "gameObject.h"
-#include "input.h"
 #include "renderer.h"
 #include "scene.h"
-#include "time.h"
 #include <SDL2/SDL.h>
 #include <iostream>

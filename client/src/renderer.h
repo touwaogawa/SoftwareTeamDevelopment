@@ -1,5 +1,5 @@
 #pragma once
-#include "math.h"
+#include "../../utils/src/math.h"
 #include <SDL2/SDL.h>
 #include <string>
 #include <unordered_map>

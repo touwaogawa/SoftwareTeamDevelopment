@@ -1,10 +1,10 @@
 #include "game.h"
-#include "input.h"
+#include "../../common/src/sceneManager.h"
+#include "../../utils/src/input.h"
+#include "../../utils/src/time.h"
 #include "renderer.h"
 #include "scene.h"
-#include "sceneManager.h"
 #include "scenes/title.h"
-#include "time.h"
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <iostream>
@@ -42,13 +42,14 @@ void Game::RunLoop()
         SceneManager::AdoptSceneChange();
         while (sceneFrag) {
             Scene* cScene = SceneManager::GetCurrentScene();
+            // 受信
+            cScene->ProccessNetowork();
             Input::UpdateInputStatus();
             if (!cScene->ProccessInput()) {
                 sceneFrag = false;
                 gameFrag  = false;
                 break;
             }
-            // 通信
             // 当たり判定
             cScene->Update();
             cScene->LateUpdate();

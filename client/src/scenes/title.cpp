@@ -1,6 +1,6 @@
 #include "title.h"
+#include "../../../common/src/sceneManager.h"
 #include "../beySmashEngine.h"
-#include "../sceneManager.h"
 #include "battle.h"
 TitleScene::TitleScene()
     : Scene("TitleScene")
@@ -22,7 +22,7 @@ bool TitleScene::ProccessInput()
 {
     if (Input::GetKeyDown(SDL_SCANCODE_RETURN)) {
         int playerNum = 4;
-        SceneManager::LoadScene(new BattleScene(playerNum));
+        SceneManager::LoadScene(new BattleScene(0, playerNum));
     }
     return true;
 }
