@@ -13,17 +13,12 @@ SDL_Window* Renderer::mWindow    = nullptr;
 SDL_GLContext Renderer::mContext = nullptr;
 float Renderer::mWindowWidth     = 0.0f;
 float Renderer::mWindowHeight    = 0.0f;
+Shader* Renderer::mMeshShader    = nullptr;
+std::unordered_map<std::string, class Mesh*> Renderer::mMeshes;
+std::vector<class MeshRenderer*> Renderer::mMeshRenderers;
+Matrix4 Renderer::mView       = {};
+Matrix4 Renderer::mProjection = {};
 
-Renderer::Renderer()
-{
-    mMeshShader = new Shader();
-}
-
-Renderer::~Renderer()
-{
-
-    delete mMeshShader;
-}
 bool Renderer::Init(float window_w, float window_h)
 {
     mWindowWidth  = window_w;
@@ -50,6 +45,7 @@ void Renderer::ShutDown()
 
 bool Renderer::Load()
 {
+    mMeshShader = new Shader();
     mView       = Matrix4::CreateLookAt(Vector3::Zero, Vector3::UnitZ, Vector3::UnitY);
     mProjection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f), mWindowWidth, mWindowHeight, 10.0f, 10000.0f);
     if (!mMeshShader->Load("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl")) {
@@ -57,6 +53,10 @@ bool Renderer::Load()
         return false;
     }
     return true;
+}
+void Renderer::UnLoad()
+{
+    delete mMeshShader;
 }
 void Renderer::Draw()
 {

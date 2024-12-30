@@ -5,7 +5,7 @@
 
 class BattleScene : public Scene {
 public:
-    BattleScene(int myPlayerId, int playerNum);
+    BattleScene(int playerNum);
     ~BattleScene() override;
     bool Load() override;
 
@@ -14,9 +14,7 @@ public:
 
 private:
     const int mPlayerNum;
-    const int mMyPlayerID;
     std::vector<class Player*> mPlayers;
-    class Player* mPlayer;
     class Stage* mStage;
     void BeforeUpdateGameObject() override;
     void AfterUpdateGameObject() override;

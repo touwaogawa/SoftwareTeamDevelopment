@@ -46,7 +46,7 @@ bool Game::Initialize()
 
     // Create the renderer
     mRenderer = new Renderer(this);
-    if (!mRenderer->Initialize(1024.0f, 768.0f)) {
+    if (!Renderer::Initialize(1024.0f, 768.0f)) {
         SDL_Log("Failed to initialize renderer");
         delete mRenderer;
         mRenderer = nullptr;
@@ -224,7 +224,7 @@ void Game::UpdateGame()
 
 void Game::GenerateOutput()
 {
-    mRenderer->Draw();
+    Renderer::Draw();
 }
 
 void Game::LoadData()
@@ -260,7 +260,7 @@ void Game::UnloadData()
     }
 
     if (mRenderer) {
-        mRenderer->UnloadData();
+        Renderer::UnloadData();
     }
 
     // Unload fonts
@@ -286,7 +286,7 @@ void Game::Shutdown()
     TTF_Quit();
     delete mPhysWorld;
     if (mRenderer) {
-        mRenderer->Shutdown();
+        Renderer::Shutdown();
     }
 
     SDL_Quit();

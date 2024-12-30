@@ -7,15 +7,8 @@ public:
     virtual ~Scene();
     virtual bool Load() = 0;
 
-    virtual bool ProccessInput() = 0;
-    virtual void ProccessNetowork();
-
     void Start();
-    void Update();
-    void LateUpdate();
-    void Draw();
-    class Renderer* GetRenderer() const;
-
+    void Update(bool& exitFrag);
     void AddGameObject(class GameObject* gameObject);
     void RemoveGameObject(class GameObject* gameObject);
 
@@ -23,14 +16,17 @@ public:
     void RemoveRootObject(class GameObject* gameObject);
 
     std::string GetName() const;
-
     int currentFrame;
 
 protected:
     std::string mName;
     std::vector<class GameObject*> mRootObjects;
     std::vector<class GameObject*> mGameObjects;
-    class Renderer* mRenderer;
-
     void RemoveAllObject();
+    virtual void BeforeUpdateGameObject() = 0;
+    virtual void AfterUpdateGameObject()  = 0;
+
+private:
+    void UpdateGameObjects();
+    void LateUpdateGameObjects();
 };

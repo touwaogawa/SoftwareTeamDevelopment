@@ -13,4 +13,5 @@ public:
 
 private:
     class Mesh* mMesh;
+    class Renderer* mRenderer;
 };

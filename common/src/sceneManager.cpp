@@ -1,5 +1,5 @@
 #include "sceneManager.h"
-#include "../client/src/scene.h"
+#include "scene.h"
 #include <iostream>
 Scene* SceneManager::mCurrentScene = nullptr;
 Scene* SceneManager::mNextScene    = nullptr;
@@ -23,7 +23,6 @@ void SceneManager::AdoptSceneChange()
     if (!mCurrentScene->Load()) {
         std::cout << "Failed Scene load : " << mCurrentScene->GetName() << std::endl;
     }
-    mCurrentScene->Start();
     mIsChanged = false;
 }
 Scene* SceneManager::GetCurrentScene()

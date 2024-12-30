@@ -2,9 +2,9 @@
 #include "../../../common/src/component.h"
 #include "../../../common/src/components/transform.h"
 #include "../../../common/src/gameObject.h"
+#include "../../../common/src/scene.h"
 #include "../mesh.h"
 #include "../renderer.h"
-#include "../scene.h"
 #include "../shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -13,11 +13,11 @@
 MeshRenderer::MeshRenderer(GameObject* owner)
     : Component(owner)
 {
-    mOwner->GetScene()->GetRenderer()->AddMeshRenderer(this);
+    Renderer::AddMeshRenderer(this);
 }
 MeshRenderer::~MeshRenderer()
 {
-    mOwner->GetScene()->GetRenderer()->RemoveMeshRenderer(this);
+    Renderer::RemoveMeshRenderer(this);
 }
 
 void MeshRenderer::SetMesh(Mesh* mesh)
@@ -27,7 +27,7 @@ void MeshRenderer::SetMesh(Mesh* mesh)
 
 void MeshRenderer::Load(const std::string& fileName)
 {
-    Mesh* mesh = mOwner->GetScene()->GetRenderer()->GetMesh(fileName);
+    Mesh* mesh = Renderer::GetMesh(fileName);
     SetMesh(mesh);
 }
 void MeshRenderer::Draw(Shader* shader)

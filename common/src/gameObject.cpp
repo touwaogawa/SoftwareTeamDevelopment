@@ -1,8 +1,8 @@
 #include "gameObject.h"
-#include "../client/src/scene.h"
 #include "component.h"
 #include "components/behaviour.h"
 #include "components/transform.h"
+#include "scene.h"
 #include <algorithm>
 
 GameObject::GameObject(Scene* scene, Transform* parent, Behaviour* behaviour)

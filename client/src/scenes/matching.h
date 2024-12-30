@@ -2,15 +2,21 @@
 #include "../../../common/src/scene.h"
 #include <vector>
 
-class TitleScene : public Scene {
+enum class MatchingState {
+    Connecting,
+    Connected,
+};
+
+class MatchingScene : public Scene {
 public:
-    TitleScene();
-    ~TitleScene() override;
+    MatchingScene();
+    ~MatchingScene() override;
     bool Load() override;
 
 private:
     void BeforeUpdateGameObject() override;
     void AfterUpdateGameObject() override;
-
+    MatchingState mMatchingState;
     bool ProccessInput();
+    void ProccessNetowork();
 };

@@ -1,9 +1,9 @@
 #include "game.h"
+#include "../../common/src/scene.h"
 #include "../../common/src/sceneManager.h"
 #include "../../utils/src/input.h"
 #include "../../utils/src/time.h"
 #include "renderer.h"
-#include "scene.h"
 #include "scenes/title.h"
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
@@ -38,25 +38,16 @@ void Game::RunLoop()
     SceneManager::LoadScene(new TitleScene());
     bool gameFrag = true;
     while (gameFrag) {
-        bool sceneFrag = true;
         SceneManager::AdoptSceneChange();
-        while (sceneFrag) {
-            Scene* cScene = SceneManager::GetCurrentScene();
-            // 受信
-            cScene->ProccessNetowork();
+        SceneManager::GetCurrentScene()->Start();
+        while (true) {
             Input::UpdateInputStatus();
-            if (!cScene->ProccessInput()) {
-                sceneFrag = false;
-                gameFrag  = false;
-                break;
+            if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {
+                return;
             }
-            // 当たり判定
-            cScene->Update();
-            cScene->LateUpdate();
-
-            cScene->Draw();
+            SceneManager::GetCurrentScene()->Update(gameFrag);
+            Renderer::Draw();
             Time::UpdateFrame();
-            cScene->currentFrame++;
             if (SceneManager::GetiIsChanged()) {
                 break;
             }
