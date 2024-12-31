@@ -38,6 +38,10 @@ void Game::RunLoop()
     SceneManager::LoadScene(new TitleScene());
     bool gameFrag = true;
     while (gameFrag) {
+        if (!Renderer::Load()) {
+            std::cout << "Failed Renderer Load" << std::endl;
+            break;
+        }
         SceneManager::AdoptSceneChange();
         SceneManager::GetCurrentScene()->Start();
         while (true) {
@@ -52,6 +56,7 @@ void Game::RunLoop()
                 break;
             }
         }
+        Renderer::UnLoad();
     }
 }
 

@@ -8,6 +8,5 @@ public:
     float GetGravity() const;
 
 private:
-    class MeshRenderer* mMeshRenderer;
     float mGravity;
 };

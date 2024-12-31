@@ -9,7 +9,7 @@ public:
 
     void Start();
     void Update(bool& exitFrag);
-    void AddGameObject(class GameObject* gameObject);
+    virtual void AddGameObject(class GameObject* gameObject);
     void RemoveGameObject(class GameObject* gameObject);
 
     void AddRootObject(class GameObject* gameObject);
@@ -23,8 +23,8 @@ protected:
     std::vector<class GameObject*> mRootObjects;
     std::vector<class GameObject*> mGameObjects;
     void RemoveAllObject();
-    virtual void BeforeUpdateGameObject() = 0;
-    virtual void AfterUpdateGameObject()  = 0;
+    virtual void BeforeUpdateGameObject() {};
+    virtual void AfterUpdateGameObject() {};
 
 private:
     void UpdateGameObjects();

@@ -11,10 +11,10 @@ public:
 
     std::deque<CommandData> commandBuffer;
     CommandData prevCommandData;
-    GameObject* GetHero() const;
+    class Hero* GetHero() const;
     int GetID() const;
 
 private:
-    GameObject* mHero;
+    class Hero* mHero;
     int mID;
 };

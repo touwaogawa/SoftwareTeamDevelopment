@@ -1,31 +1,28 @@
 #include "bey.h"
-#include "../../../../client/src/components/meshRenderer.h"
 #include "../../../../common/src/component.h"
 #include "../../components/transform.h"
 #include "beyMove.h"
-
-Bey::Bey(class Scene* scene, class Transform* parent,
-    float mass,
-    float walkAcceleration,
-    float maxWalkSpeed,
-    float initialDushSpeed,
-    float dushAcceleration,
-    float maxRunSpeed,
-    float traction)
-    : GameObject(scene, parent, new BeyMove(this))
-    , mMeshRenderer(new MeshRenderer(this))
-    , mMass(mass)
-    , mWalkAcceleration(walkAcceleration)
-    , mMaxWalkSpeed(maxWalkSpeed)
-    , mInitialDushSpeed(initialDushSpeed)
-    , mDushAcceleration(dushAcceleration)
-    , mMaxRunSpeed(maxRunSpeed)
-    , mTraction(traction)
+#include <iostream>
+#include <string>
+Bey::Bey(class Scene* scene, class Transform* parent, BeyType beyType)
+    : GameObject(scene, parent, new BeyMove(this), GameObjectRenderType::Mesh3D, RenderFileSelection(beyType))
 {
-    AddComponent(mMeshRenderer);
-    mMeshRenderer->Load("../assets/models/Shuriken.obj");
 }
 
 Bey::~Bey()
 {
+}
+
+std::string Bey::RenderFileSelection(BeyType beyType)
+{
+    std::string renderFile;
+    switch (beyType) {
+    case BeyType::Shuriken:
+        renderFile = "../assets/models/Shuriken.obj";
+        break;
+    default:
+        std::cout << "BeyType error" << std::endl;
+        break;
+    }
+    return renderFile;
 }

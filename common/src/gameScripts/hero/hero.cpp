@@ -5,27 +5,11 @@
 #include "heroMove.h"
 #include "rider.h"
 
-Hero::Hero(Scene* scene, Transform* parent,
-    float walkAcceleration,
-    float maxWalkSpeed,
-    float initialDushSpeed,
-    float dushAcceleration,
-    float maxRunSpeed,
-    float traction,
-    float mass)
+Hero::Hero(Scene* scene, Transform* parent, HeroBaseStatus heroBaseStatus)
     : GameObject(scene, parent, new HeroMove(this))
-    , mBey(new Bey(mScene, mTransform))
-    , mRider(new Rider(mScene, mTransform))
-    , mWalkAcceleration(walkAcceleration)
-    , mMaxWalkSpeed(maxWalkSpeed)
-    , mInitialDushSpeed(initialDushSpeed)
-    , mDushAcceleration(dushAcceleration)
-    , mMaxRunSpeed(maxRunSpeed)
-    , mTraction(traction)
-    , mMass(mass)
-    , currentStatus(HeroStatus::Idle)
-    , currentMoveAxis(0.0f, 0.0f)
-    , currentSpeed(0.0f)
+    , mBey(new Bey(mScene, mTransform, BeyType::Shuriken))
+    , mRider(new Rider(mScene, mTransform, RiderType::BaseHuman))
+    , mBaseStatus(heroBaseStatus)
 {
 }
 
@@ -35,25 +19,34 @@ Hero::~Hero()
 
 float Hero::GetWalkAcceleration() const
 {
-    return mWalkAcceleration;
+    return mBaseStatus.walkAcceleration;
 }
 float Hero::GetMaxWalkSpeed() const
 {
-    return mMaxWalkSpeed;
+    return mBaseStatus.maxWalkSpeed;
 }
 float Hero::GetInitialDushSpeed() const
 {
-    return mInitialDushSpeed;
+    return mBaseStatus.initialDushSpeed;
 }
 float Hero::GetDushAcceleration() const
 {
-    return mDushAcceleration;
+    return mBaseStatus.dushAcceleration;
 }
 float Hero::GetMaxRunSpeed() const
 {
-    return mMaxRunSpeed;
+    return mBaseStatus.maxRunSpeed;
 }
 float Hero::GetTraction() const
 {
-    return mTraction;
+    return mBaseStatus.traction;
+}
+
+Bey* Hero::GetBey() const
+{
+    return mBey;
+}
+Rider* Hero::GetRider() const
+{
+    return mRider;
 }

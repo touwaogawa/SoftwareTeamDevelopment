@@ -3,7 +3,7 @@
 #include "playerMove.h"
 Player::Player(Scene* scene, Transform* parent, int playerID)
     : GameObject(scene, parent, new PlayerMove(this))
-    , mHero(new Hero(mScene, mTransform, 0.05f, 0.1f, 0.1f, 0.05f, 0.35f, 0.1f, 50.0f))
+    , mHero(new Hero(mScene, mTransform))
     , mID(playerID)
 {
 }
@@ -11,7 +11,7 @@ Player::~Player()
 {
 }
 
-GameObject* Player::GetHero() const
+Hero* Player::GetHero() const
 {
     return mHero;
 }

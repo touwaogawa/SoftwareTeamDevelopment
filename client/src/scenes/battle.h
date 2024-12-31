@@ -9,6 +9,8 @@ public:
     ~BattleScene() override;
     bool Load() override;
 
+    void AddGameObject(class GameObject* gameObject) override;
+
     class Stage* GetStage() const;
     int GetPlayerNum() const;
 

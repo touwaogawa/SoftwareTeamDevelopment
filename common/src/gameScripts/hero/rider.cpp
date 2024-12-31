@@ -1,19 +1,29 @@
 #include "rider.h"
-#include "../../../../client/src/components/meshRenderer.h"
 #include "../../../../common/src/component.h"
 #include "../../components/transform.h"
 #include "riderMove.h"
-// #include "riderMove.h"
+#include <iostream>
+#include <string>
 
-Rider::Rider(Scene* scene, Transform* parent)
-    : GameObject(scene, parent, new RiderMove(this))
-    , mMeshRenderer(new MeshRenderer(this))
+Rider::Rider(Scene* scene, Transform* parent, RiderType riderType)
+    : GameObject(scene, parent, new RiderMove(this), GameObjectRenderType::Mesh3D, RenderFileSelection(riderType))
 {
-    AddComponent(mMeshRenderer);
-    // mMeshRenderer->Load("assets/models/BaseHuman.obj");
-    mMeshRenderer->Load("../assets/models/BaseHuman.obj");
 }
 
 Rider::~Rider()
 {
+}
+
+std::string Rider::RenderFileSelection(RiderType riderType)
+{
+    std::string renderFile;
+    switch (riderType) {
+    case RiderType::BaseHuman:
+        renderFile = "../assets/models/BaseHuman.obj";
+        break;
+    default:
+        std::cout << "RiderType error" << std::endl;
+        break;
+    }
+    return renderFile;
 }

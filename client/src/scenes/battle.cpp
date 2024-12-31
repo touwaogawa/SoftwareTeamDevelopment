@@ -1,4 +1,6 @@
 #include "battle.h"
+#include "../../../common/src/gameScripts/hero/bey.h"
+#include "../../../common/src/gameScripts/hero/rider.h"
 #include "../../../common/src/gameScripts/player.h"
 #include "../../../common/src/gameScripts/stage/stage.h"
 #include "../../../common/src/sceneManager.h"
@@ -18,16 +20,37 @@ BattleScene::~BattleScene()
 }
 bool BattleScene::Load()
 {
-    if (!Renderer::Load()) {
-        std::cout << "Failed Renderer Load" << std::endl;
-        return false;
-    }
     for (int i = 0; i < mPlayerNum; i++) {
         mPlayers.push_back(new Player(this, nullptr, i));
     }
     mPlayer = mPlayers[mMyPlayerID];
     mStage  = new Stage(this, nullptr);
+
     return true;
+}
+
+void BattleScene::AddGameObject(GameObject* gameObject)
+{
+    mGameObjects.push_back(gameObject);
+    MeshRenderer* mr;
+    switch (gameObject->GetRenderType()) {
+    case GameObjectRenderType::NON_Render:
+        // std::cout << "GameObjectRenderType::Non_Render" << std::endl;
+        break;
+    case GameObjectRenderType::Mesh3D:
+        // std::cout << "GameObjectRenderType::Mesh3D :" << gameObject->GetRenderFile() << std::endl;
+        mr = new MeshRenderer(gameObject);
+        mr->Load(gameObject->GetRenderFile());
+        gameObject->AddComponent(mr);
+        break;
+    case GameObjectRenderType::Sprite:
+        /* code */
+        break;
+
+    default:
+        std::cout << "GameObjectRenderType error :" << std::endl;
+        break;
+    }
 }
 
 Stage* BattleScene::GetStage() const

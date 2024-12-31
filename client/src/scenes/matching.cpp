@@ -16,10 +16,6 @@ MatchingScene::~MatchingScene()
 
 bool MatchingScene::Load()
 {
-    if (!Renderer::Load()) {
-        std::cout << "Failed Renderer Load" << std::endl;
-        return false;
-    }
     return true;
 }
 

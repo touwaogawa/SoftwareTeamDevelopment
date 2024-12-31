@@ -2,31 +2,38 @@
 
 #include "../../../../utils/src/math.h"
 #include "../../gameObject.h"
-enum class HeroStatus {
+enum class HeroState {
     Idle,
     Walking,
     StartRunning,
     Running,
     StopRunning,
     RunningAttack,
-    PreJump
+    PreJump,
+    HeroStateNum
 
+};
+struct HeroBaseStatus {
+    float walkAcceleration = 0.05f; // 歩行加速
+    float maxWalkSpeed     = 0.1f;  // 最大歩行スピード
+    float initialDushSpeed = 0.1f;  // ダッシュ初速度
+    float dushAcceleration = 0.05f; // ダッシュ加速量
+    float maxRunSpeed      = 0.25f; // 最大ダッシュ速度
+    float traction         = 0.1f;  // 地上抵抗
+    float mass             = 50.0f; // 質量
+};
+
+struct HeroCurrentStatus {
+    HeroState state  = HeroState::Idle;     // 現在の状態
+    Vector2 moveAxis = Vector2(0.0f, 0.0f); // 向いている方向(地面と水平方向)
+    float speed      = 0.0f;
 };
 class Hero : public GameObject {
 public:
-    Hero(Scene* scene, Transform* parent,
-        float walkAcceleration = 0.05f,
-        float maxWalkSpeed     = 0.1f,
-        float initialDushSpeed = 0.1f,
-        float dushAcceleration = 0.05f,
-        float maxRunSpeed      = 0.25f,
-        float traction         = 0.1f,
-        float mass             = 50.0f);
+    Hero(Scene* scene, Transform* parent, HeroBaseStatus heroBaseStatus = HeroBaseStatus());
     ~Hero() override;
 
-    HeroStatus currentStatus; // 状態
-    Vector2 currentMoveAxis;  // 移動方向
-    float currentSpeed;       // 現在の水平方向の移動速度
+    HeroCurrentStatus mCurrentStatus;
 
     float GetWalkAcceleration() const;
     float GetMaxWalkSpeed() const;
@@ -35,15 +42,11 @@ public:
     float GetMaxRunSpeed() const;
     float GetTraction() const;
 
-private:
-    GameObject* mBey;
-    GameObject* mRider;
+    class Bey* GetBey() const;
+    class Rider* GetRider() const;
 
-    float mWalkAcceleration; // 歩行加速
-    float mMaxWalkSpeed;     // 最大歩行スピード
-    float mInitialDushSpeed; // ダッシュ初速度
-    float mDushAcceleration; // ダッシュ加速量
-    float mMaxRunSpeed;      // 最大ダッシュ速度
-    float mTraction;         // 地上抵抗
-    float mMass;             // 質量
+private:
+    class Bey* mBey;
+    class Rider* mRider;
+    HeroBaseStatus mBaseStatus;
 };

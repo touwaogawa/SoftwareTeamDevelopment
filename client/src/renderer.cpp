@@ -56,6 +56,10 @@ bool Renderer::Load()
 }
 void Renderer::UnLoad()
 {
+    for (auto mesh : mMeshes) {
+        delete mesh.second;
+    }
+    mMeshes.clear();
     delete mMeshShader;
 }
 void Renderer::Draw()

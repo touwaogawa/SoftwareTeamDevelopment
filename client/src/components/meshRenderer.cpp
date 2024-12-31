@@ -3,6 +3,7 @@
 #include "../../../common/src/components/transform.h"
 #include "../../../common/src/gameObject.h"
 #include "../../../common/src/scene.h"
+#include "../../../utils/src/math.h"
 #include "../mesh.h"
 #include "../renderer.h"
 #include "../shader.h"
@@ -34,8 +35,8 @@ void MeshRenderer::Draw(Shader* shader)
 {
     shader->Use();
     GLint modelLoc = glGetUniformLocation(shader->GetProgram(), "model");
-
-    Matrix4 model = mOwner->GetTransform()->GetWorldMatrix();
+    Matrix4 model
+        = mOffset * mOwner->GetTransform()->GetWorldMatrix();
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.GetAsFloatPtr());
 
     mMesh->GetVAO()->Bind();

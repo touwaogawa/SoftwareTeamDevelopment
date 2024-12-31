@@ -48,43 +48,43 @@ void HeroMove::LateUpdate()
 // ##############################################
 void HeroMove::Walking(Vector2 axis)
 {
-    mHero->currentMoveAxis = Vector2::Normalize(axis);
-    if (mHero->currentSpeed < mHero->GetMaxWalkSpeed()) {
-        mHero->currentSpeed = std::min(mHero->GetMaxWalkSpeed(), mHero->currentSpeed + mHero->GetWalkAcceleration());
+    mHero->mCurrentStatus.moveAxis = Vector2::Normalize(axis);
+    if (mHero->mCurrentStatus.speed < mHero->GetMaxWalkSpeed()) {
+        mHero->mCurrentStatus.speed = std::min(mHero->GetMaxWalkSpeed(), mHero->mCurrentStatus.speed + mHero->GetWalkAcceleration());
     }
 }
 void HeroMove::StartRunning(Vector2 axis)
 {
-    mHero->currentMoveAxis = Vector2::Normalize(axis);
-    mHero->currentSpeed    = std::min(mHero->GetMaxRunSpeed(), mHero->currentSpeed + mHero->GetDushAcceleration());
+    mHero->mCurrentStatus.moveAxis = Vector2::Normalize(axis);
+    mHero->mCurrentStatus.speed    = std::min(mHero->GetMaxRunSpeed(), mHero->mCurrentStatus.speed + mHero->GetDushAcceleration());
 }
 void HeroMove::Running(Vector2 axis)
 {
-    mHero->currentMoveAxis = Vector2::Normalize(axis);
+    mHero->mCurrentStatus.moveAxis = Vector2::Normalize(axis);
 }
 void HeroMove::StopRunning(Vector2 axis)
 {
-    if (mHero->currentSpeed < 0.05f) {
-        mHero->currentSpeed = 0.0f;
+    if (mHero->mCurrentStatus.speed < 0.05f) {
+        mHero->mCurrentStatus.speed = 0.0f;
     } else {
-        mHero->currentSpeed -= mHero->GetTraction() * mGravity;
-        if (mHero->currentSpeed < 0.0f) {
-            mHero->currentSpeed = 0.0f;
+        mHero->mCurrentStatus.speed -= mHero->GetTraction() * mGravity;
+        if (mHero->mCurrentStatus.speed < 0.0f) {
+            mHero->mCurrentStatus.speed = 0.0f;
         }
     }
 }
 void HeroMove::StartRunningAttack(Vector2 axis)
 {
-    mCurrentActionFrame = 0;
-    mHero->currentSpeed = 1.0f;
+    mCurrentActionFrame         = 0;
+    mHero->mCurrentStatus.speed = 1.0f;
 }
 bool HeroMove::UpdateRunningAttack()
 {
     mCurrentActionFrame++;
     if (10 <= mCurrentActionFrame) {
-        mHero->currentSpeed -= 0.5f;
-        if (mHero->currentSpeed < 0.05) {
-            mHero->currentSpeed = 0.0f;
+        mHero->mCurrentStatus.speed -= 0.5f;
+        if (mHero->mCurrentStatus.speed < 0.05) {
+            mHero->mCurrentStatus.speed = 0.0f;
             return false;
         }
     }
@@ -95,8 +95,8 @@ void HeroMove::UpdatePosision()
     Vector3 pos = mOwner->GetTransform()->GetLocalPosition();
     // std::cout << "pos_x: " << pos.x << std::endl;
     // std::cout << "pos_z: " << pos.z << std::endl;
-    Vector2 ma = mHero->currentMoveAxis;
-    float cs   = mHero->currentSpeed;
+    Vector2 ma = mHero->mCurrentStatus.moveAxis;
+    float cs   = mHero->mCurrentStatus.speed;
     // std::cout << "cs " << cs << std::endl;
     // std::cout << "ma_x " << ma.x << std::endl;
     // std::cout << "ma_x " << ma.y << std::endl;
