@@ -1,10 +1,11 @@
 #include "battle.h"
+#include "../../../common/src/beySmashEngine.h"
 #include "../../../common/src/gameScripts/hero/bey.h"
 #include "../../../common/src/gameScripts/hero/rider.h"
 #include "../../../common/src/gameScripts/player.h"
 #include "../../../common/src/gameScripts/stage/stage.h"
 #include "../../../common/src/sceneManager.h"
-#include "../beySmashEngine.h"
+#include "../components/meshRenderer.h"
 #include <iostream>
 
 BattleScene::BattleScene(int myPlayerID, int playerNum)
@@ -21,7 +22,7 @@ BattleScene::~BattleScene()
 bool BattleScene::Load()
 {
     for (int i = 0; i < mPlayerNum; i++) {
-        mPlayers.push_back(new Player(this, nullptr, i));
+        mPlayers.push_back(new Player(this, nullptr, i, &currentFrame));
     }
     mPlayer = mPlayers[mMyPlayerID];
     mStage  = new Stage(this, nullptr);

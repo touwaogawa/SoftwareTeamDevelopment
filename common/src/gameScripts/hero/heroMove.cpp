@@ -1,6 +1,5 @@
 #include "heroMove.h"
-#include "../../../../client/src/beySmashEngine.h"
-#include "../../../../client/src/scenes/battle.h"
+#include "../../beySmashEngine.h"
 #include "../stage/stage.h"
 #include "hero.h"
 
@@ -11,9 +10,7 @@ HeroMove::HeroMove(GameObject* owner)
 
 void HeroMove::Start()
 {
-    mBattleScene = static_cast<BattleScene*>(mOwner->GetScene());
-    mHero        = static_cast<Hero*>(mOwner);
-    mGravity     = mBattleScene->GetStage()->GetGravity();
+    mHero = static_cast<Hero*>(mOwner);
 }
 namespace {
 // デバッグ用
@@ -67,7 +64,7 @@ void HeroMove::StopRunning(Vector2 axis)
     if (mHero->mCurrentStatus.speed < 0.05f) {
         mHero->mCurrentStatus.speed = 0.0f;
     } else {
-        mHero->mCurrentStatus.speed -= mHero->GetTraction() * mGravity;
+        mHero->mCurrentStatus.speed -= mHero->GetTraction() * mHero->GetGravity();
         if (mHero->mCurrentStatus.speed < 0.0f) {
             mHero->mCurrentStatus.speed = 0.0f;
         }

@@ -41,6 +41,14 @@ float Hero::GetTraction() const
 {
     return mBaseStatus.traction;
 }
+float Hero::GetMass() const
+{
+    return mBaseStatus.mass;
+}
+float Hero::GetGravity() const
+{
+    return mBaseStatus.gravity;
+}
 
 Bey* Hero::GetBey() const
 {

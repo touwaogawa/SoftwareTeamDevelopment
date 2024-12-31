@@ -1,6 +1,6 @@
 #include "title.h"
+#include "../../../common/src/beySmashEngine.h"
 #include "../../../common/src/sceneManager.h"
-#include "../beySmashEngine.h"
 #include "matching.h"
 TitleScene::TitleScene()
     : Scene("TitleScene")

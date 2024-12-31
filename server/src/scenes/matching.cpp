@@ -8,6 +8,7 @@
 
 MatchingScene::MatchingScene()
     : Scene("MatchingScene")
+    , mMatchingState(MatchingState::Init)
 {
 }
 MatchingScene::~MatchingScene()
@@ -60,30 +61,31 @@ bool MatchingScene::ProccessNetowork()
         std::cout << "Server started, waiting for clients..." << std::endl;
         mMatchingState = MatchingState::Waiting;
         break;
-    case MatchingState::Waiting:
+    case MatchingState::Waiting: {
         ENetEvent event;
-        while (true) {
-            while (enet_host_service(server, &event, 0) > 0) {
-                switch (event.type) {
-                case ENET_EVENT_TYPE_CONNECT:
-                    std::cout << "A new client connected from "
-                              << event.peer->address.host << ":"
-                              << event.peer->address.port << std::endl;
-                    break;
-                case ENET_EVENT_TYPE_RECEIVE:
-                    std::cout << "Received packet from client: " << (char*)event.packet->data << std::endl;
-                    enet_host_broadcast(server, 0, event.packet);
-                    enet_packet_destroy(event.packet); // パケットの解放
-                    break;
-                case ENET_EVENT_TYPE_DISCONNECT:
-                    std::cout << "A client disconnected." << std::endl;
-                    break;
-                default:
-                    break;
-                }
+        while (enet_host_service(server, &event, 0) > 0) {
+            switch (event.type) {
+            case ENET_EVENT_TYPE_CONNECT:
+                std::cout << "A new client connected from "
+                          << event.peer->address.host << ":"
+                          << event.peer->address.port << std::endl;
+                break;
+            case ENET_EVENT_TYPE_RECEIVE: {
+                std::cout << "Received packet from client: " << (char*)event.packet->data << std::endl;
+                // 受信したパケットをそのままブロードキャスト
+                enet_host_broadcast(server, 0, event.packet);
+
+                // パケットを解放（再送信後）
+                // enet_packet_destroy(event.packet);
+            } break;
+            case ENET_EVENT_TYPE_DISCONNECT:
+                std::cout << "A client disconnected." << std::endl;
+                break;
+            default:
+                break;
             }
         }
-        break;
+    } break;
     case MatchingState::AllConnected:
         break;
     default:

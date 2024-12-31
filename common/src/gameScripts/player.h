@@ -6,15 +6,17 @@
 
 class Player : public GameObject {
 public:
-    Player(Scene* scene, Transform* parent, int playerID);
+    Player(Scene* scene, Transform* parent, int playerID, const int* currentSceneFrame);
     ~Player() override;
 
     std::deque<CommandData> commandBuffer;
     CommandData prevCommandData;
     class Hero* GetHero() const;
     int GetID() const;
+    int GetCurrentSceneFrame() const;
 
 private:
     class Hero* mHero;
     int mID;
+    const int* mCurrentSceneFrame;
 };

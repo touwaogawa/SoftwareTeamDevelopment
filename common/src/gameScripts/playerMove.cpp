@@ -1,6 +1,6 @@
 #include "playerMove.h"
-#include "../../../client/src/beySmashEngine.h"
-#include "../../../client/src/scenes/battle.h"
+#include "../beySmashEngine.h"
+#include "hero/hero.h"
 #include "hero/heroMove.h"
 #include "player.h"
 #include "stage/stage.h"
@@ -12,17 +12,29 @@ PlayerMove::PlayerMove(GameObject* owner)
 
 void PlayerMove::Start()
 {
-    mBattleScene                = static_cast<BattleScene*>(mOwner->GetScene());
     mPlayer                     = static_cast<Player*>(mOwner);
     mHero                       = mPlayer->GetHero();
     mHeroMove                   = static_cast<HeroMove*>(mHero->GetBehaviour());
-    mGravity                    = mBattleScene->GetStage()->GetGravity();
     mHero->mCurrentStatus.state = HeroState::Idle;
-    double radius               = 13.0;
-    double angle                = Math::TwoPi * mPlayer->GetID() / mBattleScene->GetPlayerNum(); // 等間隔の角度（ラジアン）
-    double x                    = radius * cos(angle);
-    double y                    = radius * sin(angle);
-    mHero->GetTransform()->SetWorldPosition(x, 0.0f, y);
+
+    double radius = 13.0;
+    switch (mPlayer->GetID()) {
+    case 0:
+        mHero->GetTransform()->SetWorldPosition(radius, 0.0f, 0.0f);
+        break;
+    case 1:
+        mHero->GetTransform()->SetWorldPosition(-radius, 0.0f, 0.0f);
+        break;
+    case 2:
+        mHero->GetTransform()->SetWorldPosition(0.0f, 0.0f, radius);
+        break;
+    case 3:
+        mHero->GetTransform()->SetWorldPosition(0.0f, 0.0f, -radius);
+        break;
+    default:
+        std::cout << "player ID error ID: " << mPlayer->GetID() << std::endl;
+        break;
+    }
 }
 namespace {
 
@@ -32,7 +44,7 @@ void PlayerMove::Update()
     if (!mPlayer->commandBuffer.empty()) {
         CommandData commandData = mPlayer->commandBuffer.back();
         int commandDelay        = 1;
-        if (commandData.frame <= mBattleScene->currentFrame - commandDelay) {
+        if (commandData.frame <= mPlayer->GetCurrentSceneFrame() - commandDelay) {
             // commandDelayフレームより過去のコマンドを実行
             // CommandDataCout(commandData);
             float stickDeadZone = 0.1;

@@ -7,6 +7,7 @@
 #include "scenes/title.h"
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include <enet/enet.h>
 #include <iostream>
 Game::Game()
 {
@@ -20,6 +21,7 @@ bool Game::Init()
     }
     // Inputの初期化
     Input::Init();
+    // Rendererの初期化
     Renderer::Init(1920.0f, 1080.0f);
     // GLEWの初期化
     glewExperimental = GL_TRUE;
@@ -27,9 +29,13 @@ bool Game::Init()
         std::cout << "GLEW initialization failed!" << std::endl;
         return false;
     }
-    // Rendererの初期化
     // Timeの初期化
     Time::Init(60); // 60fps
+
+    if (enet_initialize() != 0) {
+        std::cerr << "ENet initialization failed!" << std::endl;
+        return false;
+    }
     return true;
 }
 
@@ -64,4 +70,5 @@ void Game::Shutdown()
 {
     Renderer::ShutDown();
     SDL_Quit();
+    enet_deinitialize();
 }

@@ -7,7 +7,9 @@ enum class MatchingState {
     Init,
     Waiting,
     AllConnected,
+    MatchingStateNum
 };
+
 class MatchingScene : public Scene {
 public:
     MatchingScene();

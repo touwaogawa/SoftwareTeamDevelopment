@@ -17,7 +17,7 @@ BattleScene::~BattleScene()
 bool BattleScene::Load()
 {
     for (int i = 0; i < mPlayerNum; i++) {
-        mPlayers.push_back(new Player(this, nullptr, i));
+        mPlayers.push_back(new Player(this, nullptr, i, &currentFrame));
     }
     mStage = new Stage(this, nullptr);
     return true;

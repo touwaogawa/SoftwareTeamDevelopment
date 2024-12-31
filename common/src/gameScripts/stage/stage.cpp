@@ -4,15 +4,9 @@
 
 Stage::Stage(Scene* scene, Transform* parent)
     : GameObject(scene, parent, nullptr, GameObjectRenderType::Mesh3D, "../assets/models/Stage.obj")
-    , mGravity(10)
 {
 }
 
 Stage::~Stage()
 {
-}
-
-float Stage::GetGravity() const
-{
-    return mGravity;
 }

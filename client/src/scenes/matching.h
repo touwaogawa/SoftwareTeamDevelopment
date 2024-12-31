@@ -1,8 +1,11 @@
 #pragma once
 #include "../../../common/src/scene.h"
-#include <vector>
+#include <enet/enet.h>
+#include <queue>
+#include <utility>
 
 enum class MatchingState {
+    Init,
     Connecting,
     Connected,
 };
@@ -18,5 +21,12 @@ private:
     void AfterUpdateGameObject() override;
     MatchingState mMatchingState;
     bool ProccessInput();
-    void ProccessNetowork();
+    bool ProccessNetowork();
+
+    ENetAddress address;
+    ENetHost* client;
+    ENetPeer* peer;
+
+    void DestroyPackets();
+    std::queue<std::pair<int, ENetPacket*>> mPendingPakets;
 };

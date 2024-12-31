@@ -19,8 +19,6 @@ public:
 
 private:
     void UpdatePosision();
-    class BattleScene* mBattleScene;
     class Hero* mHero;
-    float mGravity;
     int mCurrentActionFrame;
 };

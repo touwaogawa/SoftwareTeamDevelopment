@@ -1,5 +1,5 @@
 #include "riderMove.h"
-#include "../../../../client/src/beySmashEngine.h"
+#include "../../beySmashEngine.h"
 #include "rider.h"
 RiderMove::RiderMove(GameObject* owner)
     : Behaviour(owner)
