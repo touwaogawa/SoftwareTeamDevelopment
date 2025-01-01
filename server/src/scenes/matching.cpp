@@ -1,4 +1,5 @@
 #include "matching.h"
+#include "../../../common/src/packet.h"
 #include "../../../common/src/sceneManager.h"
 #include "../../../utils/src/input.h"
 #include "battle.h"
@@ -18,14 +19,13 @@ bool MatchingScene::Load()
 {
     return true;
 }
-void MatchingScene::BeforeUpdateGameObject()
+void MatchingScene::Update(bool& exitFrag)
 {
     ProccessNetowork();
     ProccessInput();
+    Scene::Update(exitFrag);
 }
-void MatchingScene::AfterUpdateGameObject()
-{
-}
+
 bool MatchingScene::ProccessInput()
 {
     if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {
@@ -65,24 +65,34 @@ bool MatchingScene::ProccessNetowork()
         ENetEvent event;
         while (enet_host_service(server, &event, 0) > 0) {
             switch (event.type) {
-            case ENET_EVENT_TYPE_CONNECT:
+            case ENET_EVENT_TYPE_CONNECT: {
                 std::cout << "A new client connected from "
                           << event.peer->address.host << ":"
                           << event.peer->address.port << std::endl;
-                break;
+                IDInitData idInitData;
+                idInitData.id      = 22;
+                ENetPacket* packet = idInitData.CreatePacket();
+                if (enet_peer_send(event.peer, 0, packet) < 0) {
+                    std::cerr << "Failed to send packet!" << std::endl;
+                }
+                enet_host_flush(server);
+
+            } break;
             case ENET_EVENT_TYPE_RECEIVE: {
-                std::cout << "Received packet from client: " << (char*)event.packet->data << std::endl;
 
-                // 受信パケットのデータを新しいパケットにコピー
-                ENetPacket* newPacket = enet_packet_create(
-                    event.packet->data,
-                    event.packet->dataLength,
-                    ENET_PACKET_FLAG_RELIABLE);
+                std::cout << "Received packet from client: " << std::endl;
+                // std::cout << "Received packet from client: " << (char*)event.packet->data << std::endl;
 
-                // 新しいパケットをブロードキャスト
-                enet_host_broadcast(server, 0, newPacket);
+                // // 受信パケットのデータを新しいパケットにコピー
+                // ENetPacket* newPacket = enet_packet_create(
+                //     event.packet->data,
+                //     event.packet->dataLength,
+                //     ENET_PACKET_FLAG_RELIABLE);
 
-                // パケットを解放（再送信後）
+                // // 新しいパケットをブロードキャスト
+                // enet_host_broadcast(server, 0, newPacket);
+
+                // // パケットを解放（再送信後）
                 enet_packet_destroy(event.packet);
             } break;
             case ENET_EVENT_TYPE_DISCONNECT:

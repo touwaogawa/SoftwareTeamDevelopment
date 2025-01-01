@@ -7,10 +7,8 @@ public:
     TitleScene();
     ~TitleScene() override;
     bool Load() override;
+    void Update(bool& exitFrag) override;
 
 private:
-    void BeforeUpdateGameObject() override;
-    void AfterUpdateGameObject() override;
-
     bool ProccessInput();
 };

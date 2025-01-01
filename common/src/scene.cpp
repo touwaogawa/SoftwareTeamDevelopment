@@ -23,11 +23,8 @@ void Scene::Start()
 }
 void Scene::Update(bool& exitFrag)
 {
-    BeforeUpdateGameObject();
     UpdateGameObjects();
     LateUpdateGameObjects();
-    AfterUpdateGameObject();
-    currentFrame++;
 }
 
 void Scene::AddGameObject(GameObject* gameObject)

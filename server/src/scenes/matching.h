@@ -1,6 +1,7 @@
 #pragma once
 #include "../../../common/src/scene.h"
 #include <enet/enet.h>
+#include <map>
 #include <vector>
 
 enum class MatchingState {
@@ -15,14 +16,14 @@ public:
     MatchingScene();
     ~MatchingScene() override;
     bool Load() override;
+    void Update(bool& exitFrag) override;
 
 private:
-    void BeforeUpdateGameObject() override;
-    void AfterUpdateGameObject() override;
     MatchingState mMatchingState;
     bool ProccessInput();
     bool ProccessNetowork();
 
     ENetAddress address;
     ENetHost* server;
+    std::map<int, ENetPeer*> ClientID;
 };

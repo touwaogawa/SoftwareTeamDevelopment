@@ -29,7 +29,12 @@ bool BattleScene::Load()
 
     return true;
 }
-
+void BattleScene::Update(bool& exitFrag)
+{
+    ProccessNetowork();
+    ProccessInput();
+    Scene::Update(exitFrag);
+}
 void BattleScene::AddGameObject(GameObject* gameObject)
 {
     mGameObjects.push_back(gameObject);
@@ -62,16 +67,6 @@ Stage* BattleScene::GetStage() const
 int BattleScene::GetPlayerNum() const
 {
     return mPlayerNum;
-}
-
-void BattleScene::BeforeUpdateGameObject()
-{
-    ProccessNetowork();
-    ProccessInput();
-}
-
-void BattleScene::AfterUpdateGameObject()
-{
 }
 
 bool BattleScene::ProccessInput()

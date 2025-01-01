@@ -63,6 +63,7 @@ void Game::RunLoop()
             if (SceneManager::GetiIsChanged()) {
                 break;
             }
+            SceneManager::GetCurrentScene()->currentFrame++;
         }
     }
 }

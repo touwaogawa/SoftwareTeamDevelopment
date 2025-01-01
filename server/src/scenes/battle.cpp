@@ -22,6 +22,12 @@ bool BattleScene::Load()
     mStage = new Stage(this, nullptr);
     return true;
 }
+void BattleScene::Update(bool& exitFrag)
+{
+    ProccessNetowork();
+    ProccessInput();
+    Scene::Update(exitFrag);
+}
 
 int BattleScene::GetPlayerNum() const
 {
@@ -31,14 +37,7 @@ Stage* BattleScene::GetStage() const
 {
     return mStage;
 }
-void BattleScene::BeforeUpdateGameObject()
-{
-    ProccessNetowork();
-    ProccessInput();
-}
-void BattleScene::AfterUpdateGameObject()
-{
-}
+
 bool BattleScene::ProccessInput()
 {
     if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {

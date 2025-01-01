@@ -16,13 +16,14 @@ public:
     ~MatchingScene() override;
     bool Load() override;
 
+    void Update(bool& exitFrag) override;
+
 private:
-    void BeforeUpdateGameObject() override;
-    void AfterUpdateGameObject() override;
     MatchingState mMatchingState;
     bool ProccessInput();
     bool ProccessNetowork();
 
+    int battleId;
     ENetAddress address;
     ENetHost* client;
     ENetPeer* peer;

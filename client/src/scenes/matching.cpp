@@ -1,4 +1,5 @@
 #include "matching.h"
+#include "../../../common/src/packet.h"
 #include "../../../common/src/sceneManager.h"
 #include "../../../utils/src/input.h"
 #include "../renderer.h"
@@ -22,15 +23,11 @@ bool MatchingScene::Load()
 {
     return true;
 }
-
-void MatchingScene::BeforeUpdateGameObject()
+void MatchingScene::Update(bool& exitFrag)
 {
     ProccessNetowork();
     ProccessInput();
-}
-
-void MatchingScene::AfterUpdateGameObject()
-{
+    Scene::Update(exitFrag);
 }
 
 bool MatchingScene::ProccessInput()
@@ -57,24 +54,24 @@ bool MatchingScene::ProccessInput()
     case MatchingState::Connecting: {
     } break;
     case MatchingState::Connected: {
-        if (Input::GetKeyDown(SDL_SCANCODE_A)) {
-            // サーバーにメッセージを送信
-            const char* message = "Hello, server!";
-            ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-            if (enet_peer_send(peer, 0, packet) < 0) {
-                std::cerr << "Failed to send packet!" << std::endl;
-            }
-            enet_host_flush(client); // メッセージを送信
-        }
-        if (Input::GetKeyDown(SDL_SCANCODE_B)) {
-            // サーバーにメッセージを送信
-            const char* message = "BBBB, server!";
-            ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-            if (enet_peer_send(peer, 0, packet) < 0) {
-                std::cerr << "Failed to send packet!" << std::endl;
-            }
-            enet_host_flush(client); // メッセージを送信
-        }
+        // if (Input::GetKeyDown(SDL_SCANCODE_A)) {
+        //     // サーバーにメッセージを送信
+        //     const char* message = "Hello, server!";
+        //     ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
+        //     if (enet_peer_send(peer, 0, packet) < 0) {
+        //         std::cerr << "Failed to send packet!" << std::endl;
+        //     }
+        //     enet_host_flush(client); // メッセージを送信
+        // }
+        // if (Input::GetKeyDown(SDL_SCANCODE_B)) {
+        //     // サーバーにメッセージを送信
+        //     const char* message = "BBBB, server!";
+        //     ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
+        //     if (enet_peer_send(peer, 0, packet) < 0) {
+        //         std::cerr << "Failed to send packet!" << std::endl;
+        //     }
+        //     enet_host_flush(client); // メッセージを送信
+        // }
     } break;
     default:
         std::cout << "MatchingState error" << std::endl;
@@ -121,8 +118,8 @@ bool MatchingScene::ProccessNetowork()
                 mMatchingState = MatchingState::Connected;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                std::cout << "Received message from server: " << (char*)event.packet->data << std::endl;
-                // enet_packet_destroy(event.packet); // パケットの解放
+                // std::cout << "Received message from server: " << (char*)event.packet->data << std::endl;
+                enet_packet_destroy(event.packet); // パケットの解放
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 std::cout << "Disconnected from server." << std::endl;
@@ -140,7 +137,18 @@ bool MatchingScene::ProccessNetowork()
                 std::cout << "Connected to server!" << std::endl;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                std::cout << "Received message from server: " << (char*)event.packet->data << std::endl;
+                switch (PacketData::RecognizePacketDatatype(event.packet)) {
+                case PacketDataType::Init: {
+                    IDInitData idInitData;
+                    idInitData.LoadPacket(event.packet);
+                    std::cout << "idInitData.id" << idInitData.id << std::endl;
+
+                } break;
+                default:
+                    std::cout << "default data" << std::endl;
+                    break;
+                }
+                // std::cout << "Received message from server: " << (char*)event.packet->data << std::endl;
                 enet_packet_destroy(event.packet); // パケットの解放
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:

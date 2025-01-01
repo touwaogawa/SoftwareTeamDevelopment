@@ -7,8 +7,8 @@ public:
     virtual ~Scene();
     virtual bool Load() = 0;
 
-    void Start();
-    void Update(bool& exitFrag);
+    virtual void Start();
+    virtual void Update(bool& exitFrag);
     virtual void AddGameObject(class GameObject* gameObject);
     void RemoveGameObject(class GameObject* gameObject);
 
@@ -23,8 +23,6 @@ protected:
     std::vector<class GameObject*> mRootObjects;
     std::vector<class GameObject*> mGameObjects;
     void RemoveAllObject();
-    virtual void BeforeUpdateGameObject() {};
-    virtual void AfterUpdateGameObject() {};
 
 private:
     void UpdateGameObjects();

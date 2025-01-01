@@ -15,14 +15,10 @@ bool TitleScene::Load()
 {
     return true;
 }
-
-void TitleScene::BeforeUpdateGameObject()
+void TitleScene::Update(bool& exitFrag)
 {
     ProccessInput();
-}
-
-void TitleScene::AfterUpdateGameObject()
-{
+    Scene::Update(exitFrag);
 }
 
 bool TitleScene::ProccessInput()

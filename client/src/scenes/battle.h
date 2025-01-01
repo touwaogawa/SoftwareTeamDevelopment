@@ -9,6 +9,8 @@ public:
     ~BattleScene() override;
     bool Load() override;
 
+    void Update(bool& exitFrag) override;
+
     void AddGameObject(class GameObject* gameObject) override;
 
     class Stage* GetStage() const;
@@ -20,8 +22,7 @@ private:
     std::vector<class Player*> mPlayers;
     class Player* mPlayer;
     class Stage* mStage;
-    void BeforeUpdateGameObject() override;
-    void AfterUpdateGameObject() override;
+
     bool ProccessInput();
     void ProccessNetowork();
 };
