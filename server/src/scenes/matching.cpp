@@ -72,11 +72,18 @@ bool MatchingScene::ProccessNetowork()
                 break;
             case ENET_EVENT_TYPE_RECEIVE: {
                 std::cout << "Received packet from client: " << (char*)event.packet->data << std::endl;
-                // 受信したパケットをそのままブロードキャスト
-                enet_host_broadcast(server, 0, event.packet);
+
+                // 受信パケットのデータを新しいパケットにコピー
+                ENetPacket* newPacket = enet_packet_create(
+                    event.packet->data,
+                    event.packet->dataLength,
+                    ENET_PACKET_FLAG_RELIABLE);
+
+                // 新しいパケットをブロードキャスト
+                enet_host_broadcast(server, 0, newPacket);
 
                 // パケットを解放（再送信後）
-                // enet_packet_destroy(event.packet);
+                enet_packet_destroy(event.packet);
             } break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 std::cout << "A client disconnected." << std::endl;

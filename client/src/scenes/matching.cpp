@@ -61,7 +61,6 @@ bool MatchingScene::ProccessInput()
             // サーバーにメッセージを送信
             const char* message = "Hello, server!";
             ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-            mPendingPakets.push(std::make_pair(currentFrame, packet));
             if (enet_peer_send(peer, 0, packet) < 0) {
                 std::cerr << "Failed to send packet!" << std::endl;
             }
@@ -71,7 +70,6 @@ bool MatchingScene::ProccessInput()
             // サーバーにメッセージを送信
             const char* message = "BBBB, server!";
             ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-            mPendingPakets.push(std::make_pair(currentFrame, packet));
             if (enet_peer_send(peer, 0, packet) < 0) {
                 std::cerr << "Failed to send packet!" << std::endl;
             }
@@ -87,7 +85,6 @@ bool MatchingScene::ProccessInput()
 
 bool MatchingScene::ProccessNetowork()
 {
-    DestroyPackets();
     switch (mMatchingState) {
     case MatchingState::Init:
         client = enet_host_create(
@@ -158,22 +155,6 @@ bool MatchingScene::ProccessNetowork()
         std::cout << "MatchingState error" << std::endl;
         break;
     }
-    return true;
-}
 
-void MatchingScene::DestroyPackets()
-{
-    while (!mPendingPakets.empty() && mPendingPakets.front().first < currentFrame - 2) {
-        std::cout << "dest" << std::endl;
-        ENetPacket* p = mPendingPakets.front().second;
-        std::cout << "dest2" << std::endl;
-        if (p == nullptr) {
-            std::cerr << "Error: Attempting to destroy a null packet!" << std::endl;
-        } else {
-            enet_packet_destroy(p);
-        }
-        std::cout << "dest3" << std::endl;
-        mPendingPakets.pop();
-        std::cout << "dest4" << std::endl;
-    }
+    return true;
 }

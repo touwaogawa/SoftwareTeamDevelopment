@@ -26,7 +26,4 @@ private:
     ENetAddress address;
     ENetHost* client;
     ENetPeer* peer;
-
-    void DestroyPackets();
-    std::queue<std::pair<int, ENetPacket*>> mPendingPakets;
 };
