@@ -5,12 +5,15 @@
 #include "heroMove.h"
 #include "rider.h"
 
-Hero::Hero(Scene* scene, Transform* parent, HeroBaseStatus heroBaseStatus)
+Hero::Hero(Scene* scene, Transform* parent, HeroInfo heroInfo)
     : GameObject(scene, parent, new HeroMove(this))
-    , mBey(new Bey(mScene, mTransform, BeyType::Shuriken))
-    , mRider(new Rider(mScene, mTransform, RiderType::BaseHuman))
-    , mBaseStatus(heroBaseStatus)
+    , mHeroInfo(heroInfo)
+    , mRider(new Rider(mScene, mTransform, mHeroInfo.riderType))
+    , mBey(new Bey(mScene, mTransform, mHeroInfo.beyType))
 {
+    // 足した答え
+    mBaseStatus.gravity = 9.8f;
+    // , mBaseStatus(heroBaseStatus)
 }
 
 Hero::~Hero()

@@ -8,6 +8,16 @@
 Rider::Rider(Scene* scene, Transform* parent, RiderType riderType)
     : GameObject(scene, parent, new RiderMove(this), GameObjectRenderType::Mesh3D, RenderFileSelection(riderType))
 {
+    switch (riderType) {
+    case RiderType::BaseHuman:
+        mRiderBaseStatus = {
+            50.0f
+        };
+        break;
+    default:
+        std::cout << "RiderType error" << std::endl;
+        break;
+    }
 }
 
 Rider::~Rider()

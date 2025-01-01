@@ -2,6 +2,9 @@
 
 #include "../../../../utils/src/math.h"
 #include "../../gameObject.h"
+#include "bey.h"
+#include "rider.h"
+
 enum class HeroState {
     Idle,
     Walking,
@@ -29,9 +32,14 @@ struct HeroCurrentStatus {
     Vector2 moveAxis = Vector2(0.0f, 0.0f); // 向いている方向(地面と水平方向)
     float speed      = 0.0f;
 };
+
+struct HeroInfo {
+    RiderType riderType;
+    BeyType beyType;
+};
 class Hero : public GameObject {
 public:
-    Hero(Scene* scene, Transform* parent, HeroBaseStatus heroBaseStatus = HeroBaseStatus());
+    Hero(Scene* scene, Transform* parent, HeroInfo heroInfo);
     ~Hero() override;
 
     HeroCurrentStatus mCurrentStatus;
@@ -45,11 +53,12 @@ public:
     float GetMass() const;
     float GetGravity() const;
 
-    class Bey* GetBey() const;
-    class Rider* GetRider() const;
+    Bey* GetBey() const;
+    Rider* GetRider() const;
 
 private:
-    class Bey* mBey;
-    class Rider* mRider;
+    HeroInfo mHeroInfo;
+    Rider* mRider;
+    Bey* mBey;
     HeroBaseStatus mBaseStatus;
 };

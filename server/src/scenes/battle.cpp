@@ -1,10 +1,11 @@
 #include "battle.h"
+#include "../../../common/src/gameScripts/hero/bey.h"
+#include "../../../common/src/gameScripts/hero/rider.h"
 #include "../../../common/src/gameScripts/player.h"
 #include "../../../common/src/gameScripts/stage/stage.h"
 #include "../../../common/src/sceneManager.h"
 #include "../../../utils/src/input.h"
 #include <iostream>
-
 BattleScene::BattleScene(int playerNum)
     : Scene("BattleScene")
     , mPlayerNum(playerNum)
@@ -17,7 +18,8 @@ BattleScene::~BattleScene()
 bool BattleScene::Load()
 {
     for (int i = 0; i < mPlayerNum; i++) {
-        mPlayers.push_back(new Player(this, nullptr, i, &currentFrame));
+        PlayerInfo playerInfo(i, "playerName", RiderType::BaseHuman, BeyType::Shuriken);
+        mPlayers.push_back(new Player(this, playerInfo, &currentFrame));
     }
     mStage = new Stage(this, nullptr);
     return true;

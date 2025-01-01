@@ -22,7 +22,8 @@ BattleScene::~BattleScene()
 bool BattleScene::Load()
 {
     for (int i = 0; i < mPlayerNum; i++) {
-        mPlayers.push_back(new Player(this, nullptr, i, &currentFrame));
+        PlayerInfo playerInfo(i, "playerName", RiderType::BaseHuman, BeyType::Shuriken);
+        mPlayers.push_back(new Player(this, playerInfo, &currentFrame));
     }
     mPlayer = mPlayers[mMyPlayerID];
     mStage  = new Stage(this, nullptr);
