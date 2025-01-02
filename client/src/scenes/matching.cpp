@@ -37,10 +37,10 @@ bool MatchingScene::ProccessInput()
     }
     int playerNum = 2;
     if (Input::GetKeyDown(SDL_SCANCODE_0)) {
-        SceneManager::LoadScene(new BattleScene(0, playerNum));
+        // SceneManager::LoadScene(new BattleScene(0, playerNum));
     }
     if (Input::GetKeyDown(SDL_SCANCODE_1)) {
-        SceneManager::LoadScene(new BattleScene(1, playerNum));
+        // SceneManager::LoadScene(new BattleScene(1, playerNum));
     }
     // if (Input::GetKeyDown(SDL_SCANCODE_2)) {
     //     SceneManager::LoadScene(new BattleScene(2, playerNum));
@@ -84,25 +84,25 @@ bool MatchingScene::ProccessNetowork()
 {
     switch (mMatchingState) {
     case MatchingState::Init:
-        client = enet_host_create(
+        mClient = enet_host_create(
             NULL,        // IPアドレスは自動選択
             1,           // 1接続のみ
             2,           // チャネル数
             57600, 14400 // 最大送受信帯域幅
         );
 
-        if (client == NULL) {
+        if (mClient == NULL) {
             std::cerr << "Failed to create ENet client!" << std::endl;
             return false;
         }
 
         // サーバーのアドレス設定
-        enet_address_set_host(&address, "127.0.0.1"); // サーバーのIPアドレス
-        address.port = 1234;
+        enet_address_set_host(&mAddress, "127.0.0.1"); // サーバーのIPアドレス
+        mAddress.port = 1234;
 
         // サーバーに接続
-        peer = enet_host_connect(client, &address, 2, 0);
-        if (peer == NULL) {
+        mPeer = enet_host_connect(mClient, &mAddress, 2, 0);
+        if (mPeer == NULL) {
             std::cerr << "No available peers for initiating an connection!" << std::endl;
             return false;
         }
@@ -111,7 +111,7 @@ bool MatchingScene::ProccessNetowork()
         break;
     case MatchingState::Connecting: {
         ENetEvent event;
-        while (enet_host_service(client, &event, 0) > 0) {
+        while (enet_host_service(mClient, &event, 0) > 0) {
             switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 std::cout << "Connected to server!" << std::endl;
@@ -131,24 +131,46 @@ bool MatchingScene::ProccessNetowork()
     } break;
     case MatchingState::Connected: {
         ENetEvent event;
-        while (enet_host_service(client, &event, 0) > 0) {
+        while (enet_host_service(mClient, &event, 0) > 0) {
             switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 std::cout << "Connected to server!" << std::endl;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 switch (PacketData::RecognizePacketDatatype(event.packet)) {
-                case PacketDataType::Init: {
+                case PacketDataType::MatchingInit: {
                     IDInitData idInitData;
                     idInitData.LoadPacket(event.packet);
-                    std::cout << "idInitData.id" << idInitData.id << std::endl;
+                    myPlayerId = idInitData.id;
+                    std::cout << "idInitData.id" << myPlayerId << std::endl;
+                    PlayerInfo playerInfo(myPlayerId, "name", RiderType::BaseHuman, BeyType::Shuriken);
+                    PlayerInfoData playerInfoData;
+                    playerInfoData.playerInfo = playerInfo;
+                    ENetPacket* packet        = playerInfoData.CreatePacket();
+                    if (enet_peer_send(mPeer, 0, packet) < 0) {
+                        std::cerr << "Failed to send packet!" << std::endl;
+                    }
+
+                } break;
+                case PacketDataType::PlayerInfo: {
+                    PlayerInfoData playerInfoData;
+                    playerInfoData.LoadPacket(event.packet);
+                    int id = playerInfoData.playerInfo.id;
+                    std::cout << "recv data id : " << id << std::endl;
+                    mPlayerInfos.push_back(playerInfoData.playerInfo);
+
+                } break;
+                case PacketDataType::StartBattle: {
+                    std::cout << "start battle" << std::endl;
+                    BattleScene* battleScene = new BattleScene(myPlayerId, mPlayerInfos.size(), mPlayerInfos);
+                    battleScene->SetENet(mAddress, mClient, mPeer);
+                    SceneManager::LoadScene(battleScene);
 
                 } break;
                 default:
                     std::cout << "default data" << std::endl;
                     break;
                 }
-                // std::cout << "Received message from server: " << (char*)event.packet->data << std::endl;
                 enet_packet_destroy(event.packet); // パケットの解放
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:

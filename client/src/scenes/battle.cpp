@@ -4,14 +4,16 @@
 #include "../../../common/src/gameScripts/hero/rider.h"
 #include "../../../common/src/gameScripts/player.h"
 #include "../../../common/src/gameScripts/stage/stage.h"
+#include "../../../common/src/packet.h"
 #include "../../../common/src/sceneManager.h"
 #include "../components/meshRenderer.h"
+#include <enet/enet.h>
 #include <iostream>
-
-BattleScene::BattleScene(int myPlayerID, int playerNum)
+BattleScene::BattleScene(int myPlayerID, int playerNum, std::vector<PlayerInfo> playerInfos)
     : Scene("BattleScene")
     , mPlayerNum(playerNum)
     , mMyPlayerID(myPlayerID)
+    , mPlayerInfos(playerInfos)
 {
 }
 
@@ -22,13 +24,19 @@ BattleScene::~BattleScene()
 bool BattleScene::Load()
 {
     for (int i = 0; i < mPlayerNum; i++) {
-        PlayerInfo playerInfo(i, "playerName", RiderType::BaseHuman, BeyType::Shuriken);
-        mPlayers.push_back(new Player(this, playerInfo, &currentFrame));
+        mPlayers.push_back(new Player(this, mPlayerInfos[i], &currentFrame));
     }
     mPlayer = mPlayers[mMyPlayerID];
     mStage  = new Stage(this, nullptr);
 
     return true;
+}
+
+void BattleScene::SetENet(ENetAddress address, ENetHost* client, ENetPeer* peer)
+{
+    mAddress = address;
+    mClient  = client;
+    mPeer    = peer;
 }
 void BattleScene::Update(bool& exitFrag)
 {
@@ -81,10 +89,59 @@ bool BattleScene::ProccessInput()
         currentFrame
     };
     mPlayer->commandBuffer.push_front(commandData);
-
+    BattleCommandData bcd;
+    bcd.id             = mMyPlayerID;
+    bcd.commandData    = commandData;
+    ENetPacket* packet = bcd.CreatePacket();
+    if (enet_peer_send(mPeer, 0, packet) < 0) {
+        std::cerr << "Failed to send packet!!" << std::endl;
+    }
     return true;
 }
 
-void BattleScene::ProccessNetowork()
+bool BattleScene::ProccessNetowork()
 {
+    switch (mBattleState) {
+    case BattleState::CountDown:
+        std::cout << "BattleScene ContDown" << std::endl;
+        std::cout << "my Id " << mMyPlayerID << std::endl;
+        mBattleState = BattleState::Battle;
+        break;
+    case BattleState::Battle: {
+        ENetEvent event;
+        while (enet_host_service(mClient, &event, 0) > 0) {
+            switch (event.type) {
+            case ENET_EVENT_TYPE_CONNECT:
+                std::cout << "Connected to server!" << std::endl;
+                break;
+            case ENET_EVENT_TYPE_RECEIVE:
+                switch (PacketData::RecognizePacketDatatype(event.packet)) {
+                case PacketDataType::BattleCommand: {
+                    std::cout << "recv command" << std::endl;
+                    BattleCommandData battleCommandData;
+                    battleCommandData.LoadPacket(event.packet);
+                    std::cout << battleCommandData.id << std::endl;
+                    std::cout << mMyPlayerID << std::endl;
+                    // コマンド追加
+                    if (battleCommandData.id != mMyPlayerID)
+                        mPlayers[battleCommandData.id]->commandBuffer.push_back(battleCommandData.commandData);
+                } break;
+                default:
+                    std::cout << "default data" << std::endl;
+                    break;
+                }
+                enet_packet_destroy(event.packet); // パケットの解放
+                break;
+            case ENET_EVENT_TYPE_DISCONNECT:
+                std::cout << "Disconnected from server." << std::endl;
+                return false;
+            default:
+                break;
+            }
+        }
+    } break;
+    default:
+        break;
+    }
+    return true;
 }

@@ -43,7 +43,7 @@ bool Game::Init()
 
 void Game::RunLoop()
 {
-    SceneManager::LoadScene(new MatchingScene());
+    SceneManager::LoadScene(new MatchingScene(3));
     bool gameFrag = true;
     while (gameFrag) {
         bool sceneFrag = true;

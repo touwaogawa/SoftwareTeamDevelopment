@@ -1,6 +1,13 @@
 #include "player.h"
 #include "hero/hero.h"
 #include "playerMove.h"
+PlayerInfo::PlayerInfo()
+    : id(0)
+    , name("player")
+{
+    heroInfo.riderType = RiderType::BaseHuman;
+    heroInfo.beyType   = BeyType::Shuriken;
+}
 PlayerInfo::PlayerInfo(int p_id, const char p_name[8], RiderType p_riderType, BeyType p_beyType)
     : id(p_id)
 {

@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../common/src/gameScripts/player.h"
 #include "../../../common/src/scene.h"
 #include <enet/enet.h>
 #include <queue>
@@ -8,6 +9,7 @@ enum class MatchingState {
     Init,
     Connecting,
     Connected,
+    MatchingStateNum
 };
 
 class MatchingScene : public Scene {
@@ -20,11 +22,15 @@ public:
 
 private:
     MatchingState mMatchingState;
+
+    // int battleId;
+    ENetAddress mAddress;
+    ENetHost* mClient;
+    ENetPeer* mPeer;
+    int myPlayerId;
+
+    std::vector<PlayerInfo> mPlayerInfos;
+
     bool ProccessInput();
     bool ProccessNetowork();
-
-    int battleId;
-    ENetAddress address;
-    ENetHost* client;
-    ENetPeer* peer;
 };

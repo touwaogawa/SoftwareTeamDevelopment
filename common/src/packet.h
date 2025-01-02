@@ -1,11 +1,16 @@
 #pragma once
+#include "commandData.h"
+#include "gameScripts/player.h"
 #include <cstring>
 #include <enet/enet.h>
 #include <iostream>
 
 enum class PacketDataType : uint8_t {
-    Init,
     Message,
+    MatchingInit,
+    PlayerInfo,
+    StartBattle,
+    BattleCommand,
     INVALID,
     PacketDataTypeNum
 };
@@ -15,23 +20,41 @@ struct PacketData {
 
     PacketData(PacketDataType packetDataType);
     // 構造体をデータ化
-    virtual ENetPacket* CreatePacket() = 0;
+    virtual ENetPacket* CreatePacket();
     // データを構造体化
-    virtual void LoadPacket(ENetPacket* packet) = 0;
+    virtual void LoadPacket(ENetPacket* packet);
     // パケットの種類を判別
     static PacketDataType RecognizePacketDatatype(ENetPacket* packet);
 };
 
 struct IDInitData : public PacketData {
     int id;
+
     IDInitData();
     ENetPacket* CreatePacket() override;
     void LoadPacket(ENetPacket* packet) override;
 };
 struct MessageData : public PacketData {
     char* message;
+
     MessageData();
     ~MessageData();
+    ENetPacket* CreatePacket() override;
+    void LoadPacket(ENetPacket* packet) override;
+};
+
+struct PlayerInfoData : public PacketData {
+    PlayerInfo playerInfo;
+
+    PlayerInfoData();
+    ENetPacket* CreatePacket() override;
+    void LoadPacket(ENetPacket* packet) override;
+};
+struct BattleCommandData : public PacketData {
+    int id;
+    CommandData commandData;
+
+    BattleCommandData();
     ENetPacket* CreatePacket() override;
     void LoadPacket(ENetPacket* packet) override;
 };
