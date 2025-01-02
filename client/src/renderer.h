@@ -7,17 +7,16 @@
 
 class Renderer {
 public:
-    Renderer();
-    ~Renderer();
     static bool Init(float window_w, float window_h);
     static void ShutDown();
 
-    bool Load();
-    void Draw();
-    class Mesh* GetMesh(const std::string& fileName);
-    void AddMeshRenderer(class MeshRenderer* meshRenderer);
-    void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
-    void SetViewMatrix(const Matrix4& view) { mView = view; }
+    static bool Load();   // シーンの最初で呼び出し
+    static void UnLoad(); // シーンの終了で呼び出し
+    static void Draw();
+    static class Mesh* GetMesh(const std::string& fileName);
+    static void AddMeshRenderer(class MeshRenderer* meshRenderer);
+    static void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
+    static void SetViewMatrix(const Matrix4& view) { mView = view; }
 
 private:
     static SDL_Window* mWindow;
@@ -26,15 +25,10 @@ private:
     static float mWindowWidth;
     static float mWindowHeight;
 
-    // シェーダ
-    class Shader* mMeshShader;
+    static class Shader* mMeshShader;
+    static std::unordered_map<std::string, class Mesh*> mMeshes;
+    static std::vector<class MeshRenderer*> mMeshRenderers;
 
-    // メッシュ
-    std::unordered_map<std::string, class Mesh*> mMeshes;
-
-    // メッシュレンダラー
-    std::vector<class MeshRenderer*> mMeshRenderers;
-
-    Matrix4 mView;
-    Matrix4 mProjection;
+    static Matrix4 mView;
+    static Matrix4 mProjection;
 };

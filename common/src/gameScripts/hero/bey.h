@@ -1,25 +1,28 @@
 #pragma once
 #include "../../../../common/src/gameObject.h"
+#include <string>
+
+enum class BeyType {
+    Shuriken,
+    BeyTypeNum
+};
+
+struct BeyBaseStatus {
+    float walkAcceleration = 0.05f;  // 歩行加速
+    float maxWalkSpeed     = 0.1f;   // 最大歩行スピード
+    float initialDushPower = 10.0f;  // ダッシュ初速度
+    float DushPower        = 5.0f;   // ダッシュ加速量
+    float maxRunSpeed      = 0.25f;  // 最大ダッシュ速度
+    float traction         = 0.1f;   // 地上抵抗
+    float mass             = 100.0f; // 質量
+};
 
 class Bey : public GameObject {
 public:
-    Bey(class Scene* scene, class Transform* parent,
-        float mass             = 1.0f,
-        float walkAcceleration = 1.0f,
-        float maxWalkSpeed     = 1.0f,
-        float initialDushSpeed = 1.0f,
-        float dushAcceleration = 1.0f,
-        float maxRunSpeed      = 1.0f,
-        float traction         = 1.0f);
+    Bey(class Scene* scene, class Transform* parent, BeyType beyType);
     ~Bey() override;
 
 private:
-    float mMass;             // 質量
-    float mWalkAcceleration; // 歩行加速
-    float mMaxWalkSpeed;     // 最大歩行スピード
-    float mInitialDushSpeed; // ダッシュ初速度
-    float mDushAcceleration; // ダッシュ加速量
-    float mMaxRunSpeed;      // 最大ダッシュ速度
-    float mTraction;         // 地上抵抗
-    class MeshRenderer* mMeshRenderer;
+    std::string RenderFileSelection(BeyType beyType);
+    BeyBaseStatus mBeyBaseStatus;
 };

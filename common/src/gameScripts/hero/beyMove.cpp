@@ -1,5 +1,5 @@
 #include "beyMove.h"
-#include "../../../../client/src/beySmashEngine.h"
+#include "../../beySmashEngine.h"
 #include "bey.h"
 BeyMove::BeyMove(GameObject* owner)
     : Behaviour(owner)

@@ -13,32 +13,24 @@ enum class BattleState {
 
 class BattleScene : public Scene {
 public:
-    BattleScene(int myPlayerId, int playerNum, std::vector<PlayerInfo> playerInfos);
+    BattleScene(int playerNum, std::vector<PlayerInfo> playerInfos);
     ~BattleScene() override;
     bool Load() override;
-    void SetENet(ENetAddress address, ENetHost* client, ENetPeer* peer);
-
+    void SetENet(ENetAddress address, ENetHost* Server);
     void Update(bool& exitFrag) override;
-
-    void AddGameObject(class GameObject* gameObject) override;
-
     class Stage* GetStage() const;
     int GetPlayerNum() const;
 
 private:
     BattleState mBattleState = BattleState::CountDown;
     const int mPlayerNum;
-    const int mMyPlayerID;
     std::vector<class Player*> mPlayers;
+    class Stage* mStage;
+
+    std::vector<PlayerInfo> mPlayerInfos;
 
     ENetAddress mAddress;
-    ENetHost* mClient;
-    ENetPeer* mPeer;
-
-    std::vector<struct PlayerInfo> mPlayerInfos;
-
-    class Player* mPlayer;
-    class Stage* mStage;
+    ENetHost* mServer;
 
     bool ProccessInput();
     bool ProccessNetowork();
