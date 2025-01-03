@@ -174,3 +174,31 @@ void BattleCommandData::LoadPacket(ENetPacket* packet)
     // commandData を読み取る
     memcpy(&commandData, data, sizeof(commandData));
 }
+
+CurrentFrameData::CurrentFrameData()
+    : PacketData(PacketDataType::CurrentFrame)
+    , currentFrame(0)
+{
+}
+ENetPacket* CurrentFrameData::CreatePacket()
+{
+    size_t dataSize = sizeof(mPacketDataType) + sizeof(currentFrame);
+    uint8_t* buffer = new uint8_t[dataSize];
+    uint8_t* p      = buffer;
+    memcpy(p, &mPacketDataType, sizeof(mPacketDataType));
+    p += sizeof(mPacketDataType);
+    memcpy(p, &currentFrame, sizeof(currentFrame));
+    ENetPacket* packet = enet_packet_create(buffer, dataSize, ENET_PACKET_FLAG_RELIABLE);
+    delete[] buffer;
+
+    return packet;
+}
+void CurrentFrameData::LoadPacket(ENetPacket* packet)
+{
+    uint8_t* data = packet->data;
+
+    // mPacketDataType を読み取る
+    memcpy(&mPacketDataType, data, sizeof(mPacketDataType));
+    data += sizeof(mPacketDataType);
+    memcpy(&currentFrame, data, sizeof(currentFrame));
+}

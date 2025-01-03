@@ -16,6 +16,12 @@ MeshRenderer::MeshRenderer(GameObject* owner)
 {
     Renderer::AddMeshRenderer(this);
 }
+MeshRenderer::MeshRenderer(GameObject* owner, const std::string& fileName)
+    : Component(owner)
+{
+    Renderer::AddMeshRenderer(this);
+    Load(fileName);
+}
 MeshRenderer::~MeshRenderer()
 {
     Renderer::RemoveMeshRenderer(this);

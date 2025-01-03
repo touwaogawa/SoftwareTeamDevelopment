@@ -5,12 +5,10 @@
 #include "scene.h"
 #include <algorithm>
 
-GameObject::GameObject(Scene* scene, Transform* parent, Behaviour* behaviour, GameObjectRenderType gameObjectRenderType, std::string renderFile)
+GameObject::GameObject(Scene* scene, Transform* parent, Behaviour* behaviour)
     : mScene(scene)
     , mTransform(new Transform(this, parent))
     , mBehaviour(behaviour)
-    , mGameObjectRenderType(gameObjectRenderType)
-    , mRenderFile(renderFile)
 {
     AddComponent(mTransform);
     if (mTransform->GetParent() == nullptr) {
@@ -70,12 +68,4 @@ void GameObject::RemoveComponent(Component* component)
 {
     auto end = std::remove(mComponents.begin(), mComponents.end(), component);
     mComponents.erase(end, mComponents.end());
-}
-GameObjectRenderType GameObject::GetRenderType() const
-{
-    return mGameObjectRenderType;
-}
-std::string GameObject::GetRenderFile() const
-{
-    return mRenderFile;
 }

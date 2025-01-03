@@ -9,7 +9,8 @@ public:
 
     virtual void Start();
     virtual void Update(bool& exitFrag);
-    virtual void AddGameObject(class GameObject* gameObject);
+
+    void AddGameObject(class GameObject* gameObject);
     void RemoveGameObject(class GameObject* gameObject);
 
     void AddRootObject(class GameObject* gameObject);
@@ -25,6 +26,7 @@ protected:
     void RemoveAllObject();
 
 private:
-    void UpdateGameObjects();
-    void LateUpdateGameObjects();
+    void StartGameObjectsFromRoot(class GameObject* rootObject);
+    void UpdateGameObjectsFromRoot(class GameObject* rootObject);
+    void LateUpdateGameObjectsFromRoot(class GameObject* rootObject);
 };

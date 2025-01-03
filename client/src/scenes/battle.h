@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../common/src/gameScripts/hero/hero.h"
-#include "../../../common/src/gameScripts/player.h"
 #include "../../../common/src/scene.h"
+#include "../gameObjects/hero/hero.h"
+#include "../gameObjects/player.h"
 #include <enet/enet.h>
 #include <vector>
 
@@ -20,8 +20,6 @@ public:
 
     void Update(bool& exitFrag) override;
 
-    void AddGameObject(class GameObject* gameObject) override;
-
     class Stage* GetStage() const;
     int GetPlayerNum() const;
 
@@ -29,7 +27,7 @@ private:
     BattleState mBattleState = BattleState::CountDown;
     const int mPlayerNum;
     const int mMyPlayerID;
-    std::vector<class Player*> mPlayers;
+    std::vector<class Player_C*> mPlayers;
 
     ENetAddress mAddress;
     ENetHost* mClient;
@@ -37,8 +35,8 @@ private:
 
     std::vector<struct PlayerInfo> mPlayerInfos;
 
-    class Player* mPlayer;
-    class Stage* mStage;
+    class Player_C* mPlayer;
+    class Stage_C* mStage;
 
     bool ProccessInput();
     bool ProccessNetowork();

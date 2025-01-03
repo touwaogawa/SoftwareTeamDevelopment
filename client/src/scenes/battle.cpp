@@ -1,14 +1,15 @@
 #include "battle.h"
 #include "../../../common/src/beySmashEngine.h"
-#include "../../../common/src/gameScripts/hero/bey.h"
-#include "../../../common/src/gameScripts/hero/rider.h"
-#include "../../../common/src/gameScripts/player.h"
-#include "../../../common/src/gameScripts/stage/stage.h"
 #include "../../../common/src/packet.h"
 #include "../../../common/src/sceneManager.h"
 #include "../components/meshRenderer.h"
+#include "../gameObjects/hero/bey.h"
+#include "../gameObjects/hero/rider.h"
+#include "../gameObjects/player.h"
+#include "../gameObjects/stage/stage.h"
 #include <enet/enet.h>
 #include <iostream>
+
 BattleScene::BattleScene(int myPlayerID, int playerNum, std::vector<PlayerInfo> playerInfos)
     : Scene("BattleScene")
     , mPlayerNum(playerNum)
@@ -23,11 +24,13 @@ BattleScene::~BattleScene()
 }
 bool BattleScene::Load()
 {
+    std::cerr << "playerNum: " << mPlayerNum << std::endl;
+
     for (int i = 0; i < mPlayerNum; i++) {
-        mPlayers.push_back(new Player(this, mPlayerInfos[i], &currentFrame));
+        mPlayers.push_back(new Player_C(this, mPlayerInfos[i], &currentFrame));
     }
     mPlayer = mPlayers[mMyPlayerID];
-    mStage  = new Stage(this, nullptr);
+    mStage  = new Stage_C(this, nullptr);
 
     return true;
 }
@@ -43,29 +46,6 @@ void BattleScene::Update(bool& exitFrag)
     ProccessNetowork();
     ProccessInput();
     Scene::Update(exitFrag);
-}
-void BattleScene::AddGameObject(GameObject* gameObject)
-{
-    mGameObjects.push_back(gameObject);
-    MeshRenderer* mr;
-    switch (gameObject->GetRenderType()) {
-    case GameObjectRenderType::NON_Render:
-        // std::cout << "GameObjectRenderType::Non_Render" << std::endl;
-        break;
-    case GameObjectRenderType::Mesh3D:
-        // std::cout << "GameObjectRenderType::Mesh3D :" << gameObject->GetRenderFile() << std::endl;
-        mr = new MeshRenderer(gameObject);
-        mr->Load(gameObject->GetRenderFile());
-        gameObject->AddComponent(mr);
-        break;
-    case GameObjectRenderType::Sprite:
-        /* code */
-        break;
-
-    default:
-        std::cout << "GameObjectRenderType error :" << std::endl;
-        break;
-    }
 }
 
 Stage* BattleScene::GetStage() const
@@ -116,15 +96,21 @@ bool BattleScene::ProccessNetowork()
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 switch (PacketData::RecognizePacketDatatype(event.packet)) {
+                case PacketDataType::CurrentFrame: {
+                    CurrentFrameData currentFrameData;
+                    currentFrameData.LoadPacket(event.packet);
+                    // サーバーのフレームと同じフレームに更新
+                    currentFrame = currentFrameData.currentFrame;
+                } break;
                 case PacketDataType::BattleCommand: {
-                    std::cout << "recv command" << std::endl;
+                    // std::cout << "recv command" << std::endl;
                     BattleCommandData battleCommandData;
                     battleCommandData.LoadPacket(event.packet);
-                    std::cout << battleCommandData.id << std::endl;
-                    std::cout << mMyPlayerID << std::endl;
+                    // std::cout << battleCommandData.id << std::endl;
+                    // std::cout << mMyPlayerID << std::endl;
                     // コマンド追加
                     if (battleCommandData.id != mMyPlayerID)
-                        mPlayers[battleCommandData.id]->commandBuffer.push_back(battleCommandData.commandData);
+                        mPlayers[battleCommandData.id]->commandBuffer.push_front(battleCommandData.commandData);
                 } break;
                 default:
                     std::cout << "default data" << std::endl;

@@ -27,7 +27,7 @@ bool Game::Init()
     );
 
     if (!window) {
-        std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        std::cerr << "SDL_SreateWindow Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
         return false;
     }
@@ -43,11 +43,12 @@ bool Game::Init()
 
 void Game::RunLoop()
 {
-    SceneManager::LoadScene(new MatchingScene(3));
+    SceneManager::LoadScene(new MatchingScene(1));
     bool gameFrag = true;
     while (gameFrag) {
         bool sceneFrag = true;
         SceneManager::AdoptSceneChange();
+        SceneManager::GetCurrentScene()->Start();
         while (sceneFrag) {
             // std::cout << "1" << std::endl;
             Input::UpdateInputStatus();

@@ -78,6 +78,8 @@
         "xtree": "cpp",
         "deque": "cpp",
         "random": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "ranges": "cpp",
+        "span": "cpp"
     }
 }

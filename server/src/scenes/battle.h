@@ -1,7 +1,6 @@
 #pragma once
-#include "../../../common/src/gameScripts/hero/hero.h"
-#include "../../../common/src/gameScripts/player.h"
 #include "../../../common/src/scene.h"
+#include "../gameObjects/player.h"
 #include <enet/enet.h>
 #include <vector>
 
@@ -24,7 +23,7 @@ public:
 private:
     BattleState mBattleState = BattleState::CountDown;
     const int mPlayerNum;
-    std::vector<class Player*> mPlayers;
+    std::vector<class Player_S*> mPlayers;
     class Stage* mStage;
 
     std::vector<PlayerInfo> mPlayerInfos;
@@ -34,4 +33,5 @@ private:
 
     bool ProccessInput();
     bool ProccessNetowork();
+    void SendCurrentFrame();
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include "../utils/src/math.h"
+#include "../../utils/src/math.h"
 struct CommandData {
     bool attack1 = false;
     bool attack2 = false;

@@ -1,5 +1,6 @@
 #include "scene.h"
 #include "../../common/src/components/behaviour.h"
+#include "../../common/src/components/transform.h"
 #include "../../common/src/gameObject.h"
 #include <algorithm>
 //
@@ -16,15 +17,18 @@ Scene::~Scene()
 }
 void Scene::Start()
 {
-    for (GameObject* gameObject : mGameObjects) {
-        if (gameObject->GetBehaviour() != nullptr)
-            gameObject->GetBehaviour()->Start();
+    for (GameObject* gameObject : mRootObjects) {
+        StartGameObjectsFromRoot(gameObject);
     }
 }
 void Scene::Update(bool& exitFrag)
 {
-    UpdateGameObjects();
-    LateUpdateGameObjects();
+    for (GameObject* gameObject : mRootObjects) {
+        UpdateGameObjectsFromRoot(gameObject);
+    }
+    for (GameObject* gameObject : mRootObjects) {
+        LateUpdateGameObjectsFromRoot(gameObject);
+    }
 }
 
 void Scene::AddGameObject(GameObject* gameObject)
@@ -64,17 +68,30 @@ void Scene::RemoveAllObject()
 }
 
 // private ######################
-void Scene::UpdateGameObjects()
+void Scene::StartGameObjectsFromRoot(GameObject* rootObject)
 {
-    for (GameObject* gameObject : mGameObjects) {
-        if (gameObject->GetBehaviour() != nullptr)
-            gameObject->GetBehaviour()->Update();
+    if (rootObject->GetBehaviour() != nullptr) {
+        rootObject->GetBehaviour()->Start();
+    }
+    for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
+        StartGameObjectsFromRoot(transform->GetOwner());
     }
 }
-void Scene::LateUpdateGameObjects()
+void Scene::UpdateGameObjectsFromRoot(GameObject* rootObject)
 {
-    for (GameObject* gameObject : mGameObjects) {
-        if (gameObject->GetBehaviour() != nullptr)
-            gameObject->GetBehaviour()->LateUpdate();
+    if (rootObject->GetBehaviour() != nullptr) {
+        rootObject->GetBehaviour()->Update();
+    }
+    for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
+        UpdateGameObjectsFromRoot(transform->GetOwner());
+    }
+}
+void Scene::LateUpdateGameObjectsFromRoot(GameObject* rootObject)
+{
+    if (rootObject->GetBehaviour() != nullptr) {
+        rootObject->GetBehaviour()->LateUpdate();
+    }
+    for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
+        LateUpdateGameObjectsFromRoot(transform->GetOwner());
     }
 }

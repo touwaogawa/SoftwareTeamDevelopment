@@ -35,43 +35,13 @@ bool MatchingScene::ProccessInput()
     if (Input::GetKeyUp(SDL_SCANCODE_ESCAPE)) {
         return false;
     }
-    int playerNum = 2;
-    if (Input::GetKeyDown(SDL_SCANCODE_0)) {
-        // SceneManager::LoadScene(new BattleScene(0, playerNum));
-    }
-    if (Input::GetKeyDown(SDL_SCANCODE_1)) {
-        // SceneManager::LoadScene(new BattleScene(1, playerNum));
-    }
-    // if (Input::GetKeyDown(SDL_SCANCODE_2)) {
-    //     SceneManager::LoadScene(new BattleScene(2, playerNum));
-    // }
-    // if (Input::GetKeyDown(SDL_SCANCODE_3)) {
-    //     SceneManager::LoadScene(new BattleScene(3, playerNum));
-    // }
     switch (mMatchingState) {
     case MatchingState::Init:
         break;
     case MatchingState::Connecting: {
     } break;
     case MatchingState::Connected: {
-        // if (Input::GetKeyDown(SDL_SCANCODE_A)) {
-        //     // サーバーにメッセージを送信
-        //     const char* message = "Hello, server!";
-        //     ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-        //     if (enet_peer_send(peer, 0, packet) < 0) {
-        //         std::cerr << "Failed to send packet!" << std::endl;
-        //     }
-        //     enet_host_flush(client); // メッセージを送信
-        // }
-        // if (Input::GetKeyDown(SDL_SCANCODE_B)) {
-        //     // サーバーにメッセージを送信
-        //     const char* message = "BBBB, server!";
-        //     ENetPacket* packet  = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-        //     if (enet_peer_send(peer, 0, packet) < 0) {
-        //         std::cerr << "Failed to send packet!" << std::endl;
-        //     }
-        //     enet_host_flush(client); // メッセージを送信
-        // }
+
     } break;
     default:
         std::cout << "MatchingState error" << std::endl;
@@ -143,7 +113,9 @@ bool MatchingScene::ProccessNetowork()
                     idInitData.LoadPacket(event.packet);
                     myPlayerId = idInitData.id;
                     std::cout << "idInitData.id" << myPlayerId << std::endl;
+                    // プレイヤーの情報仮
                     PlayerInfo playerInfo(myPlayerId, "name", RiderType::BaseHuman, BeyType::Shuriken);
+
                     PlayerInfoData playerInfoData;
                     playerInfoData.playerInfo = playerInfo;
                     ENetPacket* packet        = playerInfoData.CreatePacket();
