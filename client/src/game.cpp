@@ -3,8 +3,8 @@
 #include "../../common/src/sceneManager.h"
 #include "../../utils/src/input.h"
 #include "../../utils/src/time.h"
+#include "gameScripts/scene/title.h"
 #include "renderer.h"
-#include "scenes/title.h"
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <enet/enet.h>
