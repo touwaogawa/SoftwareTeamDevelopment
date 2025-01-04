@@ -1,5 +1,4 @@
 #pragma once
-
 class SceneManager {
 public:
     static void LoadScene(class Scene* nextScene);

@@ -3,7 +3,7 @@
 #include "../../common/src/sceneManager.h"
 #include "../../utils/src/input.h"
 #include "../../utils/src/time.h"
-#include "scenes/matching.h"
+#include "gameScripts/scenes/matching.h"
 #include <SDL2/SDL.h>
 #include <enet/enet.h>
 #include <iostream>
@@ -27,7 +27,7 @@ bool Game::Init()
     );
 
     if (!window) {
-        std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        std::cerr << "SDL_SreateWindow Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
         return false;
     }
@@ -43,11 +43,12 @@ bool Game::Init()
 
 void Game::RunLoop()
 {
-    SceneManager::LoadScene(new MatchingScene(3));
+    SceneManager::LoadScene(new MatchingScene(2));
     bool gameFrag = true;
     while (gameFrag) {
         bool sceneFrag = true;
         SceneManager::AdoptSceneChange();
+        SceneManager::GetCurrentScene()->Start();
         while (sceneFrag) {
             // std::cout << "1" << std::endl;
             Input::UpdateInputStatus();

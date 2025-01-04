@@ -1,5 +1,4 @@
 #pragma once
-
 class Component {
 public:
     explicit Component(class GameObject* owner);
