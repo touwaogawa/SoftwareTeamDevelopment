@@ -3,7 +3,7 @@
 #include "../../common/src/sceneManager.h"
 #include "../../utils/src/input.h"
 #include "../../utils/src/time.h"
-#include "scenes/matching.h"
+#include "gameScripts/scenes/matching.h"
 #include <SDL2/SDL.h>
 #include <enet/enet.h>
 #include <iostream>
@@ -43,7 +43,7 @@ bool Game::Init()
 
 void Game::RunLoop()
 {
-    SceneManager::LoadScene(new MatchingScene(1));
+    SceneManager::LoadScene(new MatchingScene(2));
     bool gameFrag = true;
     while (gameFrag) {
         bool sceneFrag = true;

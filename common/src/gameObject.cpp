@@ -1,7 +1,7 @@
 #include "gameObject.h"
 #include "component.h"
-#include "components/behaviour.h"
-#include "components/transform.h"
+#include "component/behaviour.h"
+#include "component/transform.h"
 #include "scene.h"
 #include <algorithm>
 

@@ -22,11 +22,11 @@ public:
 protected:
     std::string mName;
     std::vector<class GameObject*> mRootObjects;
-    std::vector<class GameObject*> mGameObjects;
+    std::vector<class GameObject*> mgameScripts;
     void RemoveAllObject();
 
 private:
-    void StartGameObjectsFromRoot(class GameObject* rootObject);
-    void UpdateGameObjectsFromRoot(class GameObject* rootObject);
-    void LateUpdateGameObjectsFromRoot(class GameObject* rootObject);
+    void StartgameScriptsFromRoot(class GameObject* rootObject);
+    void UpdategameScriptsFromRoot(class GameObject* rootObject);
+    void LateUpdategameScriptsFromRoot(class GameObject* rootObject);
 };

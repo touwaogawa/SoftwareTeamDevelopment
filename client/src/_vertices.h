@@ -1,5 +1,4 @@
 #pragma once
-
 float testvertices[] = {
     // 位置            // 法線
     -0.5f,

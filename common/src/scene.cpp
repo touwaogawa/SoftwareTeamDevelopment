@@ -1,7 +1,7 @@
 #include "scene.h"
-#include "../../common/src/components/behaviour.h"
-#include "../../common/src/components/transform.h"
-#include "../../common/src/gameObject.h"
+#include "component/behaviour.h"
+#include "component/transform.h"
+#include "gameObject.h"
 #include <algorithm>
 //
 #include <iostream>
@@ -18,28 +18,28 @@ Scene::~Scene()
 void Scene::Start()
 {
     for (GameObject* gameObject : mRootObjects) {
-        StartGameObjectsFromRoot(gameObject);
+        StartgameScriptsFromRoot(gameObject);
     }
 }
 void Scene::Update(bool& exitFrag)
 {
     for (GameObject* gameObject : mRootObjects) {
-        UpdateGameObjectsFromRoot(gameObject);
+        UpdategameScriptsFromRoot(gameObject);
     }
     for (GameObject* gameObject : mRootObjects) {
-        LateUpdateGameObjectsFromRoot(gameObject);
+        LateUpdategameScriptsFromRoot(gameObject);
     }
 }
 
 void Scene::AddGameObject(GameObject* gameObject)
 {
-    mGameObjects.push_back(gameObject);
+    mgameScripts.push_back(gameObject);
 }
 
 void Scene::RemoveGameObject(GameObject* gameObject)
 {
-    auto end = std::remove(mGameObjects.begin(), mGameObjects.end(), gameObject);
-    mGameObjects.erase(end, mGameObjects.end());
+    auto end = std::remove(mgameScripts.begin(), mgameScripts.end(), gameObject);
+    mgameScripts.erase(end, mgameScripts.end());
 }
 
 void Scene::AddRootObject(GameObject* gameObject)
@@ -68,30 +68,30 @@ void Scene::RemoveAllObject()
 }
 
 // private ######################
-void Scene::StartGameObjectsFromRoot(GameObject* rootObject)
+void Scene::StartgameScriptsFromRoot(GameObject* rootObject)
 {
     if (rootObject->GetBehaviour() != nullptr) {
         rootObject->GetBehaviour()->Start();
     }
     for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
-        StartGameObjectsFromRoot(transform->GetOwner());
+        StartgameScriptsFromRoot(transform->GetOwner());
     }
 }
-void Scene::UpdateGameObjectsFromRoot(GameObject* rootObject)
+void Scene::UpdategameScriptsFromRoot(GameObject* rootObject)
 {
     if (rootObject->GetBehaviour() != nullptr) {
         rootObject->GetBehaviour()->Update();
     }
     for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
-        UpdateGameObjectsFromRoot(transform->GetOwner());
+        UpdategameScriptsFromRoot(transform->GetOwner());
     }
 }
-void Scene::LateUpdateGameObjectsFromRoot(GameObject* rootObject)
+void Scene::LateUpdategameScriptsFromRoot(GameObject* rootObject)
 {
     if (rootObject->GetBehaviour() != nullptr) {
         rootObject->GetBehaviour()->LateUpdate();
     }
     for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
-        LateUpdateGameObjectsFromRoot(transform->GetOwner());
+        LateUpdategameScriptsFromRoot(transform->GetOwner());
     }
 }

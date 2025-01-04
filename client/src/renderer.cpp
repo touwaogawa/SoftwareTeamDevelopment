@@ -1,5 +1,5 @@
 #include "renderer.h"
-#include "components/meshRenderer.h"
+#include "component/meshRenderer.h"
 #include "mesh.h"
 #include "shader.h"
 #include <algorithm>
