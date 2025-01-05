@@ -7,7 +7,7 @@ public:
     static bool Init(int fps);
     // フレームごとに呼び出されるメソッド
     static void UpdateFrame();
-
+    static float GetTimeStep();
     // static auto GetTime();
 
 private:

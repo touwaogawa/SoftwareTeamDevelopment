@@ -57,7 +57,7 @@ void Game::RunLoop()
                 return;
             }
             // std::cout << "3" << std::endl;
-            SceneManager::GetCurrentScene()->Update(gameFrag);
+            SceneManager::GetCurrentScene()->Update(gameFrag, Time::GetTimeStep());
             // std::cout << "4" << std::endl;
             Time::UpdateFrame();
             // std::cout << "5" << std::endl;

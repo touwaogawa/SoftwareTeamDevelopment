@@ -35,7 +35,8 @@ void Time::UpdateFrame()
     mLastTime = mTime; // 現在の時間を次のフレームの基準に
 }
 
-// auto Time::GetTime()
-// {
-//     return mTime;
-// }
+float Time::GetTimeStep()
+{
+    std::chrono::duration<float> duration = mTime - mLastTime;
+    return duration.count();
+}
