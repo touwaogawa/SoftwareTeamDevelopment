@@ -4,8 +4,15 @@
 reactphysics3d::PhysicsCommon Physics::mPhysicsCommon;
 
 Physics::Physics()
-    : mPhysicsWorld(mPhysicsCommon.createPhysicsWorld())
 {
+    // Create the world settings
+    rp3d::PhysicsWorld::WorldSettings settings;
+    settings.defaultVelocitySolverNbIterations = 20;
+    settings.isSleepingEnabled                 = false;
+    settings.gravity                           = rp3d::Vector3(0, -9.81, 0);
+
+    // Create the physics world with your settings
+    mPhysicsWorld    = mPhysicsCommon.createPhysicsWorld(settings);
     mMyEventListener = new MyEventListener();
     mPhysicsWorld->setEventListener(mMyEventListener);
 }
@@ -26,6 +33,7 @@ void Physics::Update(float timeStep /*経過時間*/)
         rigidBody->SetTransform();
     }
     // 物理演算
+    // printf("timestep : %f\n", timeStep);
     mPhysicsWorld->update(static_cast<rp3d::decimal>(timeStep));
     // rp3d::Transfrom ->Transform
     for (RigidBody* rigidBody : mRigidBodies) {
@@ -46,8 +54,6 @@ void MyEventListener::onContact(const CallbackData& callbackData)
         const rp3d::CollisionCallback::ContactPair pair = callbackData.getContactPair(i);
         const rp3d::Collider* collider1                 = pair.getCollider1();
         const rp3d::Collider* collider2                 = pair.getCollider2();
-        const rp3d::Body* rigidBody1                    = pair.getBody1();
-        const rp3d::Body* rigidBody2                    = pair.getBody2();
         Collider* colliderComponent1                    = static_cast<Collider*>(collider1->getUserData());
         Collider* colliderComponent2                    = static_cast<Collider*>(collider2->getUserData());
 
@@ -68,6 +74,7 @@ void MyEventListener::onContact(const CallbackData& callbackData)
             std::cout << "rp3d::CollisionCallback::ContactPair::EventType error" << std::endl;
             break;
         }
+        std::cout << "collision" << std::endl;
     }
 }
 
@@ -76,13 +83,11 @@ void MyEventListener::onTrigger(const rp3d::OverlapCallback::CallbackData& callb
 
     int numPairs = callbackData.getNbOverlappingPairs();
     for (int i = 0; i < numPairs; i++) {
-        const const rp3d::OverlapCallback::OverlapPair pair = callbackData.getOverlappingPair(i);
-        const rp3d::Collider* collider1                     = pair.getCollider1();
-        const rp3d::Collider* collider2                     = pair.getCollider2();
-        const rp3d::Body* rigidBody1                        = pair.getBody1();
-        const rp3d::Body* rigidBody2                        = pair.getBody2();
-        Collider* colliderComponent1                        = static_cast<Collider*>(collider1->getUserData());
-        Collider* colliderComponent2                        = static_cast<Collider*>(collider2->getUserData());
+        const rp3d::OverlapCallback::OverlapPair pair = callbackData.getOverlappingPair(i);
+        const rp3d::Collider* collider1               = pair.getCollider1();
+        const rp3d::Collider* collider2               = pair.getCollider2();
+        Collider* colliderComponent1                  = static_cast<Collider*>(collider1->getUserData());
+        Collider* colliderComponent2                  = static_cast<Collider*>(collider2->getUserData());
 
         switch (pair.getEventType()) {
         case rp3d::OverlapCallback::OverlapPair::EventType::OverlapStart:
@@ -102,4 +107,5 @@ void MyEventListener::onTrigger(const rp3d::OverlapCallback::CallbackData& callb
             break;
         }
     }
+    std::cout << "trigger" << std::endl;
 }

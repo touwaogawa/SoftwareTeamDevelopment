@@ -10,9 +10,10 @@ RigidBody::RigidBody(GameObject* owner, rp3d::BodyType bodyType, Physics* physic
     : Component(owner)
     , mPhysics(physics)
 {
-    Transform* transform = mOwner->GetTransform();
-    SetTransform();
-    mRigidBody = mPhysics->GetPhysicsWorld()->createRigidBody(mTransform);
+    rp3d::Vector3 rp3d_pos;
+    rp3d::Quaternion rp3d_q;
+    rp3d::Transform t(rp3d_pos, rp3d_q);
+    mRigidBody = mPhysics->GetPhysicsWorld()->createRigidBody(t);
     mRigidBody->setType(bodyType);
     mPhysics->AddRigidBody(this);
 }
@@ -30,13 +31,25 @@ void RigidBody::SetTransform()
     Quaternion q         = transform->GetWorldRotation();
     rp3d::Vector3 rp3d_pos(pos.x, pos.y, pos.z);
     rp3d::Quaternion rp3d_q(q.x, q.y, q.z, q.w);
-    mTransform = rp3d::Transform(rp3d_pos, rp3d_q);
+    rp3d::Transform t(rp3d_pos, rp3d_q);
+    mRigidBody->setTransform(t);
 }
 
 void RigidBody::UpdateTransform()
 {
-    rp3d::Vector3 pos  = mTransform.getPosition();
-    rp3d::Quaternion q = mTransform.getOrientation();
-    mOwner->GetTransform()->SetWorldPosition(Vector3(pos.x, pos.y, pos.z));
-    mOwner->GetTransform()->SetWorldRotation(Quaternion(q.x, q.y, q.z, q.w));
+    rp3d::Transform t  = mRigidBody->getTransform();
+    rp3d::Vector3 pos  = t.getPosition();
+    rp3d::Quaternion q = t.getOrientation();
+    std::cout << "x: " << pos.x
+              << "y: " << pos.y
+              << "z: " << pos.z
+              << std::endl;
+    mOwner->GetTransform()->SetWorldPosition(static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
+    mOwner->GetTransform()->SetWorldRotation(Quaternion(static_cast<float>(q.x), static_cast<float>(q.y), static_cast<float>(q.z), static_cast<float>(q.w)));
+}
+
+void RigidBody::SetVA(float x, float y, float z)
+{
+    // mRigidBody->setLinearLockAxisFactor(rp3d::Vector3(static_cast<rp3d::decimal>(x), static_cast<rp3d::decimal>(y), static_cast<rp3d::decimal>(z)));
+    mRigidBody->setLinearVelocity(rp3d::Vector3(static_cast<rp3d::decimal>(x), static_cast<rp3d::decimal>(y), static_cast<rp3d::decimal>(z)));
 }

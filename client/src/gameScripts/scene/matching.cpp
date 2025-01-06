@@ -23,11 +23,11 @@ bool MatchingScene::Load()
 {
     return true;
 }
-void MatchingScene::Update(bool& exitFrag)
+void MatchingScene::Update(bool& exitFrag, float timeStep)
 {
     ProccessNetowork();
     ProccessInput();
-    Scene::Update(exitFrag);
+    Scene::Update(exitFrag, timeStep);
 }
 
 bool MatchingScene::ProccessInput()

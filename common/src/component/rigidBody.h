@@ -9,6 +9,7 @@ public:
     rp3d::RigidBody* mRigidBody;
     void SetTransform();
     void UpdateTransform();
+    void SetVA(float x, float y, float z);
 
 private:
     rp3d::Transform mTransform;

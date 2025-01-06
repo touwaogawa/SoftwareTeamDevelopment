@@ -1,4 +1,4 @@
-#include "riderMove.h" k
+#include "riderMove.h"
 #include <iostream>
 
 RiderMove::RiderMove(GameObject* owner)

@@ -42,11 +42,11 @@ void BattleScene::SetENet(ENetAddress address, ENetHost* client, ENetPeer* peer)
     mClient  = client;
     mPeer    = peer;
 }
-void BattleScene::Update(bool& exitFrag)
+void BattleScene::Update(bool& exitFrag, float timeStep)
 {
     ProccessNetowork();
     ProccessInput();
-    Scene::Update(exitFrag);
+    Scene::Update(exitFrag, timeStep);
 }
 
 Stage* BattleScene::GetStage() const

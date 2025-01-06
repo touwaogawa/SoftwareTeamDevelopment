@@ -11,7 +11,16 @@ public:
     class Behaviour* GetBehaviour() const;
 
     template <typename T>
-    T* GetComponent();
+    T* GetComponent()
+    {
+        for (Component* comp : mComponents) {
+            T* casted = dynamic_cast<T*>(comp);
+            if (casted) {
+                return casted;
+            }
+        }
+        return nullptr;
+    }
 
     void AddComponent(class Component* component);
     void RemoveComponent(class Component* component);

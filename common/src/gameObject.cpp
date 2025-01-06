@@ -47,17 +47,6 @@ Behaviour* GameObject::GetBehaviour() const
 {
     return mBehaviour;
 }
-template <typename T>
-T* GameObject::GetComponent()
-{
-    for (Component* comp : mComponents) {
-        T* casted = dynamic_cast<T*>(comp);
-        if (casted) {
-            return casted;
-        }
-    }
-    return nullptr;
-}
 
 void GameObject::AddComponent(Component* component)
 {

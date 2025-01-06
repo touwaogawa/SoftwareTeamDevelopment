@@ -33,12 +33,12 @@ void BattleScene::SetENet(ENetAddress address, ENetHost* server)
     mAddress = address;
     mServer  = server;
 }
-void BattleScene::Update(bool& exitFrag)
+void BattleScene::Update(bool& exitFrag, float timeStep)
 {
     SendCurrentFrame();
     ProccessNetowork();
     ProccessInput();
-    Scene::Update(exitFrag);
+    Scene::Update(exitFrag, timeStep);
     // SendCurrentBattleStatus();
 }
 

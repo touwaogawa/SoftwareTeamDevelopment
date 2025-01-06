@@ -10,5 +10,5 @@ Collider::Collider(GameObject* owner,
     , mRigidBody(rigidBody)
 {
     rp3d::Collider* collider = mRigidBody->addCollider(shape, offset);
-    collider->setUserData(static_cast<GameObject*>(owner));
+    collider->setUserData(static_cast<void*>(this));
 }

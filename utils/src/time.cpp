@@ -20,6 +20,7 @@ bool Time::Init(int fps)
 
 void Time::UpdateFrame()
 {
+    mLastTime = mTime; // 現在の時間を次のフレームの基準に
     // 経過時間を計測
     mTime              = std::chrono::high_resolution_clock::now();
     auto frameDuration = std::chrono::duration_cast<std::chrono::milliseconds>(mTime - mLastTime).count();
@@ -31,8 +32,6 @@ void Time::UpdateFrame()
     if (delayTime > 0) {
         SDL_Delay(delayTime); // 指定時間だけ待機
     }
-
-    mLastTime = mTime; // 現在の時間を次のフレームの基準に
 }
 
 float Time::GetTimeStep()
