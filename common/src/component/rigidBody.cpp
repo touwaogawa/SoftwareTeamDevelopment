@@ -40,10 +40,10 @@ void RigidBody::UpdateTransform()
     rp3d::Transform t  = mRigidBody->getTransform();
     rp3d::Vector3 pos  = t.getPosition();
     rp3d::Quaternion q = t.getOrientation();
-    std::cout << "x: " << pos.x
-              << "y: " << pos.y
-              << "z: " << pos.z
-              << std::endl;
+    // std::cout << "x: " << pos.x
+    //           << "y: " << pos.y
+    //           << "z: " << pos.z
+    //           << std::endl;
     mOwner->GetTransform()->SetWorldPosition(static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
     mOwner->GetTransform()->SetWorldRotation(Quaternion(static_cast<float>(q.x), static_cast<float>(q.y), static_cast<float>(q.z), static_cast<float>(q.w)));
 }

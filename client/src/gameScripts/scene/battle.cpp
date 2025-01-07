@@ -26,7 +26,7 @@ BattleScene::~BattleScene()
 }
 bool BattleScene::Load()
 {
-    std::cerr << "playerNum: " << mPlayerNum << std::endl;
+    // std::cerr << "playerNum: " << mPlayerNum << std::endl;
 
     for (int i = 0; i < mPlayerNum; i++) {
         mPlayers.push_back(new Player_C(this, mPlayerInfos[i], &currentFrame));
@@ -87,7 +87,7 @@ bool BattleScene::ProccessNetowork()
 {
     switch (mBattleState) {
     case BattleState::CountDown:
-        std::cout << "BattleScene ContDown" << std::endl;
+        // std::cout << "BattleScene ContDown" << std::endl;
         std::cout << "my Id " << mMyPlayerID << std::endl;
         mBattleState = BattleState::Battle;
         break;

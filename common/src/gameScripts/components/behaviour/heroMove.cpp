@@ -7,12 +7,12 @@
 HeroMove::HeroMove(GameObject* owner)
     : Behaviour(owner)
 {
-    std::cout << "heroMove constructor" << std::endl;
+    // std::cout << "heroMove constructor" << std::endl;
 }
 
 void HeroMove::Start()
 {
-    std::cout << "heroMove start" << std::endl;
+    // std::cout << "heroMove start" << std::endl;
     mHero        = static_cast<Hero*>(mOwner);
     RigidBody* r = mOwner->GetComponent<RigidBody>();
     if (r) {
@@ -103,8 +103,8 @@ void HeroMove::UpdatePosision()
     Vector2 ma = mHero->mCurrentStatus.moveDir;
     float cs   = mHero->mCurrentStatus.speed;
     // std::cout << "cs " << cs << std::endl;
-    std::cout << "ma_x " << ma.x << std::endl;
-    std::cout << "ma_y " << ma.y << std::endl;
+    // std::cout << "ma_x " << ma.x << std::endl;
+    // std::cout << "ma_y " << ma.y << std::endl;
     pos.x += cs * ma.x;
     pos.z += cs * ma.y;
     // mOwner->GetTransform()->SetLocalPosition(pos);

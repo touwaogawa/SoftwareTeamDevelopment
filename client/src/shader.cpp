@@ -1,4 +1,5 @@
 #include "shader.h"
+#include "../../utils/src/math.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -36,6 +37,49 @@ void Shader::Use()
 GLuint Shader::GetProgram() const
 {
     return mProgram;
+}
+
+void Shader::SetMatrixUniform(const char* name, const Matrix4& matrix)
+{
+    // Find the uniform by this name
+    GLuint loc = glGetUniformLocation(mProgram, name);
+    // Send the matrix data to the uniform
+    glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.GetAsFloatPtr());
+}
+
+void Shader::SetMatrixUniforms(const char* name, Matrix4* matrices, unsigned count)
+{
+    GLuint loc = glGetUniformLocation(mProgram, name);
+    // Send the matrix data to the uniform
+    glUniformMatrix4fv(loc, count, GL_TRUE, matrices->GetAsFloatPtr());
+}
+
+void Shader::SetVectorUniform(const char* name, const Vector3& vector)
+{
+    GLuint loc = glGetUniformLocation(mProgram, name);
+    // Send the vector data
+    glUniform3fv(loc, 1, vector.GetAsFloatPtr());
+}
+
+void Shader::SetVector2Uniform(const char* name, const Vector2& vector)
+{
+    GLuint loc = glGetUniformLocation(mProgram, name);
+    // Send the vector data
+    glUniform2fv(loc, 1, vector.GetAsFloatPtr());
+}
+
+void Shader::SetFloatUniform(const char* name, float value)
+{
+    GLuint loc = glGetUniformLocation(mProgram, name);
+    // Send the float data
+    glUniform1f(loc, value);
+}
+
+void Shader::SetIntUniform(const char* name, int value)
+{
+    GLuint loc = glGetUniformLocation(mProgram, name);
+    // Send the float data
+    glUniform1i(loc, value);
 }
 bool Shader::checkCompileErrors(GLuint shader, GLenum shaderType)
 {

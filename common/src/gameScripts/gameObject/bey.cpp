@@ -21,7 +21,7 @@ Bey::Bey(Scene* scene, Transform* parent, BeyType beyType, BeyMove* beyMove)
         std::cout << "BeyType error" << std::endl;
         break;
     }
-    std::cout << "bey constructor" << std::endl;
+    // std::cout << "bey constructor" << std::endl;
 }
 
 Bey::~Bey()

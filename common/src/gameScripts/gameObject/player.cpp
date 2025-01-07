@@ -22,7 +22,7 @@ Player::Player(Scene* scene, PlayerInfo playerInfo, const int* currentSceneFrame
     , mPlayerInfo(playerInfo)
     , mCurrentSceneFrame(currentSceneFrame)
 {
-    std::cout << "player constructor" << std::endl;
+    // std::cout << "player constructor" << std::endl;
 }
 
 Player::~Player()

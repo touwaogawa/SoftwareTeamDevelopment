@@ -15,7 +15,7 @@ Rider::Rider(Scene* scene, Transform* parent, RiderType riderType, RiderMove* ri
         std::cout << "RiderType error" << std::endl;
         break;
     }
-    std::cout << "rider constructor" << std::endl;
+    // std::cout << "rider constructor" << std::endl;
 }
 
 Rider::~Rider()

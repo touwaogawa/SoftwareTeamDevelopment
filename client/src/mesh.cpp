@@ -1,10 +1,10 @@
 #include "mesh.h"
+#include "renderer.h"
 #include <glm/glm.hpp>
 #include <iostream>
 #include <string>
 #include <tiny_obj_loader.h>
 #include <vector>
-
 Mesh::Mesh()
 {
 }
@@ -56,4 +56,36 @@ bool Mesh::LoadObjFile(const std::string& fileName)
     }
     mVertexArray = new VertexArray(vertices.data(), vertices.size(), VertexArray::Layout::PosNormTex);
     return true;
+}
+
+void Mesh::LoadTextureFile(const std::vector<std::string>& fileNames)
+{
+    for (std::string fileName : fileNames) {
+
+        Texture* t = Renderer::GetTexture(fileName);
+        if (t == nullptr) {
+            // If it's null, use the default texture
+            t = Renderer::GetTexture("../assets/textures/default.png");
+        }
+        mTextures.emplace_back(t);
+    }
+}
+void Mesh::LoadTextureFile(const std::string& fileName)
+{
+    Texture* t = Renderer::GetTexture(fileName);
+    // std::cout << "filename " << fileName << std::endl;
+    if (t == nullptr) {
+        // If it's null, use the default texture
+        t = Renderer::GetTexture("../assets/textures/default.png");
+    }
+    mTextures.emplace_back(t);
+}
+
+Texture* Mesh::GetTexture(size_t index)
+{
+    if (index < mTextures.size()) {
+        return mTextures[index];
+    } else {
+        return nullptr;
+    }
 }

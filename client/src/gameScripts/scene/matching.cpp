@@ -114,7 +114,7 @@ bool MatchingScene::ProccessNetowork()
                     myPlayerId = idInitData.id;
                     std::cout << "idInitData.id" << myPlayerId << std::endl;
                     // プレイヤーの情報仮
-                    PlayerInfo playerInfo(myPlayerId, "name", RiderType::BaseHuman, BeyType::Shuriken);
+                    PlayerInfo playerInfo(myPlayerId, "name", RiderType::BaseHuman, BeyType::Hexagram);
 
                     PlayerInfoData playerInfoData;
                     playerInfoData.playerInfo = playerInfo;

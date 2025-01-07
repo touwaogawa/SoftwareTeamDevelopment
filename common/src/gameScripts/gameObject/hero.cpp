@@ -12,7 +12,7 @@ Hero::Hero(Scene* scene, Transform* parent, Vector3 initialPos, HeroInfo heroInf
     : GameObject(scene, parent, heroMove)
     , mHeroInfo(heroInfo)
 {
-    std::cout << "hero constructor" << std::endl;
+    // std::cout << "hero constructor" << std::endl;
     mBaseStatus.gravity = 9.8f;
     mTransform->SetWorldPosition(initialPos);
     // RigidBody setting

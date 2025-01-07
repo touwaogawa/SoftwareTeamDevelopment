@@ -75,6 +75,12 @@
         "regex": "cpp",
         "stop_token": "cpp",
         "thread": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "deque": "cpp",
+        "queue": "cpp",
+        "ranges": "cpp",
+        "set": "cpp",
+        "span": "cpp",
+        "mutex": "cpp"
     }
 }

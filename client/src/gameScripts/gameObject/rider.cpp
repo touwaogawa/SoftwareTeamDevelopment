@@ -9,7 +9,7 @@ Rider_C::Rider_C(Scene* scene, Transform* parent, RiderType riderType)
     std::cout << "Rider_C constructer" << std::endl;
     switch (riderType) {
     case RiderType::BaseHuman:
-        AddComponent(new MeshRenderer(this, "../assets/models/BaseHuman.obj"));
+        AddComponent(new MeshRenderer(this, "../assets/models/BaseHuman.obj", "../assets/textures/humanColor.png"));
         break;
     default:
         std::cout << "RiderType error" << std::endl;

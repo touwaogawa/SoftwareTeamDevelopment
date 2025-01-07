@@ -4,12 +4,12 @@
 RiderMove::RiderMove(GameObject* owner)
     : Behaviour(owner)
 {
-    std::cout << "riderMove constructor" << std::endl;
+    // std::cout << "riderMove constructor" << std::endl;
 }
 
 void RiderMove::Start()
 {
-    std::cout << "riderMove start" << std::endl;
+    // std::cout << "riderMove start" << std::endl;
     dir_x = 0.0f;
     dir_y = 0.0f;
 }
