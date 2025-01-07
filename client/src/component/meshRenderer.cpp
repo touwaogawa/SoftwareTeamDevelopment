@@ -45,9 +45,10 @@ void MeshRenderer::Draw(Shader* shader)
         = mOffset * mOwner->GetTransform()->GetWorldMatrix();
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.GetAsFloatPtr());
 
-    mMesh->GetVAO()->Bind();
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, mMesh->GetNumVerts());
+    VertexArray* va = mMesh->GetVertexArray();
+    va->Bind();
+    // glDrawElements(GL_TRIANGLES, va->GetNumIndices(), GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, va->GetNumVerts());
 
     glBindVertexArray(0);
 }

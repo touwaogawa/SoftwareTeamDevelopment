@@ -1,5 +1,13 @@
 #pragma once
 #include <GL/glew.h>
+#include <glm/glm.hpp>
+
+struct Vertex {
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 texCoord;
+};
+
 class VertexArray {
 public:
     enum class Layout {
@@ -7,16 +15,15 @@ public:
         PosNormTex
     };
 
-    VertexArray(const void* verts, unsigned int numVerts, Layout layout,
-        const unsigned int* indices, unsigned int numIndices);
+    VertexArray(const void* verts, unsigned int numVerts, Layout layout);
     ~VertexArray();
+    unsigned int GetNumVerts() const { return mNumVerts; }
 
     void Bind();
-
-    static GLuint GetVertexSize(VertexArray::Layout layout);
 
 private:
     GLuint mVBO;
     GLuint mEBO;
     GLuint mVAO;
+    unsigned int mNumVerts;
 };

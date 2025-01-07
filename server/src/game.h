@@ -3,7 +3,7 @@ class Game {
 public:
     Game();
     bool Init();
-    void RunLoop();
+    void RunLoop(int playerNum);
     void Shutdown();
 
 private:

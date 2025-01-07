@@ -7,10 +7,8 @@ public:
     Mesh();
     ~Mesh();
     bool LoadObjFile(const std::string& fileName);
-    VertexArray* GetVAO() const;
-    unsigned int GetNumVerts() const { return mNumVerts; }
+    VertexArray* GetVertexArray() const { return mVertexArray; }
 
 private:
     VertexArray* mVertexArray;
-    unsigned int mNumVerts;
 };
