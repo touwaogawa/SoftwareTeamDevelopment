@@ -33,9 +33,3 @@ void Time::UpdateFrame()
         SDL_Delay(delayTime); // 指定時間だけ待機
     }
 }
-
-float Time::GetTimeStep()
-{
-    std::chrono::duration<float> duration = mTime - mLastTime;
-    return duration.count();
-}

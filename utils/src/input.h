@@ -9,24 +9,41 @@ public:
     // 終了
     static void ShutDown();
 
-    // 接続に成功したら trueを返す
+    // 接続に成功したら trueを返す(joyCon用)
     static bool ConnectController();
 
     // メンバにキーの状態を更新, 毎フレーム呼ばれる
     static void UpdateInputStatus();
 
-    // PCキーボード関係(SDL)
-    static bool GetKey(SDL_Scancode scancode);
-    static bool GetKeyDown(SDL_Scancode scancode);
-    static bool GetKeyUp(SDL_Scancode scancode);
+    // PCキーボード(SDL)
+    static bool GetKey(SDL_Scancode scancode) { return mKeyboardState[scancode]; }
+    static bool GetKeyDown(SDL_Scancode scancode)
+    {
+        return mKeyboardState[scancode] && !mPrevKeyboardState[scancode];
+    }
+    static bool GetKeyUp(SDL_Scancode scancode)
+    {
+        return !mKeyboardState[scancode] && mPrevKeyboardState[scancode];
+    }
 
-    // ganepad用
-    static bool GetButton(int buttonName);
-    static bool GetButtonDown(int buttonName);
-    static bool GetButtonUp(int buttonName);
-    //-1~1の範囲で指定した名前の値が返される。
-    static float GetAxis(int axisName);
-    static float GetAxisRel(int axisName);
+    // gamepad
+    static bool GetButton(int buttonName) { return mJoystickButtonState[buttonName - 1]; }
+    static bool GetButtonDown(int buttonName)
+    {
+        return mJoystickButtonState[buttonName - 1] && !mPrevJoystickButtonState[buttonName - 1];
+    }
+    static bool GetButtonUp(int buttonName)
+    {
+        return !mJoystickButtonState[buttonName - 1] && mPrevJoystickButtonState[buttonName - 1];
+    }
+    static float GetAxis(int axisName)
+    {
+        return mJoystickAxisState[axisName - 1];
+    }
+    static float GetAxisRel(int axisName)
+    {
+        return mJoystickAxisState[axisName - 1] - mPrevJoystickAxisState[axisName - 1];
+    }
 
     // joycon用
     static bool GetJCButton(std::string buttonName);

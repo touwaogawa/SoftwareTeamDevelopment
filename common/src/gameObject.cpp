@@ -33,26 +33,6 @@ GameObject::~GameObject()
     }
 }
 
-Scene* GameObject::GetScene() const
-{
-    return mScene;
-}
-
-Transform* GameObject::GetTransform() const
-{
-    return mTransform;
-}
-
-Behaviour* GameObject::GetBehaviour() const
-{
-    return mBehaviour;
-}
-
-void GameObject::AddComponent(Component* component)
-{
-    mComponents.push_back(component);
-}
-
 void GameObject::RemoveComponent(Component* component)
 {
     auto end = std::remove(mComponents.begin(), mComponents.end(), component);

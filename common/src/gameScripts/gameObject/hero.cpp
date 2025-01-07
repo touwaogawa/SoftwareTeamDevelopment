@@ -12,25 +12,24 @@ Hero::Hero(Scene* scene, Transform* parent, Vector3 initialPos, HeroInfo heroInf
     : GameObject(scene, parent, heroMove)
     , mHeroInfo(heroInfo)
 {
-    std::cout << "hero constructer" << std::endl;
+    std::cout << "hero constructor" << std::endl;
     mBaseStatus.gravity = 9.8f;
     mTransform->SetWorldPosition(initialPos);
     // RigidBody setting
     RigidBody* rigidBody = new RigidBody(this, rp3d::BodyType::DYNAMIC, mScene->GetPhysics());
-    rigidBody->mRigidBody->enableGravity(false);
-    rigidBody->mRigidBody->setMass(2.0f);
-    rigidBody->mRigidBody->setAngularLockAxisFactor(rp3d::Vector3(0, 1, 0));
+    rigidBody->GetRp3dRogidBody()->enableGravity(false);
+    rigidBody->GetRp3dRogidBody()->setMass(2.0f);
+    rigidBody->GetRp3dRogidBody()->setAngularLockAxisFactor(rp3d::Vector3(0, 1, 0));
     AddComponent(rigidBody);
 
     // Collider setting
     rp3d::Vector3 position(0.0f, 1.0f, 0.0f);
     rp3d::Quaternion rotation; // 回転なし
     rp3d::Transform transform(position, rotation);
-
     Collider* collider = new Collider(this,
         mScene->GetPhysics()->GetPhysicsWorld(),
-        Physics::mPhysicsCommon.createSphereShape(1.0),
-        rigidBody->mRigidBody,
+        Physics::GetPhysicsCommon().createSphereShape(2.0),
+        rigidBody->GetRp3dRogidBody(),
         transform);
     AddComponent(collider);
 }

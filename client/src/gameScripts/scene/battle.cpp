@@ -1,6 +1,7 @@
 #include "battle.h"
 #include "../../../../common/src/component/transform.h"
 #include "../../../../common/src/gameScripts/packetData.h"
+#include "../../../../common/src/physics.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
 #include "../../component/meshRenderer.h"
@@ -45,6 +46,8 @@ void BattleScene::SetENet(ENetAddress address, ENetHost* client, ENetPeer* peer)
 void BattleScene::Update(bool& exitFrag, float timeStep)
 {
     ProccessNetowork();
+    // Transformをdynamic objectのrp3d::Transformに反映
+    mPhysics->SetDynamicTransform();
     ProccessInput();
     Scene::Update(exitFrag, timeStep);
 }
@@ -137,5 +140,6 @@ bool BattleScene::ProccessNetowork()
     default:
         break;
     }
+    enet_host_flush(mClient);
     return true;
 }

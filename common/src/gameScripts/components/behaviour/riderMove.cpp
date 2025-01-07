@@ -4,7 +4,7 @@
 RiderMove::RiderMove(GameObject* owner)
     : Behaviour(owner)
 {
-    std::cout << "riderMove constructer" << std::endl;
+    std::cout << "riderMove constructor" << std::endl;
 }
 
 void RiderMove::Start()

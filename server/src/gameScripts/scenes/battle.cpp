@@ -39,7 +39,7 @@ void BattleScene::Update(bool& exitFrag, float timeStep)
     ProccessNetowork();
     ProccessInput();
     Scene::Update(exitFrag, timeStep);
-    // SendCurrentBattleStatus();
+    SendCurrentBattleStatus();
 }
 
 int BattleScene::GetPlayerNum() const
@@ -103,6 +103,7 @@ bool BattleScene::ProccessNetowork()
     default:
         break;
     }
+    enet_host_flush(mServer);
     return true;
 }
 
@@ -120,6 +121,8 @@ void BattleScene::SendCurrentBattleStatus()
         playerCurrentData.id                = mPlayers[i]->GetID();
         playerCurrentData.heroCurrentStatus = mPlayers[i]->GetHero()->mCurrentStatus;
         playerCurrentData.heroTransform     = mPlayers[i]->GetHero()->GetTransform()->GetWorldMatrix();
-        enet_host_broadcast(mServer, 0, playerCurrentData.CreatePacket());
+        ENetPacket* p                       = playerCurrentData.CreatePacket();
+        enet_host_broadcast(mServer, 0, p);
     }
+    enet_host_flush(mServer);
 }

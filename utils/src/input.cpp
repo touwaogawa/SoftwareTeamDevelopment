@@ -88,44 +88,6 @@ void Input::UpdateInputStatus()
     }
 }
 
-// PCキーボード関係(SDL)
-bool Input::GetKey(SDL_Scancode scancode)
-{
-    return mKeyboardState[scancode];
-}
-
-bool Input::GetKeyDown(SDL_Scancode scancode)
-{
-    return mKeyboardState[scancode] && !mPrevKeyboardState[scancode];
-}
-
-bool Input::GetKeyUp(SDL_Scancode scancode)
-{
-    return !mKeyboardState[scancode] && mPrevKeyboardState[scancode];
-}
-
-// ganepad用
-bool Input::GetButton(int buttonName)
-{
-    return mJoystickButtonState[buttonName - 1];
-}
-bool Input::GetButtonDown(int buttonName)
-{
-    return mJoystickButtonState[buttonName - 1] && !mPrevJoystickButtonState[buttonName - 1];
-}
-bool Input::GetButtonUp(int buttonName)
-{
-    return !mJoystickButtonState[buttonName - 1] && mPrevJoystickButtonState[buttonName - 1];
-}
-//-1~1の範囲で指定した名前の値が返される。
-float Input::GetAxis(int axisName)
-{
-    return mJoystickAxisState[axisName - 1];
-}
-float Input::GetAxisRel(int axisName)
-{
-    return mJoystickAxisState[axisName - 1] - mPrevJoystickAxisState[axisName - 1];
-}
 // ジョイコン用
 bool Input::GetJCButton(std::string buttonName)
 {

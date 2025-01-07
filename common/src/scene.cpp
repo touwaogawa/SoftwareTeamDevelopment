@@ -24,14 +24,14 @@ void Scene::Start()
         StartgameScriptsFromRoot(gameObject);
     }
 }
-void Scene::Update(bool& exitFrag, float timeStep)
+void Scene::Update(bool& exitFrag, float timeStep_sec)
 {
     // ゲームオブジェクトの更新
     for (GameObject* gameObject : mRootObjects) {
         UpdategameScriptsFromRoot(gameObject);
     }
     // 物理演算
-    mPhysics->Update(timeStep);
+    mPhysics->Update(timeStep_sec);
     // ゲームオブジェクトの更新(物理演算終了後)
     for (GameObject* gameObject : mRootObjects) {
         LateUpdategameScriptsFromRoot(gameObject);

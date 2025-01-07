@@ -4,7 +4,7 @@ BeyMove::BeyMove(GameObject* owner)
     : Behaviour(owner)
     , mSpinPower(0.0f)
 {
-    std::cout << "beyMove constructer" << std::endl;
+    std::cout << "beyMove constructor" << std::endl;
 }
 
 void BeyMove::Start()

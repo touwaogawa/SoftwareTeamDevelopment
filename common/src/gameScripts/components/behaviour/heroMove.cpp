@@ -7,7 +7,7 @@
 HeroMove::HeroMove(GameObject* owner)
     : Behaviour(owner)
 {
-    std::cout << "heroMove constructer" << std::endl;
+    std::cout << "heroMove constructor" << std::endl;
 }
 
 void HeroMove::Start()
@@ -109,7 +109,7 @@ void HeroMove::UpdatePosision()
     pos.z += cs * ma.y;
     // mOwner->GetTransform()->SetLocalPosition(pos);
     RigidBody* r = mOwner->GetComponent<RigidBody>();
-    if (r) {
+    if (r && cs > 0.0f) {
         r->SetVA(ma.x * 5.0f, 0.0f, ma.y * 5.0f);
     }
 }

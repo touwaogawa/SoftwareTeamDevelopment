@@ -3,12 +3,24 @@
 #include <vector>
 class Scene {
 public:
+    /// @brief Constructor
+    /// @param name
     Scene(std::string name);
+
+    /// @brief Destructor
     virtual ~Scene();
+
+    /// @brief Scene load
+    /// @return Return false, if failed to load
     virtual bool Load() = 0;
 
+    /// @brief Call the Start methos of all gameobject
     virtual void Start();
-    virtual void Update(bool& exitFrag, float timeStep);
+
+    /// @brief Call the Update method and LateUpdate method of all gameobject and update physics
+    /// @param exitFrag
+    /// @param timeStep //seccond
+    virtual void Update(bool& exitFrag, float timeStep_sec);
 
     void AddGameObject(class GameObject* gameObject);
     void RemoveGameObject(class GameObject* gameObject);
@@ -25,11 +37,11 @@ protected:
     std::string mName;
     std::vector<class GameObject*> mRootObjects;
     std::vector<class GameObject*> mgameObjects;
+    class Physics* mPhysics;
 
     void RemoveAllObject();
 
 private:
-    class Physics* mPhysics;
     void StartgameScriptsFromRoot(class GameObject* rootObject);
     void UpdategameScriptsFromRoot(class GameObject* rootObject);
     void LateUpdategameScriptsFromRoot(class GameObject* rootObject);

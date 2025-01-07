@@ -26,18 +26,31 @@ reactphysics3d::PhysicsWorld* Physics::GetPhysicsWorld() const
     return mPhysicsWorld;
 }
 
-void Physics::Update(float timeStep /*経過時間*/)
+void Physics::Update(float timeStep_sec)
 {
     // Transform -> rp3d::Transform
     for (RigidBody* rigidBody : mRigidBodies) {
-        rigidBody->SetTransform();
+        if (rigidBody->GetRp3dRogidBody()->getType() == rp3d::BodyType::KINEMATIC) {
+            rigidBody->SetTransform();
+        }
     }
     // 物理演算
-    // printf("timestep : %f\n", timeStep);
-    mPhysicsWorld->update(static_cast<rp3d::decimal>(timeStep));
+    // printf("timestep_sec : %f\n", timeStep_sec);
+    mPhysicsWorld->update(static_cast<rp3d::decimal>(timeStep_sec));
     // rp3d::Transfrom ->Transform
     for (RigidBody* rigidBody : mRigidBodies) {
-        rigidBody->UpdateTransform();
+        if (rigidBody->GetRp3dRogidBody()->getType() == rp3d::BodyType::DYNAMIC) {
+            rigidBody->UpdateTransform();
+        }
+    }
+}
+
+void Physics::SetDynamicTransform()
+{
+    for (RigidBody* rigidBody : mRigidBodies) {
+        if (rigidBody->GetRp3dRogidBody()->getType() == rp3d::BodyType::DYNAMIC) {
+            rigidBody->SetTransform();
+        }
     }
 }
 
