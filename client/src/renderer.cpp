@@ -1,4 +1,8 @@
 #include "renderer.h"
+#include "../../common/src/component/transform.h"
+#include "../../common/src/gameObject.h"
+#include "../../utils/src/math.h"
+#include "component/camera.h"
 #include "component/meshRenderer.h"
 #include "mesh.h"
 #include "shader.h"
@@ -19,8 +23,8 @@ Shader* Renderer::mShadowMeshShader = nullptr;
 std::unordered_map<std::string, class Texture*> Renderer::mTextures;
 std::unordered_map<std::string, class Mesh*> Renderer::mMeshes;
 std::vector<class MeshRenderer*> Renderer::mMeshRenderers;
-Matrix4 Renderer::mView       = {};
-Matrix4 Renderer::mProjection = {};
+std::unordered_map<std::string, Camera*> Renderer::mCameras;
+Camera* Renderer::mCamera     = nullptr;
 GLuint Renderer::mDepthMapFBO = 0;
 GLuint Renderer::mDepthMap    = 0;
 
@@ -50,9 +54,8 @@ void Renderer::ShutDown()
 
 bool Renderer::Load()
 {
+
     mMeshShader = new Shader();
-    mView       = Matrix4::CreateLookAt(Vector3::Zero, Vector3::UnitZ, Vector3::UnitY);
-    mProjection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f), mWindowWidth, mWindowHeight, 10.0f, 10000.0f);
     if (!mMeshShader->Load("shaders/default.vert", "shaders/default.frag")) {
         std::cout << "Failed Mesh Shader load" << std::endl;
         return false;
@@ -90,74 +93,104 @@ bool Renderer::Load()
 }
 void Renderer::UnLoad()
 {
+
     for (auto mesh : mMeshes) {
         delete mesh.second;
     }
     mMeshes.clear();
     delete mMeshShader;
+
+    for (auto texture : mTextures) {
+        delete texture.second;
+    }
+    mTextures.clear();
+
+    for (auto camera : mCameras) {
+        delete camera.second;
+    }
+    mCameras.clear();
 }
 void Renderer::Draw()
 {
     // std::cout << "Draw" << std::endl;
+    // glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    // glm::mat4 lightProjection, lightView;
-    // glm::mat4 lightSpaceMatrix;
-    glm::vec3 lightPos(0.0f, 8.0f, 5.0f);
+    // デプス取得----------------------
+    mDepthShader->Use();
 
-    // // 正射影行列（平行光源用）
-    // lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
-    // // ビュー行列
-    // lightView        = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-    // lightSpaceMatrix = lightProjection * lightView;
+    Matrix4 lightProjection, lightView;
+    Matrix4 lightSpaceMatrix;
+    Vector3 lightPos(0.0f, 8.0f, 5.0f);
 
-    // // シャドウマップをレンダリング
-    // glViewport(0, 0, 1024, 1024);
-    // glBindFramebuffer(GL_FRAMEBUFFER, mDepthMapFBO);
-    // glClear(GL_DEPTH_BUFFER_BIT);
+    // 正射影行列（平行光源用）
+    lightProjection = Matrix4::CreateOrtho(20.0f, 20.0f, 1.0f, 7.5f);
+    // ビュー行列
+    lightView = Matrix4::CreateLookAt(lightPos, Vector3(), Vector3(0.0f, 1.0f, 0.0f));
 
-    // // シェーダーに lightSpaceMatrix を渡す
-    // mDepthShader->Use();
-    // mDepthShader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+    lightSpaceMatrix = lightProjection * lightView;
 
-    // // シーンをレンダリング
-    // RenderScene(mDepthShader);
+    // シャドウマップをレンダリング
+    glViewport(0, 0, 1024, 1024);
+    glBindFramebuffer(GL_FRAMEBUFFER, mDepthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
-    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // シェーダーに lightSpaceMatrix を渡す
+    mDepthShader->Use();
+    mDepthShader->SetMatrixUniform("lightSpaceMatrix", lightSpaceMatrix);
 
-    mMeshShader->Use();
-    glm::mat4 identity = glm::mat4(1.0f);
-    glm::vec3 view_pos = glm::vec3(0.0f, -1.5f, -70.0f);
+    // シーンをレンダリング
+    for (MeshRenderer* meshRenderer : mMeshRenderers) {
+        meshRenderer->Draw(mDepthShader);
+    }
 
-    glm::mat4 view = glm::translate(identity, view_pos);
-    view *= glm::rotate(identity, glm::radians(48.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    // view                 = glm::rotate(view, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::mat4 projection = glm::perspective(glm::radians(40.0f), mWindowWidth / mWindowHeight, 0.1f, 150.0f);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // 描画----------------------
+    glViewport(0, 0, mWindowWidth, mWindowHeight);
+    mShadowMeshShader->Use();
+
+    // glm::mat4 identity = glm::mat4(1.0f);
+    // glm::vec3 view_pos = glm::vec3(0.0f, -1.5f, -70.0f);
+    Vector3 viewPos;
+    Matrix4 view;
+    Matrix4 projection;
+    projection = Matrix4::CreatePerspectiveFOV(40.0f, mWindowWidth, mWindowHeight, 0.1f, 150.0f);
+    if (mCamera == nullptr) {
+        // std::cout << "mCamera == nullptr" << std::endl;
+        viewPos = Vector3(0.0f, -40.0f, -40.0f);
+        view    = Matrix4::CreateTranslation(viewPos);
+        view *= Matrix4::CreateRotationX(48.0f / 360.0f * Math::TwoPi);
+    } else {
+        viewPos = mCamera->GetOwner()->GetTransform()->GetWorldPosition();
+        view    = Matrix4::CreateTranslation(viewPos);
+        view *= mCamera->GetOwner()->GetTransform()->GetWorldMatrix().GetRotationPart();
+    }
 
     // ライトのプロパティ
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-    // glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "viewPos"), mView.mat[3][0], mView.mat[3][1], mView.mat[3][2]);
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "viewPos"), 0.0f, 0.0f, -10.0f);
+    mShadowMeshShader->SetVectorUniform("lightPos", lightPos);
+    mShadowMeshShader->SetVectorUniform("viewPos", viewPos);
 
     // 色の設定
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "diffuseLightColor"), 1.0f, 1.0f, 1.0f);
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "ambientLightColor"), 0.7f, 0.9f, 0.9f);
+    Vector3 diffuseLightColor(1.0f, 1.0f, 1.0f);
+    Vector3 ambientLightColor(0.7f, 0.9f, 0.9f);
+    mShadowMeshShader->SetVectorUniform("diffuseLightColor", diffuseLightColor);
+    mShadowMeshShader->SetVectorUniform("ambientLightColor", ambientLightColor);
 
     // アンビエントライトの強度
-    glUniform1f(glGetUniformLocation(mMeshShader->GetProgram(), "ambientStrength"), 0.6f);
+    glUniform1f(glGetUniformLocation(mShadowMeshShader->GetProgram(), "ambientStrength"), 0.6f);
 
-    GLint viewLoc = glGetUniformLocation(mMeshShader->GetProgram(), "view");
-    GLint projLoc = glGetUniformLocation(mMeshShader->GetProgram(), "projection");
+    mShadowMeshShader->SetMatrixUniform("view", view);
+    mShadowMeshShader->SetMatrixUniform("projection", projection);
 
-    // glUniformMatrix4fv(viewLoc, 1, GL_FALSE, mView.GetAsFloatPtr());
-    // glUniformMatrix4fv(projLoc, 1, GL_FALSE, mProjection.GetAsFloatPtr());
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, mDepthMap);
+    mShadowMeshShader->SetIntUniform("shadowMap", 1);
 
     // 各メッシュ
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
-        meshRenderer->Draw(mMeshShader);
+        meshRenderer->Draw(mShadowMeshShader);
     }
 
     // 表示
@@ -209,4 +242,10 @@ void Renderer::RemoveMeshRenderer(MeshRenderer* meshRenderer)
 {
     auto end = std::remove(mMeshRenderers.begin(), mMeshRenderers.end(), meshRenderer);
     mMeshRenderers.erase(end, mMeshRenderers.end());
+}
+
+void Renderer::UseCamera(const std::string& cameraName)
+{
+    Camera* camera = mCameras.find(cameraName)->second;
+    mCamera        = camera;
 }

@@ -124,7 +124,7 @@ bool BattleScene::ProccessNetowork()
                     mPlayers[id]->GetHero()->GetTransform()->SetWorldMatrix(playerCurrentData.heroTransform);
                 } break;
                 default:
-                    std::cout << "default data" << std::endl;
+                    std::cout << "PacketData error" << std::endl;
                     break;
                 }
                 enet_packet_destroy(event.packet); // パケットの解放

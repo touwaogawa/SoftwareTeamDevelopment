@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+class Camera;
 class Renderer {
 public:
     static bool Init(float window_w, float window_h);
@@ -18,7 +19,16 @@ public:
     static class Mesh* GetMesh(const std::string& fileName);
     static void AddMeshRenderer(class MeshRenderer* meshRenderer);
     static void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
-    static void SetViewMatrix(const Matrix4& view) { mView = view; }
+    // static void SetViewMatrix(const Matrix4& view) { mView = view; }
+    static void AddCamera(const std::string& cameraName, Camera* camera)
+    {
+        mCameras.emplace(cameraName, camera);
+    }
+    static void RemoveCamera(const std::string& cameraName)
+    {
+        mCameras.erase(cameraName);
+    }
+    static void UseCamera(const std::string& cameraName);
 
 private:
     static SDL_Window* mWindow;
@@ -35,8 +45,9 @@ private:
     static std::unordered_map<std::string, class Mesh*> mMeshes;
     static std::vector<class MeshRenderer*> mMeshRenderers;
 
-    static Matrix4 mView;
-    static Matrix4 mProjection;
+    // カメラ情報
+    static std::unordered_map<std::string, Camera*> mCameras;
+    static Camera* mCamera;
 
     static GLuint mDepthMapFBO;
     static GLuint mDepthMap;

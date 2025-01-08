@@ -12,7 +12,6 @@ Bey_C::Bey_C(Scene* scene, Transform* parent, BeyType beyType)
         break;
     case BeyType::Hexagram:
         AddComponent(new MeshRenderer(this, "../assets/models/Hexagram.obj", "../assets/textures/silver.png"));
-        // AddComponent(new MeshRenderer(this, "../assets/models/Cube.obj", "../assets/textures/silver.png"));
         break;
     case BeyType::Snowflake:
         AddComponent(new MeshRenderer(this, "../assets/models/Snowflake.obj", "../assets/textures/silver.png"));

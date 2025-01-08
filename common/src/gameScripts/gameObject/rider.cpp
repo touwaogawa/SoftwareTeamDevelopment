@@ -13,6 +13,9 @@ Rider::Rider(Scene* scene, Transform* parent, RiderType riderType, RiderMove* ri
         break;
     default:
         std::cout << "RiderType error" << std::endl;
+        mRiderBaseStatus = {
+            50.0f
+        };
         break;
     }
     // std::cout << "rider constructor" << std::endl;
