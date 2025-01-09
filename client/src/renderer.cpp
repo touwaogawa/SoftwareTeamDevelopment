@@ -121,6 +121,67 @@ void Renderer::Draw()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
+    Draw3DObjects();
+
+        // 表示
+    SDL_GL_SwapWindow(mWindow);
+}
+
+Texture* Renderer::GetTexture(const std::string& fileName)
+{
+    Texture* tex = nullptr;
+    auto iter    = mTextures.find(fileName);
+    if (iter != mTextures.end()) {
+        tex = iter->second;
+    } else {
+        tex = new Texture();
+        if (tex->Load(fileName)) {
+            mTextures.emplace(fileName, tex);
+        } else {
+            delete tex;
+            tex = nullptr;
+        }
+    }
+    return tex;
+}
+
+Mesh* Renderer::GetMesh(const std::string& fileName)
+{
+
+    Mesh* m   = nullptr;
+    auto iter = mMeshes.find(fileName);
+    if (iter != mMeshes.end()) {
+        m = iter->second;
+    } else {
+        m = new Mesh();
+        if (m->LoadObjFile(fileName)) {
+            mMeshes.emplace(fileName, m);
+        } else {
+            delete m;
+            m = nullptr;
+        }
+    }
+    return m;
+}
+
+void Renderer::AddMeshRenderer(MeshRenderer* meshRenderer)
+{
+    mMeshRenderers.push_back(meshRenderer);
+}
+void Renderer::RemoveMeshRenderer(MeshRenderer* meshRenderer)
+{
+    auto end = std::remove(mMeshRenderers.begin(), mMeshRenderers.end(), meshRenderer);
+    mMeshRenderers.erase(end, mMeshRenderers.end());
+}
+
+void Renderer::UseCamera(const std::string& cameraName)
+{
+    Camera* camera = mCameras.find(cameraName)->second;
+    mCamera        = camera;
+}
+
+void Renderer::Draw3DObjects()
+{
     // デプス取得----------------------
     mDepthShader->Use();
 
@@ -195,64 +256,4 @@ void Renderer::Draw()
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
         meshRenderer->Draw(mShadowMeshShader);
     }
-    glBegin(GL_TRIANGLES);
-    glVertex3f(-0.5f, -0.5f, -1.0f);
-    glVertex3f(0.5f, -0.5f, -4.0f);
-    glVertex3f(0.0f, 0.5f, -1.0f);
-    glEnd();
-    // 表示
-    SDL_GL_SwapWindow(mWindow);
-}
-
-Texture* Renderer::GetTexture(const std::string& fileName)
-{
-    Texture* tex = nullptr;
-    auto iter    = mTextures.find(fileName);
-    if (iter != mTextures.end()) {
-        tex = iter->second;
-    } else {
-        tex = new Texture();
-        if (tex->Load(fileName)) {
-            mTextures.emplace(fileName, tex);
-        } else {
-            delete tex;
-            tex = nullptr;
-        }
-    }
-    return tex;
-}
-
-Mesh* Renderer::GetMesh(const std::string& fileName)
-{
-
-    Mesh* m   = nullptr;
-    auto iter = mMeshes.find(fileName);
-    if (iter != mMeshes.end()) {
-        m = iter->second;
-    } else {
-        m = new Mesh();
-        if (m->LoadObjFile(fileName)) {
-            mMeshes.emplace(fileName, m);
-        } else {
-            delete m;
-            m = nullptr;
-        }
-    }
-    return m;
-}
-
-void Renderer::AddMeshRenderer(MeshRenderer* meshRenderer)
-{
-    mMeshRenderers.push_back(meshRenderer);
-}
-void Renderer::RemoveMeshRenderer(MeshRenderer* meshRenderer)
-{
-    auto end = std::remove(mMeshRenderers.begin(), mMeshRenderers.end(), meshRenderer);
-    mMeshRenderers.erase(end, mMeshRenderers.end());
-}
-
-void Renderer::UseCamera(const std::string& cameraName)
-{
-    Camera* camera = mCameras.find(cameraName)->second;
-    mCamera        = camera;
 }
