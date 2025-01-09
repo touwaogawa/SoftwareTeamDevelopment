@@ -134,7 +134,7 @@ void Renderer::Draw()
     // シャドウマップをレンダリング
     glViewport(0, 0, 1024, 1024);
     glBindFramebuffer(GL_FRAMEBUFFER, mDepthMapFBO);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    // glClear(GL_DEPTH_BUFFER_BIT);
 
     // シェーダーに lightSpaceMatrix を渡す
     mDepthShader->Use();
@@ -151,12 +151,10 @@ void Renderer::Draw()
     glViewport(0, 0, mWindowWidth, mWindowHeight);
     mShadowMeshShader->Use();
 
-    // glm::mat4 identity = glm::mat4(1.0f);
-    // glm::vec3 view_pos = glm::vec3(0.0f, -1.5f, -70.0f);
     Vector3 viewPos;
     Matrix4 view;
     Matrix4 projection;
-    projection = Matrix4::CreatePerspectiveFOV(40.0f, mWindowWidth, mWindowHeight, 0.1f, 150.0f);
+    projection = Matrix4::CreatePerspectiveFOV(40.0f / 360.0f * Math::TwoPi, mWindowWidth, mWindowHeight, 0.1f, 150.0f);
     if (mCamera == nullptr) {
         // std::cout << "mCamera == nullptr" << std::endl;
         viewPos = Vector3(0.0f, -40.0f, -40.0f);
@@ -179,8 +177,10 @@ void Renderer::Draw()
     mShadowMeshShader->SetVectorUniform("ambientLightColor", ambientLightColor);
 
     // アンビエントライトの強度
-    glUniform1f(glGetUniformLocation(mShadowMeshShader->GetProgram(), "ambientStrength"), 0.6f);
+    float ambientStrength = 0.6f;
+    mShadowMeshShader->SetFloatUniform("ambientStrength", ambientStrength);
 
+    // ビュー、プロジェクション
     mShadowMeshShader->SetMatrixUniform("view", view);
     mShadowMeshShader->SetMatrixUniform("projection", projection);
 
@@ -192,7 +192,11 @@ void Renderer::Draw()
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
         meshRenderer->Draw(mShadowMeshShader);
     }
-
+    glBegin(GL_TRIANGLES);
+    glVertex3f(-0.5f, -0.5f, -1.0f);
+    glVertex3f(0.5f, -0.5f, -4.0f);
+    glVertex3f(0.0f, 0.5f, -1.0f);
+    glEnd();
     // 表示
     SDL_GL_SwapWindow(mWindow);
 }
