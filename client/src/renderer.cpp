@@ -126,38 +126,47 @@ void Renderer::Draw()
 
     // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    mMeshShader->Use();
+    Shader* shader = mMeshShader;
+    shader->Use();
     glm::mat4 identity = glm::mat4(1.0f);
     glm::vec3 view_pos = glm::vec3(0.0f, -1.5f, -70.0f);
 
-    glm::mat4 view = glm::translate(identity, view_pos);
-    view *= glm::rotate(identity, glm::radians(48.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    Vector3 viewpos(0.0f, 40.0f, 40.0f);
+    Matrix4 view = Matrix4::CreateTranslation(viewpos);
+    view *= Matrix4::CreateRotationX(48.0f / 360.0f * Math::TwoPi);
+
+    // glm::mat4 view = glm::translate(identity, view_pos);
+    // view *= glm::rotate(identity, glm::radians(48.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     // view                 = glm::rotate(view, glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 projection = glm::perspective(glm::radians(40.0f), mWindowWidth / mWindowHeight, 0.1f, 150.0f);
 
     // ライトのプロパティ
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-    // glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "viewPos"), mView.mat[3][0], mView.mat[3][1], mView.mat[3][2]);
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "viewPos"), 0.0f, 0.0f, -10.0f);
+    glUniform3f(glGetUniformLocation(shader->GetProgram(), "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+    // glUniform3f(glGetUniformLocation(shader->GetProgram(), "viewPos"), mView.mat[3][0], mView.mat[3][1], mView.mat[3][2]);
+    glUniform3f(glGetUniformLocation(shader->GetProgram(), "viewPos"), 0.0f, 0.0f, -10.0f);
 
     // 色の設定
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "diffuseLightColor"), 1.0f, 1.0f, 1.0f);
-    glUniform3f(glGetUniformLocation(mMeshShader->GetProgram(), "ambientLightColor"), 0.7f, 0.9f, 0.9f);
+    Vector3 diffuseLightColor(1.0f, 1.0f, 1.0f);
+    Vector3 ambientLightColor(0.7f, 0.9f, 0.9f);
+    shader->SetVectorUniform("diffuseLightColor", diffuseLightColor);
+    shader->SetVectorUniform("ambientLightColor", ambientLightColor);
 
     // アンビエントライトの強度
-    glUniform1f(glGetUniformLocation(mMeshShader->GetProgram(), "ambientStrength"), 0.6f);
+    float ambientStrength = 0.6f;
+    shader->SetFloatUniform("ambientStrength", ambientStrength);
 
-    GLint viewLoc = glGetUniformLocation(mMeshShader->GetProgram(), "view");
-    GLint projLoc = glGetUniformLocation(mMeshShader->GetProgram(), "projection");
+    GLint viewLoc = glGetUniformLocation(shader->GetProgram(), "view");
+    GLint projLoc = glGetUniformLocation(shader->GetProgram(), "projection");
 
     // glUniformMatrix4fv(viewLoc, 1, GL_FALSE, mView.GetAsFloatPtr());
     // glUniformMatrix4fv(projLoc, 1, GL_FALSE, mProjection.GetAsFloatPtr());
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    shader->SetMatrixUniform("view", view);
+    // glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     // 各メッシュ
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
-        meshRenderer->Draw(mMeshShader);
+        meshRenderer->Draw(shader);
     }
 
     // 表示
