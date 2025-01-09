@@ -57,17 +57,17 @@ bool Renderer::Load()
 
     mMeshShader = new Shader();
     if (!mMeshShader->Load("shaders/default.vert", "shaders/default.frag")) {
-        std::cout << "Failed Mesh Shader load" << std::endl;
+        std::cout << "Failed Shader load" << std::endl;
         return false;
     }
     mDepthShader = new Shader();
     if (!mDepthShader->Load("shaders/createDepth.vert", "shaders/null.frag")) {
-        std::cout << "Failed Mesh Shader load" << std::endl;
+        std::cout << "Failed Shader load" << std::endl;
         return false;
     }
     mShadowMeshShader = new Shader();
     if (!mShadowMeshShader->Load("shaders/shadowMesh.vert", "shaders/shadowMesh.frag")) {
-        std::cout << "Failed Mesh Shader load" << std::endl;
+        std::cout << "Failed Shader load" << std::endl;
         return false;
     }
 
@@ -157,9 +157,9 @@ void Renderer::Draw()
     projection = Matrix4::CreatePerspectiveFOV(40.0f / 360.0f * Math::TwoPi, mWindowWidth, mWindowHeight, 0.1f, 150.0f);
     if (mCamera == nullptr) {
         // std::cout << "mCamera == nullptr" << std::endl;
-        viewPos = Vector3(0.0f, -40.0f, -40.0f);
-        view    = Matrix4::CreateTranslation(viewPos);
-        view *= Matrix4::CreateRotationX(48.0f / 360.0f * Math::TwoPi);
+        viewPos = Vector3(0.0f, 40.0f, -40.0f);
+        view    = Matrix4::CreateLookAt(viewPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        // view *= Matrix4::CreateRotationX(48.0f / 360.0f * Math::TwoPi);
     } else {
         viewPos = mCamera->GetOwner()->GetTransform()->GetWorldPosition();
         view    = Matrix4::CreateTranslation(viewPos);

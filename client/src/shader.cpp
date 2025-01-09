@@ -10,18 +10,27 @@ bool Shader::Load(const std::string& vertexPath, const std::string& fragmentPath
 {
     // シェーダーコードの読み込み、コンパイル
     GLuint vertex, fragment;
-    if (!CompileShader(vertexPath, GL_VERTEX_SHADER, vertex))
+    if (!CompileShader(vertexPath, GL_VERTEX_SHADER, vertex)) {
+        std::cout << "Failed Shader file load : " << vertexPath << std::endl;
         return false;
-    if (!CompileShader(fragmentPath, GL_FRAGMENT_SHADER, fragment))
+    }
+    if (!CompileShader(fragmentPath, GL_FRAGMENT_SHADER, fragment)) {
+        std::cout << "Failed Shader file load : " << fragmentPath << std::endl;
         return false;
+    }
 
     // シェーダープログラムのリンク
     mProgram = glCreateProgram();
     glAttachShader(mProgram, vertex);
     glAttachShader(mProgram, fragment);
     glLinkProgram(mProgram);
-    if (!checkCompileErrors(mProgram, 0))
+    if (!checkCompileErrors(mProgram, 0)) {
+
+        std::cout << "Failed Shader compile" << std::endl;
+        std::cout << "vertex   : " << vertexPath << std::endl;
+        std::cout << "fragment : " << fragmentPath << std::endl;
         return false;
+    }
 
     // シェーダーの削除
     glDeleteShader(vertex);
