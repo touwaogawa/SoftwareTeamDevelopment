@@ -103,13 +103,13 @@ void HeroMove::UpdatePosision()
     Vector2 ma = mHero->mCurrentStatus.moveDir;
     float cs   = mHero->mCurrentStatus.speed;
     // std::cout << "cs " << cs << std::endl;
-    // std::cout << "ma_x " << ma.x << std::endl;
-    // std::cout << "ma_y " << ma.y << std::endl;
-    pos.x += cs * ma.x;
-    pos.z -= cs * ma.y;
+    std::cout << "ma_x " << ma.x << std::endl;
+    std::cout << "ma_y " << ma.y << std::endl;
+    // pos.x += cs * ma.x;
+    // pos.z -= cs * ma.y;
     // mOwner->GetTransform()->SetLocalPosition(pos);
     RigidBody* r = mOwner->GetComponent<RigidBody>();
     if (r && cs > 0.0f) {
-        r->SetVA(ma.x * 5.0f, 0.0f, -ma.y * 5.0f);
+        r->SetVA(ma.x * 5.0f, 0.0f, ma.y * 5.0f);
     }
 }

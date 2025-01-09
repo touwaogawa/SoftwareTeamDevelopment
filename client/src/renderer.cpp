@@ -161,7 +161,7 @@ void Renderer::Draw()
     projection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f), mWindowWidth, mWindowHeight, 0.1f, 150.0f);
     if (mCamera == nullptr) {
         // std::cout << "mCamera == nullptr" << std::endl;
-        viewPos = Vector3(10.0f, 40.0f, 40.0f);
+        viewPos = Vector3(10.0f, 40.0f, -40.0f);
         view    = Matrix4::CreateLookAt(viewPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
     } else {
         viewPos = mCamera->GetOwner()->GetTransform()->GetWorldPosition();

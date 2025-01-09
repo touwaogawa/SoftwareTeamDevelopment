@@ -68,8 +68,8 @@ bool BattleScene::ProccessInput()
         Input::GetButton(2),
         Input::GetButton(3),
         Input::GetButton(1) || Input::GetButton(4),
-        Vector2(Input::GetAxis(1), Input::GetAxis(2)),
-        Vector2(Input::GetAxis(3), Input::GetAxis(4)),
+        Vector2(Input::GetAxis(1), -Input::GetAxis(2)),
+        Vector2(Input::GetAxis(3), -Input::GetAxis(4)),
         currentFrame
     };
     mPlayer->commandBuffer.push_front(commandData);
