@@ -22,7 +22,6 @@ BattleScene::BattleScene(int myPlayerID, int playerNum, std::vector<PlayerInfo> 
 
 BattleScene::~BattleScene()
 {
-    delete mPlayer;
 }
 bool BattleScene::Load()
 {

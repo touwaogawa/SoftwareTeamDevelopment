@@ -103,8 +103,8 @@ void HeroMove::UpdatePosision()
     Vector2 ma = mHero->mCurrentStatus.moveDir;
     float cs   = mHero->mCurrentStatus.speed;
     // std::cout << "cs " << cs << std::endl;
-    std::cout << "ma_x " << ma.x << std::endl;
-    std::cout << "ma_y " << ma.y << std::endl;
+    // std::cout << "ma_x " << ma.x << std::endl;
+    // std::cout << "ma_y " << ma.y << std::endl;
     // pos.x += cs * ma.x;
     // pos.z -= cs * ma.y;
     // mOwner->GetTransform()->SetLocalPosition(pos);

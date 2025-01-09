@@ -4,9 +4,11 @@
 #include "../../utils/src/math.h"
 #include "component/camera.h"
 #include "component/meshRenderer.h"
+#include "component/sprite.h"
 #include "mesh.h"
 #include "shader.h"
 #include "texture.h"
+#include "vertexArray.h"
 #include <algorithm>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -20,13 +22,16 @@ float Renderer::mWindowHeight       = 0.0f;
 Shader* Renderer::mMeshShader       = nullptr;
 Shader* Renderer::mDepthShader      = nullptr;
 Shader* Renderer::mShadowMeshShader = nullptr;
+Shader* Renderer::mSpriteShader     = nullptr;
 std::unordered_map<std::string, class Texture*> Renderer::mTextures;
 std::unordered_map<std::string, class Mesh*> Renderer::mMeshes;
 std::vector<class MeshRenderer*> Renderer::mMeshRenderers;
+std::vector<class Sprite*> Renderer::mSprites;
 std::unordered_map<std::string, Camera*> Renderer::mCameras;
-Camera* Renderer::mCamera     = nullptr;
-GLuint Renderer::mDepthMapFBO = 0;
-GLuint Renderer::mDepthMap    = 0;
+Camera* Renderer::mCamera           = nullptr;
+GLuint Renderer::mDepthMapFBO       = 0;
+GLuint Renderer::mDepthMap          = 0;
+VertexArray* Renderer::mSpriteVerts = nullptr;
 
 bool Renderer::Init(float window_w, float window_h)
 {
@@ -54,7 +59,7 @@ void Renderer::ShutDown()
 
 bool Renderer::Load()
 {
-
+    CreateSpriteVerts();
     mMeshShader = new Shader();
     if (!mMeshShader->Load("shaders/default.vert", "shaders/default.frag")) {
         std::cout << "Failed Shader load" << std::endl;
@@ -70,6 +75,15 @@ bool Renderer::Load()
         std::cout << "Failed Shader load" << std::endl;
         return false;
     }
+    mSpriteShader = new Shader();
+    if (!mSpriteShader->Load("shaders/sprite.vert", "shaders/sprite.frag")) {
+        std::cout << "Failed Shader load" << std::endl;
+        return false;
+    }
+    mSpriteShader->Use();
+    // Set the view-projection matrix
+    Matrix4 spriteViewProj = Matrix4::CreateSimpleViewProj(mWindowWidth, mWindowHeight);
+    mSpriteShader->SetMatrixUniform("viewProjection", spriteViewProj);
 
     glGenFramebuffers(1, &mDepthMapFBO);
     glGenTextures(1, &mDepthMap);
@@ -120,10 +134,26 @@ void Renderer::Draw()
     glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
 
     Draw3DObjects();
 
-        // 表示
+    // Sprites
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
+    mSpriteShader->Use();
+    mSpriteVerts->Bind();
+    for (auto sprite : mSprites) {
+        // std::cout << "Sprite" << std::endl;
+        if (sprite->GetVisible()) {
+            sprite->Draw(mSpriteShader);
+        }
+    }
+
+    // 表示
     SDL_GL_SwapWindow(mWindow);
 }
 
@@ -172,6 +202,27 @@ void Renderer::RemoveMeshRenderer(MeshRenderer* meshRenderer)
 {
     auto end = std::remove(mMeshRenderers.begin(), mMeshRenderers.end(), meshRenderer);
     mMeshRenderers.erase(end, mMeshRenderers.end());
+}
+void Renderer::AddSprite(Sprite* sprite)
+{
+    int myDrawOrder = sprite->GetDrawOrder();
+    auto iter       = mSprites.begin();
+    for (;
+         iter != mSprites.end();
+         ++iter) {
+        if (myDrawOrder < (*iter)->GetDrawOrder()) {
+            break;
+        }
+    }
+
+    // Inserts element before position of iterator
+    mSprites.insert(iter, sprite);
+}
+void Renderer::RemoveSprite(Sprite* sprite)
+{
+    std::cout << "Remove Sprite" << std::endl;
+    auto end = std::remove(mSprites.begin(), mSprites.end(), sprite);
+    mSprites.erase(end, mSprites.end());
 }
 
 void Renderer::UseCamera(const std::string& cameraName)
@@ -256,4 +307,22 @@ void Renderer::Draw3DObjects()
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
         meshRenderer->Draw(mShadowMeshShader);
     }
+}
+
+void Renderer::CreateSpriteVerts()
+{
+    float vertices[] = {
+        // 三角形1
+        -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // top left
+        0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,  // top right
+        0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // bottom right
+
+        // 三角形2
+        0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left
+        -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f   // top left
+    };
+    const void* ptr = static_cast<const void*>(vertices);
+    // std::cout << "Create Sprite verts before new" << std::endl;
+    mSpriteVerts = new VertexArray(ptr, 6, VertexArray::Layout::PosNormTex);
 }

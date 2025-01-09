@@ -36,10 +36,10 @@ public:
 protected:
     std::string mName;
     std::vector<class GameObject*> mRootObjects;
-    std::vector<class GameObject*> mgameObjects;
+    std::vector<class GameObject*> mGameObjects;
     class Physics* mPhysics;
 
-    void RemoveAllObject();
+    void DeteleAllObject();
 
 private:
     void StartgameScriptsFromRoot(class GameObject* rootObject);

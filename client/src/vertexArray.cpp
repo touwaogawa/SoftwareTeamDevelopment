@@ -1,5 +1,6 @@
 #include "vertexArray.h"
 #include <GL/glew.h>
+#include <iostream>
 
 VertexArray::VertexArray(const void* verts, unsigned int numVerts, Layout layout)
     : mNumVerts(numVerts)

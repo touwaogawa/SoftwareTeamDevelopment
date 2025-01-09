@@ -7,6 +7,8 @@
 #include <vector>
 
 class Camera;
+class VertexArray;
+
 class Renderer {
 public:
     static bool Init(float window_w, float window_h);
@@ -19,6 +21,8 @@ public:
     static class Mesh* GetMesh(const std::string& fileName);
     static void AddMeshRenderer(class MeshRenderer* meshRenderer);
     static void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
+    static void AddSprite(class Sprite* Sprite);
+    static void RemoveSprite(class Sprite* Sprite);
     // static void SetViewMatrix(const Matrix4& view) { mView = view; }
     static void AddCamera(const std::string& cameraName, Camera* camera)
     {
@@ -40,10 +44,12 @@ private:
     static class Shader* mMeshShader;
     static class Shader* mDepthShader;
     static class Shader* mShadowMeshShader;
+    static class Shader* mSpriteShader;
 
     static std::unordered_map<std::string, class Texture*> mTextures;
     static std::unordered_map<std::string, class Mesh*> mMeshes;
     static std::vector<class MeshRenderer*> mMeshRenderers;
+    static std::vector<class Sprite*> mSprites;
 
     // カメラ情報
     static std::unordered_map<std::string, Camera*> mCameras;
@@ -52,5 +58,9 @@ private:
     static GLuint mDepthMapFBO;
     static GLuint mDepthMap;
 
+    // スプライト
+    static VertexArray* mSpriteVerts;
+
     static void Draw3DObjects();
+    static void CreateSpriteVerts();
 };

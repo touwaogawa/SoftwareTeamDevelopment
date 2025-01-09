@@ -16,7 +16,7 @@ Scene::Scene(std::string name)
 Scene::~Scene()
 {
     delete mPhysics;
-    RemoveAllObject();
+    DeteleAllObject();
 }
 void Scene::Start()
 {
@@ -40,24 +40,29 @@ void Scene::Update(bool& exitFrag, float timeStep_sec)
 
 void Scene::AddGameObject(GameObject* gameObject)
 {
-    mgameObjects.push_back(gameObject);
+    mGameObjects.push_back(gameObject);
+    // std::cout << "go num : " << mGameObjects.size() << std::endl;
 }
 
 void Scene::RemoveGameObject(GameObject* gameObject)
 {
-    auto end = std::remove(mgameObjects.begin(), mgameObjects.end(), gameObject);
-    mgameObjects.erase(end, mgameObjects.end());
+    auto end = std::remove(mGameObjects.begin(), mGameObjects.end(), gameObject);
+    mGameObjects.erase(end, mGameObjects.end());
+    // std::cout << "go num : " << mGameObjects.size() << std::endl;
 }
 
 void Scene::AddRootObject(GameObject* gameObject)
 {
     mRootObjects.push_back(gameObject);
+    // std::cout << "ro num : " << mRootObjects.size() << std::endl;
 }
 
 void Scene::RemoveRootObject(GameObject* gameObject)
 {
+
     auto end = std::remove(mRootObjects.begin(), mRootObjects.end(), gameObject);
     mRootObjects.erase(end, mRootObjects.end());
+    // std::cout << "ro num : " << mRootObjects.size() << std::endl;
 }
 
 std::string Scene::GetName() const
@@ -67,10 +72,11 @@ std::string Scene::GetName() const
 
 // protected ###################
 
-void Scene::RemoveAllObject()
+void Scene::DeteleAllObject()
 {
     for (GameObject* rootObject : mRootObjects) {
-        RemoveRootObject(rootObject);
+        // std::cout << "root Object" << std::endl;
+        delete rootObject;
     }
 }
 
