@@ -40,10 +40,12 @@ void MeshRenderer::LoadTextures(const std::string& fileName)
 
 void MeshRenderer::Draw(Shader* shader)
 {
-    GLint modelLoc = glGetUniformLocation(shader->GetProgram(), "model");
+    // GLint modelLoc = glGetUniformLocation(shader->GetProgram(), "model");
     Matrix4 model
         = mOffset * mOwner->GetTransform()->GetWorldMatrix();
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.GetAsFloatPtr());
+    // glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.GetAsFloatPtr());
+
+    shader->SetMatrixUniform("model", model);
 
     Texture* t = mMesh->GetTexture(mTextureIndex);
     if (t) {
