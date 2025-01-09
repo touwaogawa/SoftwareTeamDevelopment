@@ -51,4 +51,6 @@ private:
 
     static GLuint mDepthMapFBO;
     static GLuint mDepthMap;
+
+    static void Draw3DObjects();
 };
