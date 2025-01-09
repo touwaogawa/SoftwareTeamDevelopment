@@ -41,7 +41,7 @@ void MeshRenderer::LoadTextures(const std::string& fileName)
 void MeshRenderer::Draw(Shader* shader)
 {
 
-    Matrix4 model = mOffset * mOwner->GetTransform()->GetWorldMatrix();
+    Matrix4 model = mOwner->GetTransform()->GetWorldMatrix() * mOffset;
     shader->SetMatrixUniform("model", model);
 
     Texture* t = mMesh->GetTexture(mTextureIndex);
@@ -52,7 +52,6 @@ void MeshRenderer::Draw(Shader* shader)
     VertexArray* va = mMesh->GetVertexArray();
     va->Bind();
 
-    // glDrawElements(GL_TRIANGLES, va->GetNumIndices(), GL_UNSIGNED_INT, 0);
     glDrawArrays(GL_TRIANGLES, 0, va->GetNumVerts());
 
     glBindVertexArray(0);
