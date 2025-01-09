@@ -1,9 +1,9 @@
 #include "mesh.h"
-#include <fstream>
+#include "renderer.h"
 #include <glm/glm.hpp>
 #include <iostream>
-#include <sstream>
 #include <string>
+#include <tiny_obj_loader.h>
 #include <vector>
 Mesh::Mesh()
 {
@@ -15,83 +15,77 @@ Mesh::~Mesh()
 
 bool Mesh::LoadObjFile(const std::string& fileName)
 {
-    std::vector<float> verts;
-    std::vector<unsigned int> indices;
-
-    std::ifstream file(fileName);
-    if (!file.is_open()) {
-        std::cerr << "Error opening file! :" << fileName << std::endl;
+    // tinyobjのオブジェクト作成
+    tinyobj::ObjReader reader;
+    if (!reader.ParseFromFile(fileName)) {
+        if (!reader.Error().empty()) {
+            std::cerr << "Error loading OBJ file: " << reader.Error() << std::endl;
+        }
         return false;
     }
 
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::vec3> normals;
-    std::vector<glm::vec2> texCoords;
-    std::vector<glm::ivec3> faceIdxs;
+    // モデルデータを取得
+    const auto& shapes = reader.GetShapes();
+    const auto& attrib = reader.GetAttrib();
+    std::vector<Vertex> vertices;
 
-    std::string line;
-    while (std::getline(file, line)) {
-        std::stringstream ss(line);
-        std::string prefix;
-        ss >> prefix;
+    // 頂点データとインデックスデータをVBOとEBO用に整理
+    for (size_t i = 0; i < shapes.size(); ++i) {
+        const auto& shape = shapes[i];
+        for (size_t j = 0; j < shape.mesh.indices.size(); ++j) {
+            const auto& idx = shape.mesh.indices[j];
 
-        if (prefix == "v") { // 頂点
-            glm::vec3 vertex;
-            ss >> vertex.x >> vertex.y >> vertex.z;
-            vertices.push_back(vertex);
-        } else if (prefix == "vn") { // 法線
-            glm::vec3 normal;
-            ss >> normal.x >> normal.y >> normal.z;
-            normals.push_back(normal);
-        } else if (prefix == "vt") { // テクスチャ座標
-            glm::vec2 texCoord;
-            ss >> texCoord.x >> texCoord.y;
-            texCoords.push_back(texCoord);
-        } else if (prefix == "f") { // 面
-            std::string faces[3];
-            ss >> faces[0] >> faces[1] >> faces[2];
-
-            for (std::string face : faces) {
-                std::stringstream faceStream(face);
-                std::string vIndex, vtIndex, vnIndex;
-                std::getline(faceStream, vIndex, '/');
-                std::getline(faceStream, vtIndex, '/');
-                std::getline(faceStream, vnIndex, '/');
-
-                glm::ivec3 faceIdx;
-                faceIdx.x = std::stoi(vIndex);  // 頂点
-                faceIdx.y = std::stoi(vtIndex); // UV
-                faceIdx.z = std::stoi(vnIndex); // 法線
-
-                faceIdxs.push_back(faceIdx);
-            }
+            glm::vec3 position = {
+                attrib.vertices[idx.vertex_index * 3],
+                attrib.vertices[idx.vertex_index * 3 + 1],
+                attrib.vertices[idx.vertex_index * 3 + 2]
+            };
+            glm::vec3 normal = {
+                attrib.normals[idx.normal_index * 3],
+                attrib.normals[idx.normal_index * 3 + 1],
+                attrib.normals[idx.normal_index * 3 + 2]
+            };
+            glm::vec2 texCoord = {
+                attrib.texcoords[idx.texcoord_index * 2],
+                attrib.texcoords[idx.texcoord_index * 2 + 1],
+            };
+            // Not gonna care about texCoord right now.
+            Vertex vert = { position, normal, texCoord };
+            vertices.push_back(vert);
         }
     }
-    int idx = 0;
-    for (glm::ivec3 faceIdx : faceIdxs) {
-        // 頂点
-        verts.push_back(vertices[faceIdx.x - 1].x);
-        verts.push_back(vertices[faceIdx.x - 1].y);
-        verts.push_back(vertices[faceIdx.x - 1].z);
-        // 法線
-        verts.push_back(normals[faceIdx.z - 1].x);
-        verts.push_back(normals[faceIdx.z - 1].y);
-        verts.push_back(normals[faceIdx.z - 1].z);
-        // UV
-        verts.push_back(texCoords[faceIdx.y - 1].x);
-        verts.push_back(texCoords[faceIdx.y - 1].y);
-        //  indicesには頂点情報を使う
-        indices.push_back(idx++);
-    }
-
-    mNumVerts    = verts.size() / 8;
-    mVertexArray = new VertexArray(verts.data(), verts.size() / 8, VertexArray::Layout::PosNormTex, indices.data(), indices.size());
-
-    file.close();
+    mVertexArray = new VertexArray(vertices.data(), vertices.size(), VertexArray::Layout::PosNormTex);
     return true;
 }
 
-VertexArray* Mesh::GetVAO() const
+void Mesh::LoadTextureFile(const std::vector<std::string>& fileNames)
 {
-    return mVertexArray;
+    for (std::string fileName : fileNames) {
+
+        Texture* t = Renderer::GetTexture(fileName);
+        if (t == nullptr) {
+            // If it's null, use the default texture
+            t = Renderer::GetTexture("../assets/textures/default.png");
+        }
+        mTextures.emplace_back(t);
+    }
+}
+void Mesh::LoadTextureFile(const std::string& fileName)
+{
+    Texture* t = Renderer::GetTexture(fileName);
+    // std::cout << "filename " << fileName << std::endl;
+    if (t == nullptr) {
+        // If it's null, use the default texture
+        t = Renderer::GetTexture("../assets/textures/default.png");
+    }
+    mTextures.emplace_back(t);
+}
+
+Texture* Mesh::GetTexture(size_t index)
+{
+    if (index < mTextures.size()) {
+        return mTextures[index];
+    } else {
+        return nullptr;
+    }
 }

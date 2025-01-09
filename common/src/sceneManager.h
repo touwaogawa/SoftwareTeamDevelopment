@@ -1,13 +1,26 @@
 #pragma once
+
+class Scene;
+
 class SceneManager {
 public:
-    static void LoadScene(class Scene* nextScene);
-    static bool GetiIsChanged();
+    /// @brief Set the next scene
+    /// @param nextScene
+    static void LoadScene(Scene* nextScene);
+
+    /// @brief Check if the LoadSecne method was called
+    /// @return return true if the LoadScene methos was called, otherwise return false
+    static bool GetiIsChanged() { return mIsChanged; }
+
+    /// @brief Adopt the next scene
     static void AdoptSceneChange();
-    static class Scene* GetCurrentScene();
+
+    /// @brief Return the current scene
+    /// @return The pointer of the current scene
+    static Scene* GetCurrentScene() { return mCurrentScene; }
 
 private:
-    static class Scene* mCurrentScene;
-    static class Scene* mNextScene;
+    static Scene* mCurrentScene;
+    static Scene* mNextScene;
     static bool mIsChanged;
 };

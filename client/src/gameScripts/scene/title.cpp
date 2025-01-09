@@ -15,10 +15,10 @@ bool TitleScene::Load()
 {
     return true;
 }
-void TitleScene::Update(bool& exitFrag)
+void TitleScene::Update(bool& exitFrag, float timeStep)
 {
     ProccessInput();
-    Scene::Update(exitFrag);
+    Scene::Update(exitFrag, timeStep);
 }
 
 bool TitleScene::ProccessInput()

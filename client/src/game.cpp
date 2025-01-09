@@ -55,7 +55,7 @@ void Game::RunLoop()
             if (Input::GetKeyDown(SDL_SCANCODE_ESCAPE)) {
                 return;
             }
-            SceneManager::GetCurrentScene()->Update(gameFrag);
+            SceneManager::GetCurrentScene()->Update(gameFrag, Time::GetTimeStep());
             Renderer::Draw();
             Time::UpdateFrame();
             if (SceneManager::GetiIsChanged()) {

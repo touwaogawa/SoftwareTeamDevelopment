@@ -33,37 +33,6 @@ GameObject::~GameObject()
     }
 }
 
-Scene* GameObject::GetScene() const
-{
-    return mScene;
-}
-
-Transform* GameObject::GetTransform() const
-{
-    return mTransform;
-}
-
-Behaviour* GameObject::GetBehaviour() const
-{
-    return mBehaviour;
-}
-template <typename T>
-T* GameObject::GetComponent()
-{
-    for (Component* comp : mComponents) {
-        T* casted = dynamic_cast<T*>(comp);
-        if (casted) {
-            return casted;
-        }
-    }
-    return nullptr;
-}
-
-void GameObject::AddComponent(Component* component)
-{
-    mComponents.push_back(component);
-}
-
 void GameObject::RemoveComponent(Component* component)
 {
     auto end = std::remove(mComponents.begin(), mComponents.end(), component);

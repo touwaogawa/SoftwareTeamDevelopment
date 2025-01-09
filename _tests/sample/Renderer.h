@@ -42,8 +42,7 @@ public:
     void AddPointLight(class PointLightComponent* light);
     void RemovePointLight(class PointLightComponent* light);
 
-    class Texture* GetTexture(const std::string& fileName);
-    class Mesh* GetMesh(const std::string& fileName);
+        class Mesh* GetMesh(const std::string& fileName);
 
     void SetViewMatrix(const Matrix4& view) { mView = view; }
 

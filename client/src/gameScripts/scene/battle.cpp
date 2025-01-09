@@ -1,6 +1,7 @@
 #include "battle.h"
 #include "../../../../common/src/component/transform.h"
 #include "../../../../common/src/gameScripts/packetData.h"
+#include "../../../../common/src/physics.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
 #include "../../component/meshRenderer.h"
@@ -25,7 +26,7 @@ BattleScene::~BattleScene()
 }
 bool BattleScene::Load()
 {
-    std::cerr << "playerNum: " << mPlayerNum << std::endl;
+    // std::cerr << "playerNum: " << mPlayerNum << std::endl;
 
     for (int i = 0; i < mPlayerNum; i++) {
         mPlayers.push_back(new Player_C(this, mPlayerInfos[i], &currentFrame));
@@ -42,11 +43,13 @@ void BattleScene::SetENet(ENetAddress address, ENetHost* client, ENetPeer* peer)
     mClient  = client;
     mPeer    = peer;
 }
-void BattleScene::Update(bool& exitFrag)
+void BattleScene::Update(bool& exitFrag, float timeStep)
 {
     ProccessNetowork();
+    // Transformをdynamic objectのrp3d::Transformに反映
+    mPhysics->SetDynamicTransform();
     ProccessInput();
-    Scene::Update(exitFrag);
+    Scene::Update(exitFrag, timeStep);
 }
 
 Stage* BattleScene::GetStage() const
@@ -65,8 +68,8 @@ bool BattleScene::ProccessInput()
         Input::GetButton(2),
         Input::GetButton(3),
         Input::GetButton(1) || Input::GetButton(4),
-        Vector2(Input::GetAxis(1), Input::GetAxis(2)),
-        Vector2(Input::GetAxis(3), Input::GetAxis(4)),
+        Vector2(Input::GetAxis(1), -Input::GetAxis(2)),
+        Vector2(Input::GetAxis(3), -Input::GetAxis(4)),
         currentFrame
     };
     mPlayer->commandBuffer.push_front(commandData);
@@ -84,7 +87,7 @@ bool BattleScene::ProccessNetowork()
 {
     switch (mBattleState) {
     case BattleState::CountDown:
-        std::cout << "BattleScene ContDown" << std::endl;
+        // std::cout << "BattleScene ContDown" << std::endl;
         std::cout << "my Id " << mMyPlayerID << std::endl;
         mBattleState = BattleState::Battle;
         break;
@@ -121,7 +124,7 @@ bool BattleScene::ProccessNetowork()
                     mPlayers[id]->GetHero()->GetTransform()->SetWorldMatrix(playerCurrentData.heroTransform);
                 } break;
                 default:
-                    std::cout << "default data" << std::endl;
+                    std::cout << "PacketData error" << std::endl;
                     break;
                 }
                 enet_packet_destroy(event.packet); // パケットの解放
@@ -137,5 +140,6 @@ bool BattleScene::ProccessNetowork()
     default:
         break;
     }
+    enet_host_flush(mClient);
     return true;
 }

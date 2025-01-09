@@ -2,6 +2,8 @@
 #include "../../../../common/src/gameObject.h"
 enum class BeyType {
     Shuriken,
+    Hexagram,
+    Snowflake,
     BeyTypeNum
 };
 

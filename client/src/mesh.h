@@ -7,10 +7,12 @@ public:
     Mesh();
     ~Mesh();
     bool LoadObjFile(const std::string& fileName);
-    VertexArray* GetVAO() const;
-    unsigned int GetNumVerts() const { return mNumVerts; }
+    void LoadTextureFile(const std::vector<std::string>& fileNames);
+    void LoadTextureFile(const std::string& fileName);
+    VertexArray* GetVertexArray() const { return mVertexArray; }
+    class Texture* GetTexture(size_t index);
 
 private:
     VertexArray* mVertexArray;
-    unsigned int mNumVerts;
+    std::vector<class Texture*> mTextures;
 };

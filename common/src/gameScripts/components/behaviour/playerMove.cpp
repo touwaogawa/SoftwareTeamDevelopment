@@ -13,7 +13,7 @@ PlayerMove::PlayerMove(GameObject* owner)
 
 void PlayerMove::Start()
 {
-    std::cout << "playerMove start" << std::endl;
+    // std::cout << "playerMove start" << std::endl;
     mPlayer                     = static_cast<Player*>(mOwner);
     mHero                       = mPlayer->GetHero();
     mHeroMove                   = static_cast<HeroMove*>(mHero->GetBehaviour());

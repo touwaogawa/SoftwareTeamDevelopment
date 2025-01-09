@@ -7,47 +7,52 @@
 #include "../mesh.h"
 #include "../renderer.h"
 #include "../shader.h"
+#include "../texture.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-MeshRenderer::MeshRenderer(GameObject* owner)
+MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::vector<std::string>& textureFileNames)
     : Component(owner)
+    , mTextureIndex(0)
 {
     Renderer::AddMeshRenderer(this);
+    LoadObj(objFileName);
+    mMesh->LoadTextureFile(textureFileNames);
 }
-MeshRenderer::MeshRenderer(GameObject* owner, const std::string& fileName)
+MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::string& textureFileName)
     : Component(owner)
+    , mTextureIndex(0)
 {
     Renderer::AddMeshRenderer(this);
-    Load(fileName);
-}
-MeshRenderer::~MeshRenderer()
-{
-    Renderer::RemoveMeshRenderer(this);
+    LoadObj(objFileName);
+    mMesh->LoadTextureFile(textureFileName);
 }
 
-void MeshRenderer::SetMesh(Mesh* mesh)
+void MeshRenderer::LoadObj(const std::string& fileName)
 {
-    mMesh = mesh;
+    mMesh = Renderer::GetMesh(fileName);
+}
+void MeshRenderer::LoadTextures(const std::string& fileName)
+{
+    mMesh->LoadTextureFile(fileName);
 }
 
-void MeshRenderer::Load(const std::string& fileName)
-{
-    Mesh* mesh = Renderer::GetMesh(fileName);
-    SetMesh(mesh);
-}
 void MeshRenderer::Draw(Shader* shader)
 {
-    shader->Use();
-    GLint modelLoc = glGetUniformLocation(shader->GetProgram(), "model");
-    Matrix4 model
-        = mOffset * mOwner->GetTransform()->GetWorldMatrix();
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.GetAsFloatPtr());
 
-    mMesh->GetVAO()->Bind();
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, mMesh->GetNumVerts());
+    Matrix4 model = mOwner->GetTransform()->GetWorldMatrix() * mOffset;
+    shader->SetMatrixUniform("model", model);
+
+    Texture* t = mMesh->GetTexture(mTextureIndex);
+    if (t) {
+        t->SetActive();
+    }
+
+    VertexArray* va = mMesh->GetVertexArray();
+    va->Bind();
+
+    glDrawArrays(GL_TRIANGLES, 0, va->GetNumVerts());
 
     glBindVertexArray(0);
 }

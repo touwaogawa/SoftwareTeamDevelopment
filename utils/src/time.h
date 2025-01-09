@@ -5,10 +5,17 @@ class Time {
 public:
     Time();
     static bool Init(int fps);
+
     // フレームごとに呼び出されるメソッド
     static void UpdateFrame();
 
-    // static auto GetTime();
+    /// @brief Return time step from previous frame
+    /// @return time step (second)
+    static float GetTimeStep()
+    {
+        std::chrono::duration<float> duration = mTime - mLastTime;
+        return duration.count();
+    }
 
 private:
     static int mFps;

@@ -17,7 +17,7 @@ public:
     MatchingScene(int playerNum);
     ~MatchingScene() override;
     bool Load() override;
-    void Update(bool& exitFrag) override;
+    void Update(bool& exitFrag, float timeStep) override;
 
 private:
     MatchingState mMatchingState;

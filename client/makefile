@@ -24,7 +24,7 @@ UTILS_OBJECTS = $(patsubst $(UTILS_SRCDIR)/%, $(UTILS_OBJDIR)/%, $(UTILS_SOURCES
 
 # コンパイルオプション
 INCLUDE = $(MYINCDIR) -pthread
-LIBRARY = $(MYLIBDIR) -Wl,-rpath,'$$ORIGIN/../lib'  -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLU -ljoyconlib -lhidapi-hidraw -lm -lSOIL -lFMOD -lGLEW -lenet
+LIBRARY = $(MYLIBDIR) -Wl,-rpath,'$$ORIGIN/../lib'  -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLU -ljoyconlib -lhidapi-hidraw -lm -lGLEW -lenet -lreactphysics3d -ltinyobjloader
 
 # 出力のターゲット
 TARGET = main

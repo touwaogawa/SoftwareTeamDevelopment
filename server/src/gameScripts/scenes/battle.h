@@ -16,7 +16,7 @@ public:
     ~BattleScene() override;
     bool Load() override;
     void SetENet(ENetAddress address, ENetHost* Server);
-    void Update(bool& exitFrag) override;
+    void Update(bool& exitFrag, float timeStep) override;
     class Stage* GetStage() const;
     int GetPlayerNum() const;
 

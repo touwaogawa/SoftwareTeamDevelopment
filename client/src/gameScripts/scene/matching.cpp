@@ -23,11 +23,11 @@ bool MatchingScene::Load()
 {
     return true;
 }
-void MatchingScene::Update(bool& exitFrag)
+void MatchingScene::Update(bool& exitFrag, float timeStep)
 {
     ProccessNetowork();
     ProccessInput();
-    Scene::Update(exitFrag);
+    Scene::Update(exitFrag, timeStep);
 }
 
 bool MatchingScene::ProccessInput()
@@ -114,7 +114,7 @@ bool MatchingScene::ProccessNetowork()
                     myPlayerId = idInitData.id;
                     std::cout << "idInitData.id" << myPlayerId << std::endl;
                     // プレイヤーの情報仮
-                    PlayerInfo playerInfo(myPlayerId, "name", RiderType::BaseHuman, BeyType::Shuriken);
+                    PlayerInfo playerInfo(myPlayerId, "name", RiderType::BaseHuman, BeyType::Hexagram);
 
                     PlayerInfoData playerInfoData;
                     playerInfoData.playerInfo = playerInfo;
@@ -140,7 +140,7 @@ bool MatchingScene::ProccessNetowork()
 
                 } break;
                 default:
-                    std::cout << "default data" << std::endl;
+                    std::cout << "PacketData error" << std::endl;
                     break;
                 }
                 enet_packet_destroy(event.packet); // パケットの解放

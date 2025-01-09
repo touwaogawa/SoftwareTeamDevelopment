@@ -208,7 +208,7 @@ PlayerCurrentData::PlayerCurrentData()
 }
 ENetPacket* PlayerCurrentData::CreatePacket()
 {
-    size_t dataSize = sizeof(mPacketDataType) + sizeof(heroCurrentStatus);
+    size_t dataSize = sizeof(mPacketDataType) + sizeof(id) + sizeof(heroCurrentStatus) + sizeof(heroTransform);
     uint8_t* buffer = new uint8_t[dataSize];
     uint8_t* p      = buffer;
     memcpy(p, &mPacketDataType, sizeof(mPacketDataType));

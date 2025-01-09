@@ -2,17 +2,20 @@
 #include "component/behaviour.h"
 #include "component/transform.h"
 #include "gameObject.h"
+#include "physics.h"
 #include <algorithm>
 //
 #include <iostream>
 Scene::Scene(std::string name)
     : currentFrame(0)
     , mName(name)
+    , mPhysics(new Physics())
 {
 }
 
 Scene::~Scene()
 {
+    delete mPhysics;
     RemoveAllObject();
 }
 void Scene::Start()
@@ -21,11 +24,15 @@ void Scene::Start()
         StartgameScriptsFromRoot(gameObject);
     }
 }
-void Scene::Update(bool& exitFrag)
+void Scene::Update(bool& exitFrag, float timeStep_sec)
 {
+    // ゲームオブジェクトの更新
     for (GameObject* gameObject : mRootObjects) {
         UpdategameScriptsFromRoot(gameObject);
     }
+    // 物理演算
+    mPhysics->Update(timeStep_sec);
+    // ゲームオブジェクトの更新(物理演算終了後)
     for (GameObject* gameObject : mRootObjects) {
         LateUpdategameScriptsFromRoot(gameObject);
     }
@@ -33,13 +40,13 @@ void Scene::Update(bool& exitFrag)
 
 void Scene::AddGameObject(GameObject* gameObject)
 {
-    mgameScripts.push_back(gameObject);
+    mgameObjects.push_back(gameObject);
 }
 
 void Scene::RemoveGameObject(GameObject* gameObject)
 {
-    auto end = std::remove(mgameScripts.begin(), mgameScripts.end(), gameObject);
-    mgameScripts.erase(end, mgameScripts.end());
+    auto end = std::remove(mgameObjects.begin(), mgameObjects.end(), gameObject);
+    mgameObjects.erase(end, mgameObjects.end());
 }
 
 void Scene::AddRootObject(GameObject* gameObject)
