@@ -87,6 +87,10 @@ bool Renderer::Load()
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mDepthMap, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Depth Framebuffer not complete!" << std::endl;
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     return true;
@@ -113,7 +117,7 @@ void Renderer::UnLoad()
 void Renderer::Draw()
 {
     // std::cout << "Draw" << std::endl;
-    // glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
+    glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
@@ -122,19 +126,19 @@ void Renderer::Draw()
 
     Matrix4 lightProjection, lightView;
     Matrix4 lightSpaceMatrix;
-    Vector3 lightPos(0.0f, 8.0f, 5.0f);
+    Vector3 lightPos(5.0f, 10.0f, 8.0f);
 
     // 正射影行列（平行光源用）
-    lightProjection = Matrix4::CreateOrtho(20.0f, 20.0f, 1.0f, 7.5f);
+    lightProjection = Matrix4::CreateOrtho(30.0f, 30.0f, 1.0f, 30.0f);
     // ビュー行列
-    lightView = Matrix4::CreateLookAt(lightPos, Vector3(), Vector3(0.0f, 1.0f, 0.0f));
+    lightView = Matrix4::CreateLookAt(lightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
 
-    lightSpaceMatrix = lightProjection * lightView;
+    lightSpaceMatrix = lightView * lightProjection;
 
     // シャドウマップをレンダリング
     glViewport(0, 0, 1024, 1024);
     glBindFramebuffer(GL_FRAMEBUFFER, mDepthMapFBO);
-    // glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
     // シェーダーに lightSpaceMatrix を渡す
     mDepthShader->Use();
@@ -154,12 +158,11 @@ void Renderer::Draw()
     Vector3 viewPos;
     Matrix4 view;
     Matrix4 projection;
-    projection = Matrix4::CreatePerspectiveFOV(40.0f / 360.0f * Math::TwoPi, mWindowWidth, mWindowHeight, 0.1f, 150.0f);
+    projection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f), mWindowWidth, mWindowHeight, 0.1f, 150.0f);
     if (mCamera == nullptr) {
         // std::cout << "mCamera == nullptr" << std::endl;
         viewPos = Vector3(0.0f, 40.0f, -40.0f);
         view    = Matrix4::CreateLookAt(viewPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        // view *= Matrix4::CreateRotationX(48.0f / 360.0f * Math::TwoPi);
     } else {
         viewPos = mCamera->GetOwner()->GetTransform()->GetWorldPosition();
         view    = Matrix4::CreateTranslation(viewPos);
@@ -172,17 +175,17 @@ void Renderer::Draw()
 
     // 色の設定
     Vector3 diffuseLightColor(1.0f, 1.0f, 1.0f);
-    Vector3 ambientLightColor(0.7f, 0.9f, 0.9f);
+    Vector3 ambientLightColor(0.53f, 0.81f, 0.92f);
     mShadowMeshShader->SetVectorUniform("diffuseLightColor", diffuseLightColor);
     mShadowMeshShader->SetVectorUniform("ambientLightColor", ambientLightColor);
 
     // アンビエントライトの強度
-    float ambientStrength = 0.6f;
+    float ambientStrength = 0.8f;
     mShadowMeshShader->SetFloatUniform("ambientStrength", ambientStrength);
 
     // ビュー、プロジェクション
-    mShadowMeshShader->SetMatrixUniform("view", view);
-    mShadowMeshShader->SetMatrixUniform("projection", projection);
+    mShadowMeshShader->SetMatrixUniform("viewProjection", view * projection);
+    mShadowMeshShader->SetMatrixUniform("lightSpaceMatrix", lightSpaceMatrix);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, mDepthMap);

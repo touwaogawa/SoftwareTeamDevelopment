@@ -9,8 +9,9 @@ out vec2 TexCoords;
 out vec4 FragPosLightSpace;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+// uniform mat4 view;
+// uniform mat4 projection;
+uniform mat4 viewProjection;
 uniform mat4 lightSpaceMatrix;
 
 void main()
@@ -20,5 +21,5 @@ void main()
     TexCoords = aTexCoord;
     FragPosLightSpace = vec4(FragPos, 1.0) * lightSpaceMatrix;
 
-    gl_Position =  vec4(FragPos, 1.0) * view * projection;
+    gl_Position =  vec4(FragPos, 1.0) * viewProjection;
 }
