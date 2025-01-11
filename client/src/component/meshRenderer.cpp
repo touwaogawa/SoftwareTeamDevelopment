@@ -20,6 +20,10 @@ MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, co
     mMesh->SetTexture(Renderer::GetTexture(textureFileName));
     Renderer::AddMeshRenderer(this);
 }
+MeshRenderer::~MeshRenderer()
+{
+    Renderer::RemoveMeshRenderer(this);
+}
 
 void MeshRenderer::Draw(Shader* shader)
 {

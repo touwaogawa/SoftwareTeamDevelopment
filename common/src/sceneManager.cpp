@@ -11,11 +11,17 @@ void SceneManager::LoadScene(Scene* nextScene)
     mIsChanged = true;
 }
 
+bool SceneManager::GetiIsChanged()
+{
+    if (mIsChanged) {
+        if (mCurrentScene) {
+            delete mCurrentScene;
+        }
+    }
+    return mIsChanged;
+}
 void SceneManager::AdoptSceneChange()
 {
-    if (mCurrentScene != nullptr) {
-        delete mCurrentScene;
-    }
     mCurrentScene = mNextScene;
     if (!mCurrentScene->Load()) {
         std::cout << "Failed Scene load : " << mCurrentScene->GetName() << std::endl;

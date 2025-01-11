@@ -22,18 +22,11 @@ public:
 
     static void AddMeshRenderer(class MeshRenderer* meshRenderer);
     static void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
+
     static void AddSprite(class SpriteRenderer* Sprite);
-    static void RemoveSprite(class SpriteRenderer* Sprite);
-    // static void SetViewMatrix(const Matrix4& view) { mView = view; }
-    static void AddCamera(const std::string& cameraName, Camera* camera)
-    {
-        mCameras.emplace(cameraName, camera);
-    }
-    static void RemoveCamera(const std::string& cameraName)
-    {
-        mCameras.erase(cameraName);
-    }
-    static void UseCamera(const std::string& cameraName);
+    static void RemoveSpriteRenderer(class SpriteRenderer* Sprite);
+
+    static void SetCamera(Camera* camera) { mCamera = camera; }
 
     static float GetWindowWidth() { return mWindowWidth; }
     static float GetWindowHeight() { return mWindowHeight; }
@@ -56,7 +49,6 @@ private:
     static std::vector<class SpriteRenderer*> mSprites;
 
     // カメラ情報
-    static std::unordered_map<std::string, Camera*> mCameras;
     static Camera* mCamera;
 
     static GLuint mDepthMapFBO;

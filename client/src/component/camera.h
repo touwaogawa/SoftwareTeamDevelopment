@@ -5,13 +5,11 @@
 class GameObject;
 class Camera : public Component {
 public:
-    Camera(GameObject* owner, const std::string& cameraName, const Matrix4& projection);
-    ~Camera();
+    Camera(GameObject* owner, const Matrix4& projection);
+    ~Camera() override;
     void Use();
-    const std::string& GetCameraName() const { return mCameraName; }
     void SetProjection(Matrix4 projection) { mProjection = projection; }
 
 private:
-    const std::string mCameraName;
     Matrix4 mProjection;
 };

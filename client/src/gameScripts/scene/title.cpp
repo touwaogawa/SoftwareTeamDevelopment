@@ -23,16 +23,17 @@ bool TitleScene::Load()
     new TitleUI(this, nullptr);
     new Stage_C(this, nullptr);
     new TitleCamera(this, nullptr);
-    PlayerInfo playerInfo(0, "name", RiderType::BaseHuman, BeyType::Hexagram);
-    mPlayer     = new Player_C(this, playerInfo, &currentFrame);
+    // PlayerInfo playerInfo(0, "name", RiderType::BaseHuman, BeyType::Hexagram);
+    // mPlayer = new Player_C(this, playerInfo, &currentFrame);
+
     Matrix4 mat = Matrix4::CreateScale(Vector3(0.6f, 0.6f, 0.6f));
-    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
-    SimpleSprite* ss = new SimpleSprite(this, nullptr, mat, "../assets/textures/PressAnyButton.png");
-    ss->SetBehaviour(new PressAnyButtonMove(ss));
+    // mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
+    // SimpleSprite* ss = new SimpleSprite(this, nullptr, mat, "../assets/textures/PressAnyButton.png");
+    // ss->SetBehaviour(new PressAnyButtonMove(ss));
 
     mat = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
     mat *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
-    StaticModel* sm = new StaticModel(this, nullptr, mat, "../assets/models/colosseum.obj", "../assets/textures/humanColore.png");
+    // StaticModel* sm = new StaticModel(this, nullptr, mat, "../assets/models/colosseum.obj", "../assets/textures/sand.png");
     return true;
 }
 void TitleScene::Update(bool& exitFrag, float timeStep)

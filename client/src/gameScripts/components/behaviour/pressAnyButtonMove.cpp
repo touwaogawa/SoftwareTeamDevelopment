@@ -1,11 +1,13 @@
 #include "pressAnyButtonMove.h"
 #include "../../../../../common/src/component/transform.h"
 #include "../../../../../common/src/gameObject.h"
+#include "../../../../../common/src/sceneManager.h"
 #include "../../../../../utils/src/input.h"
 #include "../../../../../utils/src/math.h"
 #include "../../../audio.h"
 #include "../../../component/camera.h"
 #include "../../../component/spriteRenderer.h"
+#include "../../scene/matching.h"
 #include <iostream>
 
 PressAnyButtonMove::PressAnyButtonMove(GameObject* owner)
@@ -85,6 +87,6 @@ void PressAnyButtonMove::GoMatching(int frame)
         sprite->SetCustomColor(Vector3(1.0f, 1.0f, 1.0f));
     }
     if (frame > 60) {
-        mStatus = PressAnyButtonMoveStatus::Init;
+        SceneManager::LoadScene(new MatchingScene());
     }
 }

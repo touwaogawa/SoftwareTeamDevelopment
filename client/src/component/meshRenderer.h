@@ -6,9 +6,10 @@
 class MeshRenderer : public Component {
 public:
     MeshRenderer(class GameObject* owner, const std::string& objFileName, const std::string& textureFileName);
-    ~MeshRenderer() = default;
+    ~MeshRenderer() override;
     void SetMesh(class Mesh* mesh) { mMesh = mesh; }
     void Draw(class Shader* shader);
+
     Matrix4 mOffset;
 
 private:

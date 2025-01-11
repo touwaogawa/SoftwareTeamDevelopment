@@ -71,7 +71,6 @@ std::string Scene::GetName() const
 }
 
 // protected ###################
-
 void Scene::DeteleAllObject()
 {
     for (GameObject* rootObject : mRootObjects) {

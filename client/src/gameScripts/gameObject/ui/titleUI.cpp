@@ -23,4 +23,5 @@ TitleUI::TitleUI(Scene* scene, Transform* parent)
 
 TitleUI::~TitleUI()
 {
+    std::cout << "titleui deleted" << std::endl;
 }

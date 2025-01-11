@@ -25,8 +25,10 @@ bool MatchingScene::Load()
 }
 void MatchingScene::Update(bool& exitFrag, float timeStep)
 {
+    std::cout << "gonum : " << mGameObjects.size() << std::endl;
     ProccessNetowork();
     ProccessInput();
+    std::cout << "rgonum : " << mRootObjects.size() << std::endl;
     Scene::Update(exitFrag, timeStep);
 }
 
@@ -41,7 +43,6 @@ bool MatchingScene::ProccessInput()
     case MatchingState::Connecting: {
     } break;
     case MatchingState::Connected: {
-
     } break;
     default:
         std::cout << "MatchingState error" << std::endl;
@@ -52,6 +53,7 @@ bool MatchingScene::ProccessInput()
 
 bool MatchingScene::ProccessNetowork()
 {
+    std::cout << "pn" << std::endl;
     switch (mMatchingState) {
     case MatchingState::Init:
         mClient = enet_host_create(
@@ -76,20 +78,21 @@ bool MatchingScene::ProccessNetowork()
             std::cerr << "No available peers for initiating an connection!" << std::endl;
             return false;
         }
-        mMatchingState = MatchingState::Connecting;
         std::cout << "Connecting to server..." << std::endl;
+        mMatchingState = MatchingState::Connecting;
         break;
     case MatchingState::Connecting: {
-        ENetEvent event;
-        while (enet_host_service(mClient, &event, 0) > 0) {
-            switch (event.type) {
+        std::cout << "Connecting" << std::endl;
+        while (enet_host_service(mClient, &mENetEvent, 0) > 0) {
+            switch (mENetEvent.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 std::cout << "Connected to server!" << std::endl;
                 mMatchingState = MatchingState::Connected;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
+                std::cout << "recv" << std::endl;
                 // std::cout << "Received message from server: " << (char*)event.packet->data << std::endl;
-                enet_packet_destroy(event.packet); // パケットの解放
+                enet_packet_destroy(mENetEvent.packet); // パケットの解放
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 std::cout << "Disconnected from server." << std::endl;
@@ -98,19 +101,20 @@ bool MatchingScene::ProccessNetowork()
                 break;
             }
         }
+        std::cout << "Connecting" << std::endl;
     } break;
     case MatchingState::Connected: {
-        ENetEvent event;
-        while (enet_host_service(mClient, &event, 0) > 0) {
-            switch (event.type) {
+        std::cout << "Connected" << std::endl;
+        while (enet_host_service(mClient, &mENetEvent, 0) > 0) {
+            switch (mENetEvent.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 std::cout << "Connected to server!" << std::endl;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                switch (PacketData::RecognizePacketDatatype(event.packet)) {
+                switch (PacketData::RecognizePacketDatatype(mENetEvent.packet)) {
                 case PacketDataType::MatchingInit: {
                     IDInitData idInitData;
-                    idInitData.LoadPacket(event.packet);
+                    idInitData.LoadPacket(mENetEvent.packet);
                     myPlayerId = idInitData.id;
                     std::cout << "idInitData.id" << myPlayerId << std::endl;
                     // プレイヤーの情報仮
@@ -126,7 +130,7 @@ bool MatchingScene::ProccessNetowork()
                 } break;
                 case PacketDataType::PlayerInfo: {
                     PlayerInfoData playerInfoData;
-                    playerInfoData.LoadPacket(event.packet);
+                    playerInfoData.LoadPacket(mENetEvent.packet);
                     int id = playerInfoData.playerInfo.id;
                     std::cout << "recv data id : " << id << std::endl;
                     mPlayerInfos.push_back(playerInfoData.playerInfo);
@@ -143,7 +147,7 @@ bool MatchingScene::ProccessNetowork()
                     std::cout << "PacketData error" << std::endl;
                     break;
                 }
-                enet_packet_destroy(event.packet); // パケットの解放
+                enet_packet_destroy(mENetEvent.packet); // パケットの解放
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 std::cout << "Disconnected from server." << std::endl;

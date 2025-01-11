@@ -22,14 +22,14 @@ GameObject::GameObject(Scene* scene, Transform* parent, Behaviour* behaviour)
 
 GameObject::~GameObject()
 {
-    // 子オブジェクトをすべて削除
-    if (!mTransform) {
+    if (!mTransform->GetParent()) {
         mScene->RemoveRootObject(this);
     }
     mScene->RemoveGameObject(this);
+    // 子オブジェクトをすべて削除
     for (Transform* child : mTransform->GetChildren()) {
 
-        child->GetOwner()->~GameObject();
+        delete child->GetOwner();
     }
     // コンポーネントをすべて削除
     for (Component* component : mComponents) {

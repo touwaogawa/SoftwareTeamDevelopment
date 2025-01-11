@@ -1,13 +1,15 @@
 #pragma once
+
+class GameObject;
 class Component {
 public:
-    explicit Component(class GameObject* owner)
+    explicit Component(GameObject* owner)
         : mOwner(owner)
     {
     }
-    virtual ~Component() = default;
-    class GameObject* GetOwner() { return mOwner; }
+    virtual ~Component();
+    GameObject* GetOwner() { return mOwner; }
 
 protected:
-    class GameObject* mOwner;
+    GameObject* mOwner;
 };

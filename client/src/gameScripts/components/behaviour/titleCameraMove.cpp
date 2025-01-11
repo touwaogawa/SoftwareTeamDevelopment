@@ -22,8 +22,9 @@ void TitleCameraMove::Update()
     mAngle += Math::ToRadians(1.0f);
     Transform* transform = mOwner->GetTransform();
     transform->SetWorldPosition(Vector3(x, 40.0f, z));
-    Camera* camera = mOwner->GetComponent<Camera>();
-    Matrix4 view   = Matrix4::CreateLookAt(transform->GetWorldPosition(), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+
+    Matrix4 view = Matrix4::CreateLookAt(transform->GetWorldPosition(), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+
     transform->SetWorldMatrix(view);
 }
 void TitleCameraMove::LateUpdate() { }

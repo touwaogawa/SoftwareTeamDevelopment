@@ -27,7 +27,6 @@ std::unordered_map<std::string, class Texture*> Renderer::mTextures;
 std::unordered_map<std::string, class Mesh*> Renderer::mMeshes;
 std::vector<class MeshRenderer*> Renderer::mMeshRenderers;
 std::vector<class SpriteRenderer*> Renderer::mSprites;
-std::unordered_map<std::string, Camera*> Renderer::mCameras;
 Camera* Renderer::mCamera           = nullptr;
 GLuint Renderer::mDepthMapFBO       = 0;
 GLuint Renderer::mDepthMap          = 0;
@@ -110,22 +109,22 @@ bool Renderer::Load()
 }
 void Renderer::UnLoad()
 {
+    delete mMeshShader;
+    delete mDepthShader;
+    delete mShadowMeshShader;
+    delete mSpriteShader;
 
     for (auto mesh : mMeshes) {
         delete mesh.second;
     }
     mMeshes.clear();
-    delete mMeshShader;
 
     for (auto texture : mTextures) {
         delete texture.second;
     }
     mTextures.clear();
 
-    for (auto camera : mCameras) {
-        delete camera.second;
-    }
-    mCameras.clear();
+    mCamera = nullptr;
 }
 void Renderer::Draw()
 {
@@ -134,9 +133,9 @@ void Renderer::Draw()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-
+    std::cout << "draw 1" << std::endl;
     Draw3DObjects();
-
+    std::cout << "draw 2" << std::endl;
     // billboard
 
     // 不透明
@@ -153,12 +152,12 @@ void Renderer::Draw()
     shader->Use();
     mSpriteVerts->Bind();
     for (auto sprite : mSprites) {
-        // std::cout << "Sprite" << std::endl;
+        std::cout << "Sprite Ren" << std::endl;
         if (sprite->GetVisible()) {
             sprite->Draw(shader);
         }
     }
-
+    std::cout << "draw 3" << std::endl;
     // 表示
     SDL_GL_SwapWindow(mWindow);
 }
@@ -223,17 +222,11 @@ void Renderer::AddSprite(SpriteRenderer* sprite)
     // Inserts element before position of iterator
     mSprites.insert(iter, sprite);
 }
-void Renderer::RemoveSprite(SpriteRenderer* sprite)
+void Renderer::RemoveSpriteRenderer(SpriteRenderer* spriteRenderer)
 {
     std::cout << "Remove Sprite" << std::endl;
-    auto end = std::remove(mSprites.begin(), mSprites.end(), sprite);
+    auto end = std::remove(mSprites.begin(), mSprites.end(), spriteRenderer);
     mSprites.erase(end, mSprites.end());
-}
-
-void Renderer::UseCamera(const std::string& cameraName)
-{
-    Camera* camera = mCameras.find(cameraName)->second;
-    mCamera        = camera;
 }
 
 void Renderer::Draw3DObjects()
@@ -263,6 +256,7 @@ void Renderer::Draw3DObjects()
 
     // シーンをレンダリング
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
+        std::cout << "meshren " << std::endl;
         meshRenderer->Draw(mDepthShader);
     }
 

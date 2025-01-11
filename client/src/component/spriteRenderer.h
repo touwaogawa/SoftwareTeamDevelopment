@@ -10,7 +10,7 @@ class Shader;
 class SpriteRenderer : public Component {
 public:
     SpriteRenderer(GameObject* owner, int order = 0);
-    ~SpriteRenderer();
+    ~SpriteRenderer() override;
 
     virtual void Draw(Shader* shader);
     void SetTexture(Texture* texture);

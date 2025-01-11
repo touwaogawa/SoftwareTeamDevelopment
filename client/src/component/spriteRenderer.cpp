@@ -23,7 +23,7 @@ SpriteRenderer::SpriteRenderer(GameObject* owner, int order)
 SpriteRenderer::~SpriteRenderer()
 {
     // std::cout << "~Sprite" << std::endl;
-    Renderer::RemoveSprite(this);
+    Renderer::RemoveSpriteRenderer(this);
 }
 
 void SpriteRenderer::Draw(Shader* shader)

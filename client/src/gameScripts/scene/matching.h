@@ -23,7 +23,8 @@ public:
 private:
     MatchingState mMatchingState;
 
-    // int battleId;
+    ENetEvent mENetEvent;
+
     ENetAddress mAddress;
     ENetHost* mClient;
     ENetPeer* mPeer;

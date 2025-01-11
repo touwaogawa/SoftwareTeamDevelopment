@@ -11,7 +11,7 @@ public:
     RigidBody(class GameObject* owner, rp3d::BodyType bodyType, class Physics* physics);
 
     /// @brief Destructor
-    ~RigidBody();
+    ~RigidBody() override;
 
     /// @brief Return rp3d::RigidBody
     /// @return The pointer of rp3d::RigidBody

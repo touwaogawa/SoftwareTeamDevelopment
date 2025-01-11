@@ -8,6 +8,7 @@ public:
         rp3d::CollisionShape* shape,
         rp3d::RigidBody* rigidBody,
         const rp3d::Transform offset);
+    ~Collider() override = default;
 
     virtual void OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair) { }
     virtual void OnCollisionStay(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair) { }
