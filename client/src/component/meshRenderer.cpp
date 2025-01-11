@@ -12,30 +12,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::vector<std::string>& textureFileNames)
-    : Component(owner)
-    , mTextureIndex(0)
-{
-    Renderer::AddMeshRenderer(this);
-    LoadObj(objFileName);
-    mMesh->LoadTextureFile(textureFileNames);
-}
 MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::string& textureFileName)
     : Component(owner)
     , mTextureIndex(0)
 {
+    mMesh = Renderer::GetMesh(objFileName);
+    mMesh->SetTexture(Renderer::GetTexture(textureFileName));
     Renderer::AddMeshRenderer(this);
-    LoadObj(objFileName);
-    mMesh->LoadTextureFile(textureFileName);
-}
-
-void MeshRenderer::LoadObj(const std::string& fileName)
-{
-    mMesh = Renderer::GetMesh(fileName);
-}
-void MeshRenderer::LoadTextures(const std::string& fileName)
-{
-    mMesh->LoadTextureFile(fileName);
 }
 
 void MeshRenderer::Draw(Shader* shader)

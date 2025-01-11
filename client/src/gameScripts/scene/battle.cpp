@@ -72,6 +72,8 @@ bool BattleScene::ProccessInput()
         currentFrame
     };
     mPlayer->commandBuffer.push_front(commandData);
+
+    // 送信
     BattleCommandData bcd;
     bcd.id             = mMyPlayerID;
     bcd.commandData    = commandData;

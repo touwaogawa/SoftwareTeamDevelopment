@@ -507,15 +507,15 @@ void Renderer::SetLightUniforms(Shader* shader, const Matrix4& view)
     // Camera position is from inverted view
     Matrix4 invView = view;
     invView.Invert();
-    shader->SetVectorUniform("uCameraPos", invView.GetTranslation());
+    shader->SetVector3Uniform("uCameraPos", invView.GetTranslation());
     // Ambient light
-    shader->SetVectorUniform("uAmbientLight", mAmbientLight);
+    shader->SetVector3Uniform("uAmbientLight", mAmbientLight);
     // Directional light
-    shader->SetVectorUniform("uDirLight.mDirection",
+    shader->SetVector3Uniform("uDirLight.mDirection",
         mDirLight.mDirection);
-    shader->SetVectorUniform("uDirLight.mDiffuseColor",
+    shader->SetVector3Uniform("uDirLight.mDiffuseColor",
         mDirLight.mDiffuseColor);
-    shader->SetVectorUniform("uDirLight.mSpecColor",
+    shader->SetVector3Uniform("uDirLight.mSpecColor",
         mDirLight.mSpecColor);
 }
 

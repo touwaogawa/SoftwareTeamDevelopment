@@ -11,4 +11,5 @@ public:
 
 private:
     bool ProccessInput();
+    class Player_C* mPlayer;
 };

@@ -63,7 +63,7 @@ void Shader::SetMatrixUniforms(const char* name, Matrix4* matrices, unsigned cou
     glUniformMatrix4fv(loc, count, GL_TRUE, matrices->GetAsFloatPtr());
 }
 
-void Shader::SetVectorUniform(const char* name, const Vector3& vector)
+void Shader::SetVector3Uniform(const char* name, const Vector3& vector)
 {
     GLuint loc = glGetUniformLocation(mProgram, name);
     // Send the vector data
@@ -90,6 +90,7 @@ void Shader::SetIntUniform(const char* name, int value)
     // Send the float data
     glUniform1i(loc, value);
 }
+
 bool Shader::checkCompileErrors(GLuint shader, GLenum shaderType)
 {
     GLint success;

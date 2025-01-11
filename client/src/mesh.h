@@ -2,17 +2,17 @@
 #include "vertexArray.h"
 #include <string>
 
+class Texture;
 class Mesh {
 public:
     Mesh();
     ~Mesh();
     bool LoadObjFile(const std::string& fileName);
-    void LoadTextureFile(const std::vector<std::string>& fileNames);
-    void LoadTextureFile(const std::string& fileName);
+    void SetTexture(Texture* texture) { mTextures.emplace_back(texture); }
     VertexArray* GetVertexArray() const { return mVertexArray; }
-    class Texture* GetTexture(size_t index);
+    Texture* GetTexture(size_t index);
 
 private:
     VertexArray* mVertexArray;
-    std::vector<class Texture*> mTextures;
+    std::vector<Texture*> mTextures;
 };

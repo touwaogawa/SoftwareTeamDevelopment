@@ -4,7 +4,7 @@
 #include "../../utils/src/math.h"
 #include "component/camera.h"
 #include "component/meshRenderer.h"
-#include "component/sprite.h"
+#include "component/spriteRenderer.h"
 #include "mesh.h"
 #include "shader.h"
 #include "texture.h"
@@ -26,7 +26,7 @@ Shader* Renderer::mSpriteShader     = nullptr;
 std::unordered_map<std::string, class Texture*> Renderer::mTextures;
 std::unordered_map<std::string, class Mesh*> Renderer::mMeshes;
 std::vector<class MeshRenderer*> Renderer::mMeshRenderers;
-std::vector<class Sprite*> Renderer::mSprites;
+std::vector<class SpriteRenderer*> Renderer::mSprites;
 std::unordered_map<std::string, Camera*> Renderer::mCameras;
 Camera* Renderer::mCamera           = nullptr;
 GLuint Renderer::mDepthMapFBO       = 0;
@@ -48,7 +48,6 @@ bool Renderer::Init(float window_w, float window_h)
         std::cout << "OpenGL context could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         return false;
     }
-
     return true;
 }
 
@@ -138,18 +137,25 @@ void Renderer::Draw()
 
     Draw3DObjects();
 
+    // billboard
+
+    // 不透明
+
+    // 透明
+
     // Sprites
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
-    mSpriteShader->Use();
+    Shader* shader = mSpriteShader;
+    shader->Use();
     mSpriteVerts->Bind();
     for (auto sprite : mSprites) {
         // std::cout << "Sprite" << std::endl;
         if (sprite->GetVisible()) {
-            sprite->Draw(mSpriteShader);
+            sprite->Draw(shader);
         }
     }
 
@@ -177,7 +183,6 @@ Texture* Renderer::GetTexture(const std::string& fileName)
 
 Mesh* Renderer::GetMesh(const std::string& fileName)
 {
-
     Mesh* m   = nullptr;
     auto iter = mMeshes.find(fileName);
     if (iter != mMeshes.end()) {
@@ -203,7 +208,7 @@ void Renderer::RemoveMeshRenderer(MeshRenderer* meshRenderer)
     auto end = std::remove(mMeshRenderers.begin(), mMeshRenderers.end(), meshRenderer);
     mMeshRenderers.erase(end, mMeshRenderers.end());
 }
-void Renderer::AddSprite(Sprite* sprite)
+void Renderer::AddSprite(SpriteRenderer* sprite)
 {
     int myDrawOrder = sprite->GetDrawOrder();
     auto iter       = mSprites.begin();
@@ -218,7 +223,7 @@ void Renderer::AddSprite(Sprite* sprite)
     // Inserts element before position of iterator
     mSprites.insert(iter, sprite);
 }
-void Renderer::RemoveSprite(Sprite* sprite)
+void Renderer::RemoveSprite(SpriteRenderer* sprite)
 {
     std::cout << "Remove Sprite" << std::endl;
     auto end = std::remove(mSprites.begin(), mSprites.end(), sprite);
@@ -277,19 +282,18 @@ void Renderer::Draw3DObjects()
         view    = Matrix4::CreateLookAt(viewPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
     } else {
         viewPos = mCamera->GetOwner()->GetTransform()->GetWorldPosition();
-        view    = Matrix4::CreateTranslation(viewPos);
-        view *= mCamera->GetOwner()->GetTransform()->GetWorldMatrix().GetRotationPart();
+        view    = mCamera->GetOwner()->GetTransform()->GetWorldMatrix();
     }
 
     // ライトのプロパティ
-    mShadowMeshShader->SetVectorUniform("lightPos", lightPos);
-    mShadowMeshShader->SetVectorUniform("viewPos", viewPos);
+    mShadowMeshShader->SetVector3Uniform("lightPos", lightPos);
+    mShadowMeshShader->SetVector3Uniform("viewPos", viewPos);
 
     // 色の設定
     Vector3 diffuseLightColor(1.0f, 1.0f, 1.0f);
     Vector3 ambientLightColor(0.53f, 0.81f, 0.92f);
-    mShadowMeshShader->SetVectorUniform("diffuseLightColor", diffuseLightColor);
-    mShadowMeshShader->SetVectorUniform("ambientLightColor", ambientLightColor);
+    mShadowMeshShader->SetVector3Uniform("diffuseLightColor", diffuseLightColor);
+    mShadowMeshShader->SetVector3Uniform("ambientLightColor", ambientLightColor);
 
     // アンビエントライトの強度
     float ambientStrength = 0.8f;

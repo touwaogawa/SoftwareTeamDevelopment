@@ -1,11 +1,14 @@
 #pragma once
 #include <string>
+#include <vector>
 
 class Texture {
 public:
     Texture();
     ~Texture() = default;
     bool Load(const std::string& fileName);
+    void CreateTextureFromAtlas(const unsigned char* atlasData, int atlasWidth, int atlasHeight);
+
     void UnLoad();
 
     void SetActive(int index = 0);

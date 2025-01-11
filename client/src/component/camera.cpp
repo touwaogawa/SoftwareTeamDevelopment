@@ -7,6 +7,11 @@ Camera::Camera(GameObject* owner, const std::string& cameraName, const Matrix4& 
 {
     Renderer::AddCamera(mCameraName, this);
 }
+
+void Camera::Use()
+{
+    Renderer::UseCamera(mCameraName);
+}
 Camera::~Camera()
 {
     Renderer::RemoveCamera(mCameraName);

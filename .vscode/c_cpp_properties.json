@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/include/**",
+                "${workspaceFolder}/_vinc/**",
                 "/usr/include/**"
             ],
             "defines": [],

@@ -22,6 +22,8 @@ public:
     /// @brief Return the Behaviour Component attached to this GameObject
     class Behaviour* GetBehaviour() const { return mBehaviour; }
 
+    void SetBehaviour(class Behaviour* behabiour) { mBehaviour = behabiour; }
+
     /// @brief Return a specified type of component
     /// @tparam T
     /// @return Returns the specified component if it exists; otherwise, returns nullptr

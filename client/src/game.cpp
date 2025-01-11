@@ -3,12 +3,14 @@
 #include "../../common/src/sceneManager.h"
 #include "../../utils/src/input.h"
 #include "../../utils/src/time.h"
+#include "audio.h"
 #include "gameScripts/scene/title.h"
 #include "renderer.h"
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <enet/enet.h>
 #include <iostream>
+
 Game::Game()
 {
 }
@@ -36,6 +38,9 @@ bool Game::Init()
         std::cerr << "ENet initialization failed!" << std::endl;
         return false;
     }
+
+    Audio::Init();
+
     return true;
 }
 
@@ -64,12 +69,14 @@ void Game::RunLoop()
             SceneManager::GetCurrentScene()->currentFrame++;
         }
         Renderer::UnLoad();
+        Audio::Unload();
     }
 }
 
 void Game::Shutdown()
 {
     Renderer::ShutDown();
+    Audio::ShutDown();
     SDL_Quit();
     enet_deinitialize();
 }

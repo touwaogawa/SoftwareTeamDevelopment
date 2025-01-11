@@ -27,7 +27,10 @@ public:
     }
 
     // gamepad
-    static bool GetButton(int buttonName) { return mJoystickButtonState[buttonName - 1]; }
+    static bool GetButton(int buttonName)
+    {
+        return mJoystickButtonState[buttonName - 1];
+    }
     static bool GetButtonDown(int buttonName)
     {
         return mJoystickButtonState[buttonName - 1] && !mPrevJoystickButtonState[buttonName - 1];

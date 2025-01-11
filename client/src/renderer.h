@@ -19,10 +19,11 @@ public:
     static void Draw();
     static class Texture* GetTexture(const std::string& fileName);
     static class Mesh* GetMesh(const std::string& fileName);
+
     static void AddMeshRenderer(class MeshRenderer* meshRenderer);
     static void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
-    static void AddSprite(class Sprite* Sprite);
-    static void RemoveSprite(class Sprite* Sprite);
+    static void AddSprite(class SpriteRenderer* Sprite);
+    static void RemoveSprite(class SpriteRenderer* Sprite);
     // static void SetViewMatrix(const Matrix4& view) { mView = view; }
     static void AddCamera(const std::string& cameraName, Camera* camera)
     {
@@ -33,6 +34,9 @@ public:
         mCameras.erase(cameraName);
     }
     static void UseCamera(const std::string& cameraName);
+
+    static float GetWindowWidth() { return mWindowWidth; }
+    static float GetWindowHeight() { return mWindowHeight; }
 
 private:
     static SDL_Window* mWindow;
@@ -49,7 +53,7 @@ private:
     static std::unordered_map<std::string, class Texture*> mTextures;
     static std::unordered_map<std::string, class Mesh*> mMeshes;
     static std::vector<class MeshRenderer*> mMeshRenderers;
-    static std::vector<class Sprite*> mSprites;
+    static std::vector<class SpriteRenderer*> mSprites;
 
     // カメラ情報
     static std::unordered_map<std::string, Camera*> mCameras;

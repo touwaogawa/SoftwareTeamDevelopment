@@ -83,7 +83,7 @@ void Scene::DeteleAllObject()
 // private ######################
 void Scene::StartgameScriptsFromRoot(GameObject* rootObject)
 {
-    if (rootObject->GetBehaviour() != nullptr) {
+    if (rootObject->GetBehaviour()) {
         rootObject->GetBehaviour()->Start();
     }
     for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
@@ -92,7 +92,7 @@ void Scene::StartgameScriptsFromRoot(GameObject* rootObject)
 }
 void Scene::UpdategameScriptsFromRoot(GameObject* rootObject)
 {
-    if (rootObject->GetBehaviour() != nullptr) {
+    if (rootObject->GetBehaviour()) {
         rootObject->GetBehaviour()->Update();
     }
     for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
@@ -101,7 +101,7 @@ void Scene::UpdategameScriptsFromRoot(GameObject* rootObject)
 }
 void Scene::LateUpdategameScriptsFromRoot(GameObject* rootObject)
 {
-    if (rootObject->GetBehaviour() != nullptr) {
+    if (rootObject->GetBehaviour()) {
         rootObject->GetBehaviour()->LateUpdate();
     }
     for (Transform* transform : rootObject->GetTransform()->GetChildren()) {

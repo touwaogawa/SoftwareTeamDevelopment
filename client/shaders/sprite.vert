@@ -4,6 +4,10 @@
 uniform mat4 model;
 uniform mat4 viewProjection;
 
+// Uniforms for animation frames
+uniform vec2 frameSize;   // アトラス内の1フレームのサイズ (幅, 高さ)
+uniform vec2 frameIndex;  // 表示するフレームのインデックス (x, y)
+
 // Attribute 0 is position, 1 is normal, 2 is tex coords.
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inNormal;
@@ -20,5 +24,6 @@ void main()
 	gl_Position = pos * model * viewProjection;
 
 	// Pass along the texture coordinate to frag shader
-	fragTexCoord = inTexCoord;
+	// fragTexCoord = inTexCoord + frameIndex * frameSize;
+	fragTexCoord = inTexCoord * frameSize + frameIndex;
 }
