@@ -4,6 +4,7 @@
 #include "../components/behaviour/pressAnyButtonMove.h"
 #include "../gameObject/player.h"
 #include "../gameObject/stage.h"
+#include "../gameObject/staticModel.h"
 #include "../gameObject/titleCamera.h"
 #include "../gameObject/ui/simpleSprite.h"
 #include "../gameObject/ui/titleUI.h"
@@ -28,6 +29,10 @@ bool TitleScene::Load()
     mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
     SimpleSprite* ss = new SimpleSprite(this, nullptr, mat, "../assets/textures/PressAnyButton.png");
     ss->SetBehaviour(new PressAnyButtonMove(ss));
+
+    mat = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
+    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
+    StaticModel* sm = new StaticModel(this, nullptr, mat, "../assets/models/colosseum.obj", "../assets/textures/humanColore.png");
     return true;
 }
 void TitleScene::Update(bool& exitFrag, float timeStep)

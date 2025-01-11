@@ -14,10 +14,10 @@ TitleUI::TitleUI(Scene* scene, Transform* parent)
     AddComponent(sprite);
     sprite->SetFrameSize(Vector2(1.0f, 1.0f));
     sprite->SetFrameIndex(Vector2(0, 0));
-    sprite->SetUseCustomColor(true);
+    sprite->SetUseCustomColor(false);
 
     // audio
-    Audio::SetMusicVolume(0.5f);
+    Audio::SetMusicVolume(0.4f);
     Audio::PlayMusic("../assets/sounds/bgm/Who_Is_the_Champion.mp3");
 }
 

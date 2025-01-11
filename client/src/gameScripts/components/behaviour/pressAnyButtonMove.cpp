@@ -2,8 +2,10 @@
 #include "../../../../../common/src/component/transform.h"
 #include "../../../../../common/src/gameObject.h"
 #include "../../../../../utils/src/input.h"
+#include "../../../../../utils/src/math.h"
 #include "../../../audio.h"
 #include "../../../component/camera.h"
+#include "../../../component/spriteRenderer.h"
 #include <iostream>
 
 PressAnyButtonMove::PressAnyButtonMove(GameObject* owner)
@@ -15,6 +17,7 @@ PressAnyButtonMove::PressAnyButtonMove(GameObject* owner)
     , mBasePosY(0.0f)
     , mBasePosZ(0.0f)
     , mActionFrame(0)
+    , mSpriteColor(Vector3())
 {
 }
 
@@ -26,6 +29,7 @@ void PressAnyButtonMove::Start()
     mBasePosY         = mOwner->GetTransform()->GetWorldPosition().y;
     mBasePosZ         = mOwner->GetTransform()->GetWorldPosition().z;
     mChunk_GoMatching = Audio::GetMixChunk("../assets/sounds/se/決定ボタンを押す18.mp3");
+    mBaseScale        = mOwner->GetTransform()->GetWorldScale();
 }
 void PressAnyButtonMove::Update()
 {
@@ -47,9 +51,9 @@ void PressAnyButtonMove::Update()
             || Input::GetButtonDown(10)
             || Input::GetButtonDown(11)
             || Input::GetButtonDown(12)) {
-            // mStatus      = PressAnyButtonMoveStatus::GoMtaching;
-            Audio::PlayChunk(mChunk_GoMatching);
             mActionFrame = 0;
+            Audio::PlayChunk(mChunk_GoMatching);
+            mStatus = PressAnyButtonMoveStatus::GoMtaching;
             break;
         }
         mActionFrame++;
@@ -67,7 +71,20 @@ void PressAnyButtonMove::LateUpdate() { }
 
 void PressAnyButtonMove::GoMatching(int frame)
 {
+    SpriteRenderer* sprite = mOwner->GetComponent<SpriteRenderer>();
+    Transform* transform   = mOwner->GetTransform();
     if (frame == 0) {
         Audio::PlayChunk(mChunk_GoMatching);
+
+        sprite->SetUseCustomColor(true);
+        sprite->SetCustomColor(Vector3(0.5f, 0.5f, 0.5f));
+        transform->SetWorldScale(mBaseScale * 0.95);
+    }
+    if (frame == 5) {
+        transform->SetWorldScale(Vector3(mBaseScale));
+        sprite->SetCustomColor(Vector3(1.0f, 1.0f, 1.0f));
+    }
+    if (frame > 60) {
+        mStatus = PressAnyButtonMoveStatus::Init;
     }
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../../../common/src/component/behaviour.h"
+#include "../../../../../utils/src/math.h"
 
 enum class PressAnyButtonMoveStatus {
     Init,
@@ -27,4 +28,6 @@ private:
     float mBasePosZ;
     int mActionFrame;
     class Mix_Chunk* mChunk_GoMatching;
+    Vector3 mSpriteColor;
+    Vector3 mBaseScale;
 };

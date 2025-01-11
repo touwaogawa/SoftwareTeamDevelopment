@@ -88,7 +88,7 @@ bool Renderer::Load()
     glGenTextures(1, &mDepthMap);
     glBindTexture(GL_TEXTURE_2D, mDepthMap);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-        1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+        2048, 2048, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -243,17 +243,17 @@ void Renderer::Draw3DObjects()
 
     Matrix4 lightProjection, lightView;
     Matrix4 lightSpaceMatrix;
-    Vector3 lightPos(5.0f, 10.0f, 8.0f);
+    Vector3 lightPos(5.0f, 30.0f, 8.0f);
 
     // 正射影行列（平行光源用）
-    lightProjection = Matrix4::CreateOrtho(30.0f, 30.0f, 1.0f, 30.0f);
+    lightProjection = Matrix4::CreateOrtho(50.0f, 50.0f, 1.0f, 100.0f);
     // ビュー行列
     lightView = Matrix4::CreateLookAt(lightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
 
     lightSpaceMatrix = lightView * lightProjection;
 
     // シャドウマップをレンダリング
-    glViewport(0, 0, 1024, 1024);
+    glViewport(0, 0, 2048, 2048);
     glBindFramebuffer(GL_FRAMEBUFFER, mDepthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
 
