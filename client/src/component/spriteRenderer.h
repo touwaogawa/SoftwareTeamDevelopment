@@ -9,7 +9,7 @@ class Texture;
 class Shader;
 class SpriteRenderer : public Component {
 public:
-    SpriteRenderer(GameObject* owner, int order = 0);
+    SpriteRenderer(GameObject* owner, int order = 0, bool isBillbourd = false);
     ~SpriteRenderer() override;
 
     virtual void Draw(Shader* shader);
@@ -46,4 +46,6 @@ private:
     bool mVisible;
     bool mUseCustomColor;
     Vector3 mCustomColor;
+
+    const bool mIsBillbourd;
 };

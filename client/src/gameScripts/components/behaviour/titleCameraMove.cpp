@@ -2,7 +2,7 @@
 #include "../../../../../common/src/component/transform.h"
 #include "../../../../../common/src/gameObject.h"
 #include "../../../audio.h"
-#include "../../../component/camera.h"
+// #include "../../../component/cameraComponent.h"
 #include <iostream>
 
 TitleCameraMove::TitleCameraMove(GameObject* owner)

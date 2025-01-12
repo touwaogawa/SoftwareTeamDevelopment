@@ -27,7 +27,7 @@ void MatchingScene::Update(bool& exitFrag, float timeStep)
 {
     ProccessNetowork();
     ProccessInput();
-    std::cout << "rgonum : " << mRootObjects.size() << std::endl;
+    // std::cout << "rgonum : " << mRootObjects.size() << std::endl;
     Scene::Update(exitFrag, timeStep);
 }
 

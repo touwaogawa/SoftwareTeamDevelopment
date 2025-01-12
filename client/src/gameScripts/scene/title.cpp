@@ -1,11 +1,12 @@
 #include "title.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
-#include "../../component/camera.h"
+#include "../../component/cameraComponent.h"
 #include "../components/behaviour/pressAnyButtonMove.h"
 #include "../components/behaviour/titleCameraMove.h"
 #include "../gameObject/player.h"
 #include "../gameObject/simpleCamera.h"
+#include "../gameObject/simpleEffect.h"
 #include "../gameObject/simpleMeshModel.h"
 #include "../gameObject/simpleSprite.h"
 #include "../gameObject/stage.h"
@@ -35,12 +36,13 @@ bool TitleScene::Load()
 
     // camera
     GameObject* camera = new SimpleCamera();
-    Camera* c          = camera->GetComponent<Camera>();
+    CameraComponent* c = camera->GetComponent<CameraComponent>();
     c->Use();
+    Matrix4 mat1;
     // std::cout << "aa" << std::endl;
     camera->SetBehaviour(new TitleCameraMove(camera));
     // std::cout << "aa" << std::endl;
-    Instantiate(camera, mat);
+    Instantiate(camera, mat1);
     // std::cout << "aa" << std::endl;
 
     // stage
@@ -52,6 +54,10 @@ bool TitleScene::Load()
     mat                   = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
     mat *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
     Instantiate(colosseum, mat);
+
+    // effect
+    // GameObject* effect = new SimpleEffect("../assets/models/square.obj", "../assets/textures/default.png");
+    // Instantiate(effect);
 
     // std::cout << "aa" << std::endl;
     // PlayerInfo playerInfo(0, "name", RiderType::BaseHuman, BeyType::Hexagram);

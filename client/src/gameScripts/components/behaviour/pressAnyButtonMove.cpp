@@ -5,7 +5,7 @@
 #include "../../../../../utils/src/input.h"
 #include "../../../../../utils/src/math.h"
 #include "../../../audio.h"
-#include "../../../component/camera.h"
+#include "../../../component/cameraComponent.h"
 #include "../../../component/spriteRenderer.h"
 #include "../../scene/matching.h"
 #include <iostream>

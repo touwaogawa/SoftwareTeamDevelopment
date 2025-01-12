@@ -6,7 +6,7 @@
 #include "../texture.h"
 #include <iostream>
 
-SpriteRenderer::SpriteRenderer(GameObject* owner, int order)
+SpriteRenderer::SpriteRenderer(GameObject* owner, int order, bool isBillbourd)
     : Component(owner)
     , mTexWidth(0)
     , mTexHeight(0)
@@ -16,14 +16,23 @@ SpriteRenderer::SpriteRenderer(GameObject* owner, int order)
     , mVisible(true)
     , mUseCustomColor(false)
     , mCustomColor(Vector3(1.0f, 0.0f, 1.0f))
+    , mIsBillbourd(isBillbourd)
 {
-    Renderer::AddSpriteRenderer(this);
+    if (mIsBillbourd) {
+        Renderer::AddBillbourdRenderer(this);
+    } else {
+        Renderer::AddSpriteRenderer(this);
+    }
 }
 
 SpriteRenderer::~SpriteRenderer()
 {
     // std::cout << "~Sprite" << std::endl;
-    Renderer::RemoveSpriteRenderer(this);
+    if (mIsBillbourd) {
+        Renderer::RemoveBillbourdRenderer(this);
+    } else {
+        Renderer::RemoveSpriteRenderer(this);
+    }
 }
 
 void SpriteRenderer::Draw(Shader* shader)
@@ -66,9 +75,17 @@ void SpriteRenderer::SetTexture(Texture* texture)
 
 void SpriteRenderer::Enable()
 {
-    Renderer::AddSpriteRenderer(this);
+    if (mIsBillbourd) {
+        Renderer::AddBillbourdRenderer(this);
+    } else {
+        Renderer::AddSpriteRenderer(this);
+    }
 }
 void SpriteRenderer::Disable()
 {
-    Renderer::RemoveSpriteRenderer(this);
+    if (mIsBillbourd) {
+        Renderer::RemoveBillbourdRenderer(this);
+    } else {
+        Renderer::RemoveSpriteRenderer(this);
+    }
 }

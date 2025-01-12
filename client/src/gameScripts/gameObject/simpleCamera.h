@@ -3,7 +3,6 @@
 #include "../../../../utils/src/math.h"
 #include "../../renderer.h"
 
-class Behaviour;
 class SimpleCamera : public GameObject {
 public:
     SimpleCamera(Matrix4 projection

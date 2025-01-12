@@ -1,10 +1,10 @@
 #version 330 core
 
 // Tex coord input from vertex shader
-in vec2 fragTexCoord;
+in vec2 TexCoord;
 
 // This corresponds to the output color to the color buffer
-out vec4 outColor;
+out vec4 FragColor;
 
 // This is used for the texture sampling
 uniform sampler2D uTexture;
@@ -19,18 +19,18 @@ const float epsilon = 1e-6;
 
 void main()
 {
-    vec4 texSample = texture(uTexture, fragTexCoord);
+    vec4 texSample = texture(uTexture, TexCoord);
     if (useCustomColor) {
         bool isWhite = (abs(texSample.r - 1.0) < epsilon &&
                         abs(texSample.g - 1.0) < epsilon &&
                         abs(texSample.b - 1.0) < epsilon);
         if(isWhite){
-            outColor = vec4(customColor, texSample.a);
+            FragColor = vec4(customColor, texSample.a);
         }else {
-            outColor = texSample;
+            FragColor = texSample;
         }
     } else {
-        outColor = texSample;
+        FragColor = texSample;
         // カラーを使わない場合は、テクスチャの色をそのまま使用
     }
 }

@@ -14,7 +14,7 @@ layout(location = 1) in vec3 inNormal;
 layout(location = 2) in vec2 inTexCoord;
 
 // Any vertex outputs (other than position)
-out vec2 fragTexCoord;
+out vec2 TexCoord;
 
 void main()
 {
@@ -24,6 +24,6 @@ void main()
 	gl_Position = pos * model * viewProjection;
 
 	// Pass along the texture coordinate to frag shader
-	// fragTexCoord = inTexCoord + frameIndex * frameSize;
-	fragTexCoord = inTexCoord * frameSize + frameIndex;
+	// TexCoord = inTexCoord + frameIndex * frameSize;
+	TexCoord = inTexCoord * frameSize + frameIndex;
 }

@@ -12,17 +12,26 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::string& textureFileName)
+MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::string& textureFileName, bool isEffect)
     : Component(owner)
     , mTextureIndex(0)
+    , mIsEffect(isEffect)
 {
     mMesh = Renderer::GetMesh(objFileName);
     mMesh->SetTexture(Renderer::GetTexture(textureFileName));
-    Renderer::AddMeshRenderer(this);
+    if (mIsEffect) {
+        Renderer::AddEffectRenderer(this);
+    } else {
+        Renderer::AddMeshRenderer(this);
+    }
 }
 MeshRenderer::~MeshRenderer()
 {
-    Renderer::RemoveMeshRenderer(this);
+    if (mIsEffect) {
+        Renderer::RemoveEffectRenderer(this);
+    } else {
+        Renderer::RemoveMeshRenderer(this);
+    }
 }
 
 void MeshRenderer::Draw(Shader* shader)
@@ -46,9 +55,17 @@ void MeshRenderer::Draw(Shader* shader)
 
 void MeshRenderer::Enable()
 {
-    Renderer::AddMeshRenderer(this);
+    if (mIsEffect) {
+        Renderer::AddEffectRenderer(this);
+    } else {
+        Renderer::AddMeshRenderer(this);
+    }
 }
 void MeshRenderer::Disable()
 {
-    Renderer::RemoveMeshRenderer(this);
+    if (mIsEffect) {
+        Renderer::RemoveEffectRenderer(this);
+    } else {
+        Renderer::RemoveMeshRenderer(this);
+    }
 }

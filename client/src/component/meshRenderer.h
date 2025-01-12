@@ -5,7 +5,7 @@
 #include <vector>
 class MeshRenderer : public Component {
 public:
-    MeshRenderer(class GameObject* owner, const std::string& objFileName, const std::string& textureFileName);
+    MeshRenderer(class GameObject* owner, const std::string& objFileName, const std::string& textureFileName, bool isEffect = false);
     ~MeshRenderer() override;
     void SetMesh(class Mesh* mesh) { mMesh = mesh; }
     void Draw(class Shader* shader);
@@ -18,4 +18,6 @@ private:
 
     class Mesh* mMesh;
     size_t mTextureIndex;
+
+    const bool mIsEffect;
 };

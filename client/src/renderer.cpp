@@ -2,7 +2,8 @@
 #include "../../common/src/component/transform.h"
 #include "../../common/src/gameObject.h"
 #include "../../utils/src/math.h"
-#include "component/camera.h"
+#include "component/cameraComponent.h"
+#include "component/lightComponent.h"
 #include "component/meshRenderer.h"
 #include "component/spriteRenderer.h"
 #include "mesh.h"
@@ -23,14 +24,28 @@ Shader* Renderer::mMeshShader       = nullptr;
 Shader* Renderer::mDepthShader      = nullptr;
 Shader* Renderer::mShadowMeshShader = nullptr;
 Shader* Renderer::mSpriteShader     = nullptr;
+Shader* Renderer::mEffectShader     = nullptr;
+Shader* Renderer::mBillbourdShader  = nullptr;
 std::unordered_map<std::string, class Texture*> Renderer::mTextures;
 std::unordered_map<std::string, class Mesh*> Renderer::mMeshes;
 std::vector<class MeshRenderer*> Renderer::mMeshRenderers;
-std::vector<class SpriteRenderer*> Renderer::mSprites;
-Camera* Renderer::mCamera           = nullptr;
-GLuint Renderer::mDepthMapFBO       = 0;
-GLuint Renderer::mDepthMap          = 0;
-VertexArray* Renderer::mSpriteVerts = nullptr;
+std::vector<class MeshRenderer*> Renderer::mEffectRenderers;
+std::vector<class SpriteRenderer*> Renderer::mSpriteRenderers;
+std::vector<class SpriteRenderer*> Renderer::mBillbourdRenderers;
+CameraComponent* Renderer::mCameraComponent = nullptr;
+LightComponent* Renderer::mLightComponent   = nullptr;
+GLuint Renderer::mDepthMapFBO               = 0;
+GLuint Renderer::mDepthMap                  = 0;
+VertexArray* Renderer::mSpriteVerts         = nullptr;
+Vector3 Renderer::mViewPos;
+Matrix4 Renderer::mView;
+Matrix4 Renderer::mProjection;
+Vector3 Renderer::mLightPos;
+Matrix4 Renderer::mLightView;
+Matrix4 Renderer::mLightProjection;
+Vector3 Renderer::mLightColor         = Vector3(1.0f, 1.0f, 1.0f);
+float Renderer::mAmbientLightStrength = 0.8f;
+Vector3 Renderer::mAmbientLightColor  = Vector3(0.53f, 0.81f, 0.92f);
 
 bool Renderer::Init(float window_w, float window_h)
 {
@@ -78,6 +93,17 @@ bool Renderer::Load()
         std::cout << "Failed Shader load" << std::endl;
         return false;
     }
+    mEffectShader = new Shader();
+    if (!mEffectShader->Load("shaders/default.vert", "shaders/default.frag")) {
+        std::cout << "Failed Shader load" << std::endl;
+        return false;
+    }
+    mBillbourdShader = new Shader();
+    if (!mBillbourdShader->Load("shaders/billbourd.vert", "shaders/sprite.frag")) {
+        std::cout << "Failed Shader load" << std::endl;
+        return false;
+    }
+
     mSpriteShader->Use();
     // Set the view-projection matrix
     Matrix4 spriteViewProj = Matrix4::CreateSimpleViewProj(mWindowWidth, mWindowHeight);
@@ -113,6 +139,8 @@ void Renderer::UnLoad()
     delete mDepthShader;
     delete mShadowMeshShader;
     delete mSpriteShader;
+    delete mEffectShader;
+    delete mBillbourdShader;
 
     for (auto mesh : mMeshes) {
         delete mesh.second;
@@ -124,39 +152,46 @@ void Renderer::UnLoad()
     }
     mTextures.clear();
 
-    mCamera = nullptr;
+    mCameraComponent = nullptr;
 }
 void Renderer::Draw()
 {
+    if (mCameraComponent == nullptr) {
+        // std::cout << "mCameraComponent == nullptr" << std::endl;
+        mViewPos    = Vector3(10.0f, 40.0f, -40.0f);
+        mView       = Matrix4::CreateLookAt(mViewPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        mProjection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f), mWindowWidth, mWindowHeight, 0.1f, 150.0f);
+    } else {
+        mViewPos    = mCameraComponent->GetOwner()->GetTransform()->GetWorldPosition();
+        mView       = mCameraComponent->GetOwner()->GetTransform()->GetWorldMatrix();
+        mProjection = mCameraComponent->GetProjection();
+    }
+
+    if (mLightComponent == nullptr) {
+        // std::cout << "mLightComponent == nullptr" << std::endl;
+        mLightPos        = Vector3(5.0f, 30.0f, 8.0f);
+        mLightView       = Matrix4::CreateLookAt(mLightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+        mLightProjection = Matrix4::CreateOrtho(30.0f, 30.0f, 5.0f, 60.0f);
+        mLightColor      = Vector3(1.0f, 1.0f, 1.0f);
+    } else {
+        mLightPos        = mLightComponent->GetOwner()->GetTransform()->GetWorldPosition();
+        mLightView       = mLightComponent->GetOwner()->GetTransform()->GetWorldMatrix();
+        mLightProjection = mLightComponent->GetProjection();
+        mLightColor      = mLightComponent->GetColor();
+    }
+
     // std::cout << "Draw" << std::endl;
     glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
     // std::cout << "draw 1" << std::endl;
     Draw3DObjects();
     // std::cout << "draw 2" << std::endl;
+    // エフェクト
+    // DrawEffects();
     // billboard
-
-    // 不透明
-
-    // 透明
-
+    // DrawBillbourds();
     // Sprites
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-
-    Shader* shader = mSpriteShader;
-    shader->Use();
-    mSpriteVerts->Bind();
-    for (auto sprite : mSprites) {
-        // std::cout << "Sprite Ren" << std::endl;
-        if (sprite->GetVisible()) {
-            sprite->Draw(shader);
-        }
-    }
+    DrawSprites();
     // std::cout << "draw 3" << std::endl;
     // 表示
     SDL_GL_SwapWindow(mWindow);
@@ -207,12 +242,23 @@ void Renderer::RemoveMeshRenderer(MeshRenderer* meshRenderer)
     auto end = std::remove(mMeshRenderers.begin(), mMeshRenderers.end(), meshRenderer);
     mMeshRenderers.erase(end, mMeshRenderers.end());
 }
-void Renderer::AddSpriteRenderer(SpriteRenderer* sprite)
+
+void Renderer::AddEffectRenderer(MeshRenderer* meshRenderer)
 {
-    int myDrawOrder = sprite->GetDrawOrder();
-    auto iter       = mSprites.begin();
+    mEffectRenderers.push_back(meshRenderer);
+}
+void Renderer::RemoveEffectRenderer(MeshRenderer* meshRenderer)
+{
+    auto end = std::remove(mEffectRenderers.begin(), mEffectRenderers.end(), meshRenderer);
+    mEffectRenderers.erase(end, mEffectRenderers.end());
+}
+
+void Renderer::AddSpriteRenderer(SpriteRenderer* spriteRenderer)
+{
+    int myDrawOrder = spriteRenderer->GetDrawOrder();
+    auto iter       = mSpriteRenderers.begin();
     for (;
-         iter != mSprites.end();
+         iter != mSpriteRenderers.end();
          ++iter) {
         if (myDrawOrder < (*iter)->GetDrawOrder()) {
             break;
@@ -220,41 +266,57 @@ void Renderer::AddSpriteRenderer(SpriteRenderer* sprite)
     }
 
     // Inserts element before position of iterator
-    mSprites.insert(iter, sprite);
+    mSpriteRenderers.insert(iter, spriteRenderer);
 }
 void Renderer::RemoveSpriteRenderer(SpriteRenderer* spriteRenderer)
 {
     // std::cout << "Remove Sprite" << std::endl;
-    auto end = std::remove(mSprites.begin(), mSprites.end(), spriteRenderer);
-    mSprites.erase(end, mSprites.end());
+    auto end = std::remove(mSpriteRenderers.begin(), mSpriteRenderers.end(), spriteRenderer);
+    mSpriteRenderers.erase(end, mSpriteRenderers.end());
+}
+
+void Renderer::AddBillbourdRenderer(SpriteRenderer* spriteRenderer)
+{
+    int myDrawOrder = spriteRenderer->GetDrawOrder();
+    auto iter       = mBillbourdRenderers.begin();
+    for (;
+         iter != mBillbourdRenderers.end();
+         ++iter) {
+        if (myDrawOrder < (*iter)->GetDrawOrder()) {
+            break;
+        }
+    }
+
+    // Inserts element before position of iterator
+    mBillbourdRenderers.insert(iter, spriteRenderer);
+}
+void Renderer::RemoveBillbourdRenderer(SpriteRenderer* spriteRenderer)
+{
+    // std::cout << "Remove Sprite" << std::endl;
+    auto end = std::remove(mBillbourdRenderers.begin(), mBillbourdRenderers.end(), spriteRenderer);
+    mBillbourdRenderers.erase(end, mBillbourdRenderers.end());
 }
 
 void Renderer::Draw3DObjects()
 {
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+
     // デプス取得----------------------
     mDepthShader->Use();
-
-    Matrix4 lightProjection, lightView;
-    Matrix4 lightSpaceMatrix;
-    Vector3 lightPos(5.0f, 30.0f, 8.0f);
-
-    // 正射影行列（平行光源用）
-    lightProjection = Matrix4::CreateOrtho(50.0f, 50.0f, 1.0f, 100.0f);
-    // ビュー行列
-    lightView = Matrix4::CreateLookAt(lightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-
-    lightSpaceMatrix = lightView * lightProjection;
 
     // シャドウマップをレンダリング
     glViewport(0, 0, 2048, 2048);
     glBindFramebuffer(GL_FRAMEBUFFER, mDepthMapFBO);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    // glClear(GL_DEPTH_BUFFER_BIT);
 
     // シェーダーに lightSpaceMatrix を渡す
     mDepthShader->Use();
-    mDepthShader->SetMatrixUniform("lightSpaceMatrix", lightSpaceMatrix);
+    mDepthShader->SetMatrixUniform("lightSpaceMatrix", mLightView * mLightProjection);
 
     // シーンをレンダリング
+    // std::cout << "meshnum : " << mMeshRenderers.size() << std::endl;
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
         // std::cout << "meshren " << std::endl;
         meshRenderer->Draw(mDepthShader);
@@ -266,36 +328,20 @@ void Renderer::Draw3DObjects()
     glViewport(0, 0, mWindowWidth, mWindowHeight);
     mShadowMeshShader->Use();
 
-    Vector3 viewPos;
-    Matrix4 view;
-    Matrix4 projection;
-    projection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f), mWindowWidth, mWindowHeight, 0.1f, 150.0f);
-    if (mCamera == nullptr) {
-        // std::cout << "mCamera == nullptr" << std::endl;
-        viewPos = Vector3(10.0f, 40.0f, -40.0f);
-        view    = Matrix4::CreateLookAt(viewPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-    } else {
-        viewPos = mCamera->GetOwner()->GetTransform()->GetWorldPosition();
-        view    = mCamera->GetOwner()->GetTransform()->GetWorldMatrix();
-    }
-
     // ライトのプロパティ
-    mShadowMeshShader->SetVector3Uniform("lightPos", lightPos);
-    mShadowMeshShader->SetVector3Uniform("viewPos", viewPos);
+    mShadowMeshShader->SetVector3Uniform("lightPos", mLightPos);
+    mShadowMeshShader->SetVector3Uniform("viewPos", mViewPos);
 
     // 色の設定
-    Vector3 diffuseLightColor(1.0f, 1.0f, 1.0f);
-    Vector3 ambientLightColor(0.53f, 0.81f, 0.92f);
-    mShadowMeshShader->SetVector3Uniform("diffuseLightColor", diffuseLightColor);
-    mShadowMeshShader->SetVector3Uniform("ambientLightColor", ambientLightColor);
+    mShadowMeshShader->SetVector3Uniform("diffuseLightColor", mLightColor);
+    mShadowMeshShader->SetVector3Uniform("ambientLightColor", mAmbientLightColor);
 
     // アンビエントライトの強度
-    float ambientStrength = 0.8f;
-    mShadowMeshShader->SetFloatUniform("ambientStrength", ambientStrength);
+    mShadowMeshShader->SetFloatUniform("ambientStrength", mAmbientLightStrength);
 
     // ビュー、プロジェクション
-    mShadowMeshShader->SetMatrixUniform("viewProjection", view * projection);
-    mShadowMeshShader->SetMatrixUniform("lightSpaceMatrix", lightSpaceMatrix);
+    mShadowMeshShader->SetMatrixUniform("viewProjection", mView * mProjection);
+    mShadowMeshShader->SetMatrixUniform("lightSpaceMatrix", mLightView * mLightProjection);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, mDepthMap);
@@ -306,7 +352,82 @@ void Renderer::Draw3DObjects()
         meshRenderer->Draw(mShadowMeshShader);
     }
 }
+void Renderer::DrawEffects()
+{
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
 
+    glViewport(0, 0, mWindowWidth, mWindowHeight);
+    mEffectShader->Use();
+
+    // ライトのプロパティ
+    mEffectShader->SetVector3Uniform("lightPos", mLightPos);
+    mEffectShader->SetVector3Uniform("viewPos", mViewPos);
+
+    // 色の設定
+    mEffectShader->SetVector3Uniform("diffuseLightColor", mLightColor);
+
+    mEffectShader->SetVector3Uniform("ambientLightColor", mAmbientLightColor);
+    mEffectShader->SetFloatUniform("ambientStrength", mAmbientLightStrength);
+
+    // ビュー、プロジェクション
+    mEffectShader->SetMatrixUniform("viewProjection", mView * mProjection);
+    mEffectShader->SetMatrixUniform("lightSpaceMatrix", mLightView * mLightProjection);
+
+    // 各メッシュ
+    for (MeshRenderer* meshRenderer : mEffectRenderers) {
+        meshRenderer->Draw(mEffectShader);
+    }
+}
+void Renderer::DrawBillbourds()
+{
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glDepthMask(GL_FALSE);
+    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
+    glViewport(0, 0, mWindowWidth, mWindowHeight);
+    mBillbourdShader->Use();
+
+    // 色の設定
+    mBillbourdShader->SetVector3Uniform("diffuseLightColor", mLightColor);
+
+    mBillbourdShader->SetVector3Uniform("ambientLightColor", mAmbientLightColor);
+    mBillbourdShader->SetFloatUniform("ambientStrength", mAmbientLightStrength);
+
+    // ビュー、プロジェクション
+    mBillbourdShader->SetMatrixUniform("viewProjection", mView * mProjection);
+    mBillbourdShader->SetVector3Uniform("viewPos", mViewPos);
+
+    // 各メッシュ
+    mBillbourdShader->Use();
+    mSpriteVerts->Bind();
+    for (auto billBourd : mBillbourdRenderers) {
+        // std::cout << "billBourd Ren" << std::endl;
+        if (billBourd->GetVisible()) {
+            billBourd->Draw(mBillbourdShader);
+        }
+    }
+}
+void Renderer::DrawSprites()
+{
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
+    Shader* shader = mSpriteShader;
+    shader->Use();
+    mSpriteVerts->Bind();
+    for (auto sprite : mSpriteRenderers) {
+        // std::cout << "Sprite Ren" << std::endl;
+        if (sprite->GetVisible()) {
+            sprite->Draw(shader);
+        }
+    }
+}
 void Renderer::CreateSpriteVerts()
 {
     float vertices[] = {
