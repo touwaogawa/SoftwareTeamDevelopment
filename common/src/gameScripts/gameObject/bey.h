@@ -1,5 +1,8 @@
 #pragma once
 #include "../../../../common/src/gameObject.h"
+
+class BeyMove;
+
 enum class BeyType {
     Shuriken,
     Hexagram,
@@ -19,7 +22,7 @@ struct BeyBaseStatus {
 
 class Bey : public GameObject {
 public:
-    Bey(Scene* scene, Transform* parent, BeyType beyType, class BeyMove* beyMove);
+    explicit Bey(BeyType beyType);
     ~Bey() override;
 
 private:

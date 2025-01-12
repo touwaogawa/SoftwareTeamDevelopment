@@ -13,6 +13,9 @@ public:
     /// @brief Destructor
     ~RigidBody() override;
 
+    void SetIsActive(bool isActive) { mRigidBody->setIsActive(isActive); }
+    bool GetIsActive() { return mRigidBody->isActive(); }
+
     /// @brief Return rp3d::RigidBody
     /// @return The pointer of rp3d::RigidBody
     rp3d::RigidBody* GetRp3dRogidBody() const { return mRigidBody; }
@@ -22,6 +25,9 @@ public:
     void SetVA(float x, float y, float z);
 
 private:
+    void Enable() override { mRigidBody->setIsActive(true); }
+    void Disable() override { mRigidBody->setIsActive(false); }
+
     rp3d::RigidBody* mRigidBody;
     rp3d::Transform mTransform;
     class Physics* mPhysics;

@@ -23,10 +23,11 @@ public:
     static void AddMeshRenderer(class MeshRenderer* meshRenderer);
     static void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
 
-    static void AddSprite(class SpriteRenderer* Sprite);
+    static void AddSpriteRenderer(class SpriteRenderer* Sprite);
     static void RemoveSpriteRenderer(class SpriteRenderer* Sprite);
 
     static void SetCamera(Camera* camera) { mCamera = camera; }
+    static Camera* GetCamera() { return mCamera; }
 
     static float GetWindowWidth() { return mWindowWidth; }
     static float GetWindowHeight() { return mWindowHeight; }

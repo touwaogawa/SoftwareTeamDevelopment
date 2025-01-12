@@ -10,6 +10,9 @@ public:
     void Update() override;
     void LateUpdate() override;
 
+    // void Awake() override;
+    // void OnEnable() override;
+
 private:
     float mAngle;
 };

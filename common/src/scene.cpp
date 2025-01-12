@@ -17,17 +17,20 @@ Scene::~Scene()
 {
     delete mPhysics;
     DeteleAllObject();
+    mRootObjects.clear();
 }
 void Scene::Start()
 {
-    for (GameObject* gameObject : mRootObjects) {
-        StartgameScriptsFromRoot(gameObject);
-    }
+    // for (GameObject* gameObject : mRootObjects) {
+    //     StartgameScriptsFromRoot(gameObject);
+    // }
 }
 void Scene::Update(bool& exitFrag, float timeStep_sec)
 {
     // ゲームオブジェクトの更新
+
     for (GameObject* gameObject : mRootObjects) {
+        std::cout << "ppp" << std::endl;
         UpdategameScriptsFromRoot(gameObject);
     }
     // 物理演算
@@ -38,17 +41,40 @@ void Scene::Update(bool& exitFrag, float timeStep_sec)
     }
 }
 
-void Scene::AddGameObject(GameObject* gameObject)
+void Scene::Instantiate(GameObject* original, Transform* parent, bool instantiateInWorldSpace)
 {
-    mGameObjects.push_back(gameObject);
-    // std::cout << "go num : " << mGameObjects.size() << std::endl;
+    // std::cout << "a" << std::endl;
+    if (original) {
+        // std::cout << "b" << std::endl;
+        original->SetScene(this);
+        original->GetTransform()->SetParent(parent, instantiateInWorldSpace);
+        Behaviour* bhv = original->GetBehaviour();
+        if (bhv) {
+            // std::cout << "c" << std::endl;
+            bhv->Awake();
+            // std::cout << "d" << std::endl;
+            if (original->GetIsActive() || bhv->GetEnabled()) {
+                // std::cout << "e" << std::endl;
+                bhv->OnEnable();
+            }
+            // std::cout << "f" << std::endl;
+        }
+    }
 }
-
-void Scene::RemoveGameObject(GameObject* gameObject)
+void Scene::Instantiate(GameObject* original, Matrix4 transform, Transform* parent)
 {
-    auto end = std::remove(mGameObjects.begin(), mGameObjects.end(), gameObject);
-    mGameObjects.erase(end, mGameObjects.end());
-    // std::cout << "go num : " << mGameObjects.size() << std::endl;
+    if (original) {
+        original->SetScene(this);
+        original->GetTransform()->SetParent(parent);
+        original->GetTransform()->SetWorldMatrix(transform);
+        Behaviour* bhv = original->GetBehaviour();
+        if (bhv) {
+            bhv->Awake();
+            if (original->GetIsActive() || bhv->GetEnabled()) {
+                bhv->OnEnable();
+            }
+        }
+    }
 }
 
 void Scene::AddRootObject(GameObject* gameObject)
@@ -91,19 +117,36 @@ void Scene::StartgameScriptsFromRoot(GameObject* rootObject)
 }
 void Scene::UpdategameScriptsFromRoot(GameObject* rootObject)
 {
-    if (rootObject->GetBehaviour()) {
-        rootObject->GetBehaviour()->Update();
-    }
-    for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
-        UpdategameScriptsFromRoot(transform->GetOwner());
+    if (rootObject->GetIsActive()) {
+        std::cout << "active" << std::endl;
+        Behaviour* bhv = rootObject->GetBehaviour();
+        if (bhv) {
+            std::cout << "bhv" << std::endl;
+            if (bhv->GetEnabled()) {
+                std::cout << "enabled" << std::endl;
+                if (bhv->GetState() == BehaviourState::PreStart) {
+                    bhv->Start();
+                    bhv->SetState(BehaviourState::Started);
+                }
+                bhv->Update();
+            }
+        }
+        for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
+            UpdategameScriptsFromRoot(transform->GetOwner());
+        }
     }
 }
 void Scene::LateUpdategameScriptsFromRoot(GameObject* rootObject)
 {
-    if (rootObject->GetBehaviour()) {
-        rootObject->GetBehaviour()->LateUpdate();
-    }
-    for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
-        LateUpdategameScriptsFromRoot(transform->GetOwner());
+    if (rootObject->GetIsActive()) {
+        Behaviour* bhv = rootObject->GetBehaviour();
+        if (bhv) {
+            if (bhv->GetEnabled()) {
+                rootObject->GetBehaviour()->LateUpdate();
+            }
+        }
+        for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
+            LateUpdategameScriptsFromRoot(transform->GetOwner());
+        }
     }
 }

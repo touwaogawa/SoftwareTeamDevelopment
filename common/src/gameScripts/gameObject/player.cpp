@@ -17,29 +17,15 @@ PlayerInfo::PlayerInfo(int p_id, const char p_name[8], RiderType p_riderType, Be
     heroInfo.riderType     = p_riderType;
     heroInfo.beyType       = p_beyType;
 }
-Player::Player(Scene* scene, PlayerInfo playerInfo, const int* currentSceneFrame, PlayerMove* playerMove)
-    : GameObject(scene, nullptr, playerMove)
+Player::Player(PlayerInfo playerInfo)
+    : GameObject()
     , mPlayerInfo(playerInfo)
-    , mCurrentSceneFrame(currentSceneFrame)
 {
     // std::cout << "player constructor" << std::endl;
 }
 
 Player::~Player()
 {
-}
-
-Hero* Player::GetHero() const
-{
-    return mHero;
-}
-int Player::GetID() const
-{
-    return mPlayerInfo.id;
-}
-int Player::GetCurrentSceneFrame() const
-{
-    return *mCurrentSceneFrame;
 }
 
 Vector3 Player::GetInitialHeroPos(int id)

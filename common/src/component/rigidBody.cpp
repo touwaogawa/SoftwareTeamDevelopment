@@ -16,6 +16,7 @@ RigidBody::RigidBody(GameObject* owner, rp3d::BodyType bodyType, Physics* physic
     mRigidBody = mPhysics->GetPhysicsWorld()->createRigidBody(t);
     mRigidBody->setType(bodyType);
     mPhysics->AddRigidBody(this);
+    mRigidBody->setUserData(static_cast<void*>(this));
 }
 
 RigidBody::~RigidBody()

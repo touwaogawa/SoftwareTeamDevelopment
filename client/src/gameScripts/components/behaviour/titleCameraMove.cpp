@@ -1,21 +1,29 @@
 #include "titleCameraMove.h"
 #include "../../../../../common/src/component/transform.h"
 #include "../../../../../common/src/gameObject.h"
+#include "../../../audio.h"
 #include "../../../component/camera.h"
 #include <iostream>
 
 TitleCameraMove::TitleCameraMove(GameObject* owner)
     : Behaviour(owner)
+    , mAngle(0.0f)
 {
 }
 
 void TitleCameraMove::Start()
 {
-    mOwner->GetTransform()->SetWorldPosition(Vector3(0.0f, 40.0f, -40.0f));
-    mAngle = 0.0f;
+    Transform* transform = mOwner->GetTransform();
+    transform->SetWorldPosition(Vector3(0.0f, 40.0f, -40.0f));
+    Matrix4 view = Matrix4::CreateLookAt(transform->GetWorldPosition(), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+
+    transform->SetWorldMatrix(view);
+    Audio::FadeInMusic("../assets/sounds/bgm/Who_Is_the_Champion.mp3", 1000);
+    // Audio::PlayMusic("../assets/sounds/bgm/Who_Is_the_Champion.mp3");
 }
 void TitleCameraMove::Update()
 {
+    std::cout << "update" << std::endl;
     float r = 40.0f;
     float x = r * Math::Cos(mAngle);
     float z = r * Math::Sin(mAngle);
@@ -28,3 +36,11 @@ void TitleCameraMove::Update()
     transform->SetWorldMatrix(view);
 }
 void TitleCameraMove::LateUpdate() { }
+// void TitleCameraMove::Awake()
+// {
+//     std::cout << "awake" << std::endl;
+// }
+// void TitleCameraMove::OnEnable()
+// {
+//     std::cout << "OneEnable" << std::endl;
+// }

@@ -2,8 +2,8 @@
 #include "../components/behaviour/beyMove.h"
 #include <iostream>
 
-Bey::Bey(Scene* scene, Transform* parent, BeyType beyType, BeyMove* beyMove)
-    : GameObject(scene, parent, beyMove)
+Bey::Bey(BeyType beyType)
+    : GameObject()
 {
     switch (beyType) {
     case BeyType::Shuriken:

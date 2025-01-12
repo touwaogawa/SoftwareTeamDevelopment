@@ -43,3 +43,12 @@ void MeshRenderer::Draw(Shader* shader)
 
     glBindVertexArray(0);
 }
+
+void MeshRenderer::Enable()
+{
+    Renderer::AddMeshRenderer(this);
+}
+void MeshRenderer::Disable()
+{
+    Renderer::RemoveMeshRenderer(this);
+}

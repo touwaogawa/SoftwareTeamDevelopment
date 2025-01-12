@@ -11,5 +11,7 @@ public:
     void SetProjection(Matrix4 projection) { mProjection = projection; }
 
 private:
+    void Enable() override {};
+    void Disable() override;
     Matrix4 mProjection;
 };

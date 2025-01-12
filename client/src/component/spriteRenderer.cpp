@@ -15,9 +15,9 @@ SpriteRenderer::SpriteRenderer(GameObject* owner, int order)
     , mDrawOrder(order)
     , mVisible(true)
     , mUseCustomColor(false)
-    , mCustomColor(Vector3(1.0f, 0.0f, 0.0f))
+    , mCustomColor(Vector3(1.0f, 0.0f, 1.0f))
 {
-    Renderer::AddSprite(this);
+    Renderer::AddSpriteRenderer(this);
 }
 
 SpriteRenderer::~SpriteRenderer()
@@ -62,4 +62,13 @@ void SpriteRenderer::SetTexture(Texture* texture)
     // Set width/height
     mTexWidth  = texture->GetWidth();
     mTexHeight = texture->GetHeight();
+}
+
+void SpriteRenderer::Enable()
+{
+    Renderer::AddSpriteRenderer(this);
+}
+void SpriteRenderer::Disable()
+{
+    Renderer::RemoveSpriteRenderer(this);
 }

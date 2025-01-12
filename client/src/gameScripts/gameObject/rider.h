@@ -3,7 +3,7 @@
 
 class Rider_C : public Rider {
 public:
-    Rider_C(Scene* scene, Transform* parent, RiderType riderType);
+    explicit Rider_C(RiderType riderType);
 
 private:
 };

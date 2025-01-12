@@ -4,6 +4,8 @@
 #include "../../gameObject.h"
 #include "bey.h"
 #include "rider.h"
+class Physics;
+
 enum class HeroState {
     Idle,
     Walking,
@@ -39,7 +41,7 @@ struct HeroInfo {
 
 class Hero : public GameObject {
 public:
-    Hero(Scene* scene, Transform* parent, Vector3 initialPos, HeroInfo heroInfo, class HeroMove* heroMove);
+    Hero(HeroInfo heroInfo, Physics* physics);
     ~Hero() override;
 
     HeroCurrentStatus mCurrentStatus;

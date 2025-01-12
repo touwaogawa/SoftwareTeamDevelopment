@@ -34,6 +34,9 @@ public:
     const Vector2& GetFrameIndex() const { return mFrameIndex; }
 
 private:
+    void Enable() override;
+    void Disable() override;
+
     Texture* mTexture;
     int mTexWidth;
     int mTexHeight;

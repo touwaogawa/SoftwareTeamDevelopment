@@ -28,10 +28,11 @@ bool BattleScene::Load()
     // std::cerr << "playerNum: " << mPlayerNum << std::endl;
 
     for (int i = 0; i < mPlayerNum; i++) {
-        mPlayers.push_back(new Player_C(this, mPlayerInfos[i], &currentFrame));
+        Player_C* player = new Player_C(mPlayerInfos[i]);
+        mPlayers.push_back(player);
     }
     mPlayer = mPlayers[mMyPlayerID];
-    mStage  = new Stage_C(this, nullptr);
+    mStage  = new Stage_C(mPhysics);
 
     return true;
 }

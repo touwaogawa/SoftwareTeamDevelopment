@@ -12,4 +12,14 @@ void Camera::Use()
 }
 Camera::~Camera()
 {
+    if (this == Renderer::GetCamera()) {
+        Renderer::SetCamera(nullptr);
+    }
+}
+
+void Camera::Disable()
+{
+    if (this == Renderer::GetCamera()) {
+        Renderer::SetCamera(nullptr);
+    }
 }

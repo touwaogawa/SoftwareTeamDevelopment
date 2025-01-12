@@ -25,7 +25,6 @@ bool MatchingScene::Load()
 }
 void MatchingScene::Update(bool& exitFrag, float timeStep)
 {
-    std::cout << "gonum : " << mGameObjects.size() << std::endl;
     ProccessNetowork();
     ProccessInput();
     std::cout << "rgonum : " << mRootObjects.size() << std::endl;

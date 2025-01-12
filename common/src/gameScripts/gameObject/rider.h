@@ -1,6 +1,7 @@
 #pragma once
 #include "../../../../common/src/gameObject.h"
 
+class RiderMove;
 enum class RiderType {
     BaseHuman,
     RiderTypeNum
@@ -11,7 +12,7 @@ struct RiderBaseStatus {
 };
 class Rider : public GameObject {
 public:
-    Rider(Scene* scene, Transform* parent, RiderType riderType, class RiderMove* riderMove);
+    explicit Rider(RiderType riderType);
     ~Rider() override;
 
 protected:

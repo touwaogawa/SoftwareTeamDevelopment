@@ -1,12 +1,14 @@
 #include "battle.h"
 #include "../../../../common/src/component/transform.h"
+#include "../../../../common/src/gameScripts/components/behaviour/playerMove.h"
 #include "../../../../common/src/gameScripts/gameObject/player.h"
+#include "../../../../common/src/gameScripts/gameObject/stage.h"
 #include "../../../../common/src/gameScripts/packetData.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
-#include "../gameObject/player.h"
-#include "../gameObject/stage.h"
 #include <iostream>
+#include <reactphysics3d/reactphysics3d.h>
+
 BattleScene::BattleScene(int playerNum, std::vector<PlayerInfo> playerInfos)
     : Scene("BattleScene")
     , mPlayerNum(playerNum)
@@ -19,13 +21,14 @@ BattleScene::~BattleScene()
 }
 bool BattleScene::Load()
 {
-    mStage = new Stage_S(this, nullptr);
-    std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
-    for (int i = 0; i < mPlayerNum; i++) {
-        std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
-        mPlayers.push_back(new Player_S(this, mPlayerInfos[i], &currentFrame));
-        std::cout << "player gen _" << i << std::endl;
-    }
+
+    // mStage new Stage(mPhysics, );
+    // std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
+    // for (int i = 0; i < mPlayerNum; i++) {
+    //     std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
+    //     mPlayers.push_back(new Player(new PlayerMove(), mPlayerInfos[i]));
+    //     std::cout << "player gen _" << i << std::endl;
+    // }
     return true;
 }
 void BattleScene::SetENet(ENetAddress address, ENetHost* server)

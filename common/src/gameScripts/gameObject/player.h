@@ -17,19 +17,17 @@ struct PlayerInfo {
 
 class Player : public GameObject {
 public:
-    Player(Scene* scene, PlayerInfo playerInfo, const int* currentSceneFrame, class PlayerMove* playerMove);
+    explicit Player(PlayerInfo playerInfo);
     ~Player() override;
 
     std::deque<CommandData> commandBuffer;
     CommandData prevCommandData;
-    Hero* GetHero() const;
-    int GetID() const;
-    int GetCurrentSceneFrame() const;
+    Hero* GetHero() const { return mHero; }
+    int GetID() const { return mPlayerInfo.id; }
 
 protected:
     PlayerInfo mPlayerInfo;
     Hero* mHero;
-    const int* mCurrentSceneFrame;
 
     Vector3 GetInitialHeroPos(int id);
 };

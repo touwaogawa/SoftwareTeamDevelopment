@@ -13,6 +13,9 @@ public:
     Matrix4 mOffset;
 
 private:
+    void Enable() override;
+    void Disable() override;
+
     class Mesh* mMesh;
     size_t mTextureIndex;
 };

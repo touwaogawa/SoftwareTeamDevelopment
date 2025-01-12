@@ -1,6 +1,9 @@
 #pragma once
+#include "../../utils/src/math.h"
 #include <string>
 #include <vector>
+class GameObject;
+class Transform;
 class Scene {
 public:
     /// @brief Constructor
@@ -22,11 +25,11 @@ public:
     /// @param timeStep //seccond
     virtual void Update(bool& exitFrag, float timeStep_sec);
 
-    void AddGameObject(class GameObject* gameObject);
-    void RemoveGameObject(class GameObject* gameObject);
+    void Instantiate(GameObject* original, Transform* parent = nullptr, bool instantiateInWorldSpace = false);
+    void Instantiate(GameObject* original, Matrix4 transform, Transform* parent = nullptr);
 
-    void AddRootObject(class GameObject* gameObject);
-    void RemoveRootObject(class GameObject* gameObject);
+    void AddRootObject(GameObject* gameObject);
+    void RemoveRootObject(GameObject* gameObject);
 
     class Physics* GetPhysics() { return mPhysics; }
 
@@ -35,14 +38,13 @@ public:
 
 protected:
     std::string mName;
-    std::vector<class GameObject*> mRootObjects;
-    std::vector<class GameObject*> mGameObjects;
+    std::vector<GameObject*> mRootObjects;
     class Physics* mPhysics;
 
     void DeteleAllObject();
 
 private:
-    void StartgameScriptsFromRoot(class GameObject* rootObject);
-    void UpdategameScriptsFromRoot(class GameObject* rootObject);
-    void LateUpdategameScriptsFromRoot(class GameObject* rootObject);
+    void StartgameScriptsFromRoot(GameObject* rootObject);
+    void UpdategameScriptsFromRoot(GameObject* rootObject);
+    void LateUpdategameScriptsFromRoot(GameObject* rootObject);
 };

@@ -1,18 +1,20 @@
 #include "transform.h"
 #include "../../../utils/src/math.h"
 #include "../component.h"
+#include "../gameObject.h"
+#include "../scene.h"
 #include <algorithm>
 #include <iostream>
-Transform::Transform(GameObject* owner, Transform* parent)
+Transform::Transform(GameObject* owner)
     : Component(owner)
+    , mIsOwnerActive(mOwner->GetIsActive())
     , mParent(nullptr)
 {
-    SetParent(parent);
 }
 
 Transform::~Transform()
 {
-    if (mParent != nullptr) {
+    if (mParent) {
         mParent->RemoveChild(this);
     }
 }
@@ -22,16 +24,22 @@ Transform* Transform::GetParent() const
     return mParent;
 }
 
-void Transform::SetParent(Transform* newParent)
+void Transform::SetParent(Transform* parent, bool instantiateInWorldSpace)
 {
-    if (mParent != nullptr) {
+    if (mParent) {
         mParent->RemoveChild(this);
     }
-    mParent = newParent;
-    if (mParent != nullptr) {
-        mParent->AddChild(this);
+    mParent = parent;
+    if (mParent) {
+        mParent->mChildren.push_back(this);
+        if (instantiateInWorldSpace) {
+            AdoptfromWorldMatrix();
+        } else {
+            AdoptfromLocalMatrix();
+        }
+    } else {
+        mOwner->GetScene()->AddRootObject(mOwner);
     }
-    AdoptfromLocalMatrix();
 }
 
 std::vector<Transform*> Transform::GetChildren()
@@ -301,8 +309,10 @@ void Transform::AdoptParentTransform()
 void Transform::AdoptParentTransformForAllChildren()
 {
     for (Transform* child : mChildren) {
-        child->AdoptParentTransform();
-        child->AdoptParentTransformForAllChildren();
+        if (child->mIsOwnerActive) {
+            child->AdoptParentTransform();
+            child->AdoptParentTransformForAllChildren();
+        }
     }
 }
 
@@ -317,11 +327,6 @@ void Transform::ConvertMatrixToValues(
     scaleOut      = matrix.GetScale();
     eulerAngleOut = matrix.GetEulerAngles();
     rotOut        = matrix.GetRotation();
-}
-
-void Transform::AddChild(Transform* child)
-{
-    mChildren.push_back(child);
 }
 
 void Transform::RemoveChild(Transform* child)

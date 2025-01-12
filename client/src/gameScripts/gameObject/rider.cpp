@@ -3,9 +3,10 @@
 #include "../components/behaviour/riderMove.h"
 #include <iostream>
 
-Rider_C::Rider_C(Scene* scene, Transform* parent, RiderType riderType)
-    : Rider(scene, parent, riderType, new RiderMove_C(this))
+Rider_C::Rider_C(RiderType riderType)
+    : Rider(riderType)
 {
+    SetBehaviour(new RiderMove_C(this));
     // std::cout << "Rider_C constructer" << std::endl;
     switch (riderType) {
     case RiderType::BaseHuman:

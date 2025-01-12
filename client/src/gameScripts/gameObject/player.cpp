@@ -2,9 +2,8 @@
 #include "../components/behaviour/playerMove.h"
 #include "hero.h"
 #include <iostream>
-Player_C::Player_C(Scene* scene, PlayerInfo playerInfo, const int* currentSceneFrame)
-    : Player(scene, playerInfo, currentSceneFrame,
-          new PlayerMove_C(this))
+Player_C::Player_C(PlayerInfo playerInfo)
+    : Player(playerInfo)
 {
-    mHero = new Hero_C(scene, mTransform, GetInitialHeroPos(playerInfo.id), playerInfo.heroInfo);
+    SetBehaviour(new PlayerMove_C(this));
 }

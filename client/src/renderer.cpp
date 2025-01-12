@@ -207,7 +207,7 @@ void Renderer::RemoveMeshRenderer(MeshRenderer* meshRenderer)
     auto end = std::remove(mMeshRenderers.begin(), mMeshRenderers.end(), meshRenderer);
     mMeshRenderers.erase(end, mMeshRenderers.end());
 }
-void Renderer::AddSprite(SpriteRenderer* sprite)
+void Renderer::AddSpriteRenderer(SpriteRenderer* sprite)
 {
     int myDrawOrder = sprite->GetDrawOrder();
     auto iter       = mSprites.begin();

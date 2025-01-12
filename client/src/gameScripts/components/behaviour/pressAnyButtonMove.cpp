@@ -35,6 +35,7 @@ void PressAnyButtonMove::Start()
 }
 void PressAnyButtonMove::Update()
 {
+    std::cout << "PressAnyButtonMoveStatus update" << std::endl;
     float offset         = mMoveRange * Math::Sin(Math::ToRadians(mTheta));
     Transform* transform = mOwner->GetTransform();
     transform->SetWorldPosition(Vector3(mBasePosX, mBasePosY + offset, mBasePosZ));
