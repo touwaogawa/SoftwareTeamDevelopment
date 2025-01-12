@@ -16,17 +16,10 @@ GameObject::GameObject(bool isActive)
 
 GameObject::~GameObject()
 {
-
-    // 子オブジェクトをすべて削除
-    for (Transform* child : mTransform->GetChildren()) {
-
-        delete child->GetOwner();
-    }
     // コンポーネントをすべて削除
     for (Component* component : mComponents) {
         delete component;
     }
-    mScene->RemoveRootObject(this);
 }
 
 void GameObject::SetIsActive(bool isActive)
@@ -58,6 +51,11 @@ void GameObject::RemoveComponent(Component* component)
 {
     auto end = std::remove(mComponents.begin(), mComponents.end(), component);
     mComponents.erase(end, mComponents.end());
+}
+
+void GameObject::Destroy()
+{
+    mScene->AddDestroyOject(this);
 }
 
 void GameObject::Enable()

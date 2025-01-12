@@ -133,9 +133,9 @@ void Renderer::Draw()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-    std::cout << "draw 1" << std::endl;
+    // std::cout << "draw 1" << std::endl;
     Draw3DObjects();
-    std::cout << "draw 2" << std::endl;
+    // std::cout << "draw 2" << std::endl;
     // billboard
 
     // 不透明
@@ -152,12 +152,12 @@ void Renderer::Draw()
     shader->Use();
     mSpriteVerts->Bind();
     for (auto sprite : mSprites) {
-        std::cout << "Sprite Ren" << std::endl;
+        // std::cout << "Sprite Ren" << std::endl;
         if (sprite->GetVisible()) {
             sprite->Draw(shader);
         }
     }
-    std::cout << "draw 3" << std::endl;
+    // std::cout << "draw 3" << std::endl;
     // 表示
     SDL_GL_SwapWindow(mWindow);
 }
@@ -224,7 +224,7 @@ void Renderer::AddSpriteRenderer(SpriteRenderer* sprite)
 }
 void Renderer::RemoveSpriteRenderer(SpriteRenderer* spriteRenderer)
 {
-    std::cout << "Remove Sprite" << std::endl;
+    // std::cout << "Remove Sprite" << std::endl;
     auto end = std::remove(mSprites.begin(), mSprites.end(), spriteRenderer);
     mSprites.erase(end, mSprites.end());
 }
@@ -256,7 +256,7 @@ void Renderer::Draw3DObjects()
 
     // シーンをレンダリング
     for (MeshRenderer* meshRenderer : mMeshRenderers) {
-        std::cout << "meshren " << std::endl;
+        // std::cout << "meshren " << std::endl;
         meshRenderer->Draw(mDepthShader);
     }
 

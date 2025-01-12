@@ -57,6 +57,8 @@ public:
     /// @param component
     void RemoveComponent(Component* component);
 
+    void Destroy();
+
 protected:
     std::vector<Component*> mComponents;
     Transform* mTransform;

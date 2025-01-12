@@ -17,20 +17,14 @@ Scene::~Scene()
 {
     delete mPhysics;
     DeteleAllObject();
-    mRootObjects.clear();
 }
-void Scene::Start()
-{
-    // for (GameObject* gameObject : mRootObjects) {
-    //     StartgameScriptsFromRoot(gameObject);
-    // }
-}
+
 void Scene::Update(bool& exitFrag, float timeStep_sec)
 {
     // ゲームオブジェクトの更新
 
     for (GameObject* gameObject : mRootObjects) {
-        std::cout << "ppp" << std::endl;
+        // std::cout << "ppp" << std::endl;
         UpdategameScriptsFromRoot(gameObject);
     }
     // 物理演算
@@ -39,6 +33,15 @@ void Scene::Update(bool& exitFrag, float timeStep_sec)
     for (GameObject* gameObject : mRootObjects) {
         LateUpdategameScriptsFromRoot(gameObject);
     }
+    for (GameObject* destroyObject : mDestroyObjects) {
+        auto it = std::find(mRootObjects.begin(), mRootObjects.end(), destroyObject);
+        // 見つかったら削除
+        if (it != mRootObjects.end()) {
+            RemoveRootObject(destroyObject);
+        }
+        DestroyObject(destroyObject);
+    }
+    mDestroyObjects.clear();
 }
 
 void Scene::Instantiate(GameObject* original, Transform* parent, bool instantiateInWorldSpace)
@@ -101,8 +104,9 @@ void Scene::DeteleAllObject()
 {
     for (GameObject* rootObject : mRootObjects) {
         // std::cout << "root Object" << std::endl;
-        delete rootObject;
+        DestroyObject(rootObject);
     }
+    mRootObjects.clear();
 }
 
 // private ######################
@@ -118,12 +122,12 @@ void Scene::StartgameScriptsFromRoot(GameObject* rootObject)
 void Scene::UpdategameScriptsFromRoot(GameObject* rootObject)
 {
     if (rootObject->GetIsActive()) {
-        std::cout << "active" << std::endl;
+        // std::cout << "active" << std::endl;
         Behaviour* bhv = rootObject->GetBehaviour();
         if (bhv) {
-            std::cout << "bhv" << std::endl;
+            // std::cout << "bhv" << std::endl;
             if (bhv->GetEnabled()) {
-                std::cout << "enabled" << std::endl;
+                // std::cout << "enabled" << std::endl;
                 if (bhv->GetState() == BehaviourState::PreStart) {
                     bhv->Start();
                     bhv->SetState(BehaviourState::Started);
@@ -149,4 +153,12 @@ void Scene::LateUpdategameScriptsFromRoot(GameObject* rootObject)
             LateUpdategameScriptsFromRoot(transform->GetOwner());
         }
     }
+}
+
+void Scene::DestroyObject(GameObject* rootObject)
+{
+    for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
+        DestroyObject(transform->GetOwner());
+    }
+    delete rootObject;
 }

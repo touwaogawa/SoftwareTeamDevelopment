@@ -35,7 +35,7 @@ void PressAnyButtonMove::Start()
 }
 void PressAnyButtonMove::Update()
 {
-    std::cout << "PressAnyButtonMoveStatus update" << std::endl;
+    // std::cout << "PressAnyButtonMoveStatus update" << std::endl;
     float offset         = mMoveRange * Math::Sin(Math::ToRadians(mTheta));
     Transform* transform = mOwner->GetTransform();
     transform->SetWorldPosition(Vector3(mBasePosX, mBasePosY + offset, mBasePosZ));
@@ -87,7 +87,11 @@ void PressAnyButtonMove::GoMatching(int frame)
         transform->SetWorldScale(Vector3(mBaseScale));
         sprite->SetCustomColor(Vector3(1.0f, 1.0f, 1.0f));
     }
-    if (frame > 60) {
+    if (frame == 60) {
+        // SpriteRenderer* sprite = new SpriteRenderer(mOwner, 100);
+        // sprite->SetTexture()
+    }
+    if (frame == 120) {
         SceneManager::LoadScene(new MatchingScene());
     }
 }

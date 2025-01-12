@@ -23,11 +23,11 @@ void TitleCameraMove::Start()
 }
 void TitleCameraMove::Update()
 {
-    std::cout << "update" << std::endl;
+    // std::cout << "update" << std::endl;
     float r = 40.0f;
     float x = r * Math::Cos(mAngle);
     float z = r * Math::Sin(mAngle);
-    mAngle += Math::ToRadians(1.0f);
+    mAngle += Math::ToRadians(0.5f);
     Transform* transform = mOwner->GetTransform();
     transform->SetWorldPosition(Vector3(x, 40.0f, z));
 

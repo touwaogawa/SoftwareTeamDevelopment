@@ -34,11 +34,6 @@ bool TitleScene::Load()
     Instantiate(pressAnyButton, mat);
 
     // camera
-    // Matrix4 projection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f),
-    //     Renderer::GetWindowWidth(),
-    //     Renderer::GetWindowHeight(),
-    //     0.1f,
-    //     150.0f);
     GameObject* camera = new SimpleCamera();
     Camera* c          = camera->GetComponent<Camera>();
     c->Use();
@@ -52,6 +47,7 @@ bool TitleScene::Load()
     GameObject* stage = new SimpleMeshModel("../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
     Instantiate(stage);
 
+    // colosseum
     GameObject* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
     mat                   = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
     mat *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
