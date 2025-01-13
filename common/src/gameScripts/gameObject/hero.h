@@ -25,7 +25,6 @@ struct HeroBaseStatus {
     float maxDushSpeed     = 0.25f * 60.0f; // 最大ダッシュ速度
     float traction         = 0.1f;          // 地上抵抗
     float mass             = 50.0f;         // 質量
-    float gravity          = 9.8f;          // 重力
 };
 
 struct HeroCurrentStatus {

@@ -68,7 +68,7 @@ void HeroMove::Update()
         float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().dushAcceleration;
         float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().dushAcceleration;
         mHeroRp3dRigidBody->applyWorldForceAtCenterOfMass(rp3d::Vector3(x, 0.0, y) * mHero->GetBaseStatus().mass);
-        if (mHeroRp3dRigidBody->getLinearVelocity().length() < mHero->GetBaseStatus().maxDushSpeed) {
+        if (mHeroRp3dRigidBody->getLinearVelocity().length() <= mHero->GetBaseStatus().maxDushSpeed) {
         } else {
             float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().maxDushSpeed;
             float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().maxDushSpeed;
@@ -89,9 +89,21 @@ void HeroMove::Update()
         std::cout << "HeroState error" << std::endl;
         break;
     }
+
+    // std::cout << "y: " << mHeroRp3dRigidBody->getTransform().getPosition().y << std::endl;
 }
 void HeroMove::LateUpdate()
 {
 }
 
 // ##############################################
+
+void HeroMove::OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair)
+{
+    std::cout << "on col hero move" << std::endl;
+}
+
+void HeroMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair)
+{
+    std::cout << "on overlap hero move" << std::endl;
+}

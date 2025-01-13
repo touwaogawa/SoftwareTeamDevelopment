@@ -1,23 +1,24 @@
 #include "matching.h"
-#include "../../../../common/src/gameScripts/packetData.h"
-#include "../../../../common/src/sceneManager.h"
-#include "../../../../utils/src/input.h"
-#include "../../component/cameraComponent.h"
-#include "../../renderer.h"
-#include "../gameObject/bey.h"
-// #include "../gameObject/player.h"
 #include "../../../../common/src/gameScripts/gameObject/bey.h"
 #include "../../../../common/src/gameScripts/gameObject/hero.h"
 #include "../../../../common/src/gameScripts/gameObject/player.h"
 #include "../../../../common/src/gameScripts/gameObject/rider.h"
+#include "../../../../common/src/gameScripts/packetData.h"
+#include "../../../../common/src/physics.h"
+#include "../../../../common/src/sceneManager.h"
+#include "../../../../utils/src/input.h"
+#include "../../component/cameraComponent.h"
+#include "../../renderer.h"
 #include "../components/behaviour/beyMove.h"
 #include "../components/behaviour/heroMove.h"
 #include "../components/behaviour/playerMove.h"
 #include "../components/behaviour/riderMove.h"
+#include "../gameObject/bey.h"
 #include "../gameObject/rider.h"
 #include "../gameObject/simpleCamera.h"
 #include "../gameObject/simpleMeshModel.h"
 #include "../gameObject/simpleSprite.h"
+#include "../gameObject/stage.h"
 #include "battle.h"
 #include <enet/enet.h>
 #include <iostream>
@@ -48,8 +49,9 @@ bool MatchingScene::Load()
     Instantiate(camera, mat);
 
     // stage
-    GameObject* stage = new SimpleMeshModel("../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
-    Instantiate(stage);
+    Stage_C* stage = new Stage_C(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
+    mat            = Matrix4::CreateTranslation(Vector3(0.0f, 0.0f, 0.0f));
+    Instantiate(stage, mat);
 
     // colosseum
     GameObject* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
@@ -69,18 +71,18 @@ bool MatchingScene::Load()
     // hero
     Hero* hero = new Hero(mPlayer, playerInfo.heroInfo, mPhysics);
     hero->SetBehaviour(new HeroMove_C(hero));
-    mat = Matrix4::CreateTranslation(Vector3(-5.0f, 0.0f, 0.0f));
+    mat = Matrix4::CreateTranslation(Vector3(0.0f, 10.0f, 0.0f));
     Instantiate(hero, mat, mPlayer->GetTransform());
 
     // rider
     Rider_C* rider = new Rider_C(hero, playerInfo.heroInfo.riderType);
     rider->SetBehaviour(new RiderMove_C(rider));
-    Instantiate(rider, hero->GetTransform(), true);
+    Instantiate(rider, hero->GetTransform(), false);
 
     // bey
     Bey_C* bey = new Bey_C(hero, playerInfo.heroInfo.beyType);
     bey->SetBehaviour(new BeyMove_C(bey));
-    Instantiate(bey, hero->GetTransform(), true);
+    Instantiate(bey, hero->GetTransform(), false);
     // ##########################################################
 
     // 接続中の文字

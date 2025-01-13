@@ -9,6 +9,16 @@ Transform::Transform(GameObject* owner)
     : Component(owner)
     , mIsOwnerActive(mOwner->GetIsActive())
     , mParent(nullptr)
+    , mWorldMatrix(Matrix4())
+    , mWorldPosition(Vector3())
+    , mWorldScale(Vector3())
+    , mWorldRotation(Quaternion())
+    , mWorldEulerAngles(Vector3())
+    , mLocalMatrix(Matrix4())
+    , mLocalPosition(Vector3())
+    , mLocalScale(Vector3())
+    , mLocalRotation(Quaternion())
+    , mLocalEulerAngles(Vector3())
 {
 }
 

@@ -5,6 +5,10 @@
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
 #include "../../component/meshRenderer.h"
+#include "../components/behaviour/beyMove.h"
+#include "../components/behaviour/heroMove.h"
+#include "../components/behaviour/playerMove.h"
+#include "../components/behaviour/riderMove.h"
 #include "../gameObject/bey.h"
 #include "../gameObject/player.h"
 #include "../gameObject/rider.h"
@@ -28,11 +32,34 @@ bool BattleScene::Load()
     // std::cerr << "playerNum: " << mPlayerNum << std::endl;
 
     for (int i = 0; i < mPlayerNum; i++) {
-        Player_C* player = new Player_C(mPlayerInfos[i]);
+
+        // player
+        Player* player = new Player(mPlayerInfos[i]);
+        mPlayer->SetBehaviour(new PlayerMove_C(mPlayer));
+        Instantiate(mPlayer);
         mPlayers.push_back(player);
+
+        // hero
+        Hero* hero = new Hero(mPlayer, mPlayerInfos[i].heroInfo, mPhysics);
+        hero->SetBehaviour(new HeroMove_C(hero));
+        float r     = 13.0f;
+        float x     = r * Math::Cos(i * Math::PiOver2);
+        float z     = r * Math::Sin(i * Math::PiOver2);
+        Matrix4 mat = Matrix4::CreateTranslation(Vector3(x, 0.0f, z));
+        Instantiate(hero, mat, mPlayer->GetTransform());
+
+        // rider
+        Rider_C* rider = new Rider_C(hero, mPlayerInfos[i].heroInfo.riderType);
+        rider->SetBehaviour(new RiderMove_C(rider));
+        Instantiate(rider, hero->GetTransform(), false);
+
+        // bey
+        Bey_C* bey = new Bey_C(hero, mPlayerInfos[i].heroInfo.beyType);
+        bey->SetBehaviour(new BeyMove_C(bey));
+        Instantiate(bey, hero->GetTransform(), false);
     }
     mPlayer = mPlayers[mMyPlayerID];
-    mStage  = new Stage_C(mPhysics);
+    mStage  = new Stage_C(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
 
     return true;
 }

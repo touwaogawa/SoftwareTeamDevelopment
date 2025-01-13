@@ -10,6 +10,7 @@ Physics::Physics()
     // Create the world settings
     rp3d::PhysicsWorld::WorldSettings settings;
     settings.defaultVelocitySolverNbIterations = 20;
+    settings.defaultPositionSolverNbIterations = 20;
     settings.isSleepingEnabled                 = false;
     settings.gravity                           = rp3d::Vector3(0, -9.81, 0);
 
@@ -68,6 +69,7 @@ void Physics::RemoveRigidBody(RigidBody* rigidBody)
 
 void MyEventListener::onContact(const CallbackData& callbackData)
 {
+    // EventListener::onContact(callbackData);
     int numPairs = callbackData.getNbContactPairs();
     for (int i = 0; i < numPairs; i++) {
         const rp3d::CollisionCallback::ContactPair pair = callbackData.getContactPair(i);
@@ -122,7 +124,7 @@ void MyEventListener::onContact(const CallbackData& callbackData)
             std::cout << "rp3d::CollisionCallback::ContactPair::EventType error" << std::endl;
             break;
         }
-        std::cout << "collision" << std::endl;
+        // std::cout << "collision" << std::endl;
     }
 }
 
@@ -183,6 +185,6 @@ void MyEventListener::onTrigger(const rp3d::OverlapCallback::CallbackData& callb
             std::cout << "rp3d::CollisionCallback::ContactPair::EventType error" << std::endl;
             break;
         }
+        std::cout << "trigger" << std::endl;
     }
-    std::cout << "trigger" << std::endl;
 }

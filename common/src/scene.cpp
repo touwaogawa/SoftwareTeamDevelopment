@@ -68,8 +68,8 @@ void Scene::Instantiate(GameObject* original, Matrix4 transform, Transform* pare
 {
     if (original) {
         original->SetScene(this);
-        original->GetTransform()->SetParent(parent);
         original->GetTransform()->SetWorldMatrix(transform);
+        original->GetTransform()->SetParent(parent);
         Behaviour* bhv = original->GetBehaviour();
         if (bhv) {
             bhv->Awake();

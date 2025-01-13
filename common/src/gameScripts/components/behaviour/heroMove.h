@@ -12,6 +12,10 @@ public:
     void Update() override;
     void LateUpdate() override;
 
+    void OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair) override;
+
+    void OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair) override;
+
 private:
     class Hero* mHero;
     int mCurrentActionFrame;

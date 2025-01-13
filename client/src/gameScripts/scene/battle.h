@@ -27,7 +27,7 @@ private:
     BattleState mBattleState = BattleState::CountDown;
     const int mPlayerNum;
     const int mMyPlayerID;
-    std::vector<class Player_C*> mPlayers;
+    std::vector<class Player*> mPlayers;
 
     ENetAddress mAddress;
     ENetHost* mClient;
@@ -35,8 +35,8 @@ private:
 
     std::vector<struct PlayerInfo> mPlayerInfos;
 
-    class Player_C* mPlayer;
-    class Stage_C* mStage;
+    class Player* mPlayer;
+    class Stage* mStage;
 
     bool ProccessInput();
     bool ProccessNetowork();
