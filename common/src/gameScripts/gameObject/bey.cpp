@@ -2,8 +2,9 @@
 #include "../components/behaviour/beyMove.h"
 #include <iostream>
 
-Bey::Bey(BeyType beyType)
+Bey::Bey(Hero* hero, BeyType beyType)
     : GameObject()
+    , mHero(hero)
 {
     switch (beyType) {
     case BeyType::Shuriken:
@@ -53,8 +54,4 @@ Bey::Bey(BeyType beyType)
         break;
     }
     // std::cout << "bey constructor" << std::endl;
-}
-
-Bey::~Bey()
-{
 }

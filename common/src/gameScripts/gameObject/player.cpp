@@ -27,25 +27,3 @@ Player::Player(PlayerInfo playerInfo)
 Player::~Player()
 {
 }
-
-Vector3 Player::GetInitialHeroPos(int id)
-{
-    float rad = 13.0f;
-    switch (id) {
-    case 0:
-        return Vector3(rad, 0.0f, 0.0f);
-        break;
-    case 1:
-        return Vector3(-rad, 0.0f, 0.0f);
-        break;
-    case 2:
-        return Vector3(0.0f, 0.0f, rad);
-        break;
-    case 3:
-        return Vector3(0.0f, 0.0f, -rad);
-        break;
-    default:
-        return Vector3(0.0f, 0.0f, 0.0f);
-        break;
-    }
-}

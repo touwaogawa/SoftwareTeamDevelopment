@@ -12,5 +12,4 @@ public:
 private:
     class Player* mPlayer;
     class Hero* mHero;
-    class HeroMove* mHeroMove;
 };

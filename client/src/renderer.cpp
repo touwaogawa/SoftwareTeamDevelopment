@@ -172,7 +172,7 @@ void Renderer::Draw()
         // std::cout << "mLightComponent == nullptr" << std::endl;
         mLightPos        = Vector3(5.0f, 30.0f, 8.0f);
         mLightView       = Matrix4::CreateLookAt(mLightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        mLightProjection = Matrix4::CreateOrtho(40.0f, 40.0f, 1.0f, 100.0f);
+        mLightProjection = Matrix4::CreateOrtho(45.0f, 45.0f, 1.0f, 80.0f);
         mLightColor      = Vector3(1.0f, 1.0f, 1.0f);
     } else {
         mLightPos        = mLightComponent->GetOwner()->GetTransform()->GetWorldPosition();

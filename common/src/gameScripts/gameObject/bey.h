@@ -2,7 +2,7 @@
 #include "../../../../common/src/gameObject.h"
 
 class BeyMove;
-
+class Hero;
 enum class BeyType {
     Shuriken,
     Hexagram,
@@ -22,9 +22,12 @@ struct BeyBaseStatus {
 
 class Bey : public GameObject {
 public:
-    explicit Bey(BeyType beyType);
-    ~Bey() override;
+    explicit Bey(Hero* hero, BeyType beyType);
+    ~Bey() override = default;
+
+    Hero* GetHero() const { return mHero; }
 
 private:
     BeyBaseStatus mBeyBaseStatus;
+    Hero* mHero;
 };

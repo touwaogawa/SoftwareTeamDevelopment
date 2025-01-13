@@ -48,9 +48,3 @@ void RigidBody::UpdateTransform()
     mOwner->GetTransform()->SetWorldPosition(static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
     mOwner->GetTransform()->SetWorldRotation(Quaternion(static_cast<float>(q.x), static_cast<float>(q.y), static_cast<float>(q.z), static_cast<float>(q.w)));
 }
-
-void RigidBody::SetVA(float x, float y, float z)
-{
-    // mRigidBody->setLinearLockAxisFactor(rp3d::Vector3(static_cast<rp3d::decimal>(x), static_cast<rp3d::decimal>(y), static_cast<rp3d::decimal>(z)));
-    mRigidBody->setLinearVelocity(rp3d::Vector3(static_cast<rp3d::decimal>(x), static_cast<rp3d::decimal>(y), static_cast<rp3d::decimal>(z)));
-}

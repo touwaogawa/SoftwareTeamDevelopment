@@ -22,7 +22,6 @@ public:
 
     void SetTransform();
     void UpdateTransform();
-    void SetVA(float x, float y, float z);
 
 private:
     void Enable() override { mRigidBody->setIsActive(true); }

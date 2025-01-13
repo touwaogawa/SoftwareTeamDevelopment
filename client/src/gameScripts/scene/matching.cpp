@@ -2,7 +2,22 @@
 #include "../../../../common/src/gameScripts/packetData.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
+#include "../../component/cameraComponent.h"
 #include "../../renderer.h"
+#include "../gameObject/bey.h"
+// #include "../gameObject/player.h"
+#include "../../../../common/src/gameScripts/gameObject/bey.h"
+#include "../../../../common/src/gameScripts/gameObject/hero.h"
+#include "../../../../common/src/gameScripts/gameObject/player.h"
+#include "../../../../common/src/gameScripts/gameObject/rider.h"
+#include "../components/behaviour/beyMove.h"
+#include "../components/behaviour/heroMove.h"
+#include "../components/behaviour/playerMove.h"
+#include "../components/behaviour/riderMove.h"
+#include "../gameObject/rider.h"
+#include "../gameObject/simpleCamera.h"
+#include "../gameObject/simpleMeshModel.h"
+#include "../gameObject/simpleSprite.h"
 #include "battle.h"
 #include <enet/enet.h>
 #include <iostream>
@@ -12,6 +27,9 @@
 MatchingScene::MatchingScene()
     : Scene("MatchingScene")
     , mMatchingState(MatchingState::Init)
+    , mConnectingSprite(nullptr)
+    , mMatchingSprite(nullptr)
+    , mPreStartSprite(nullptr)
 {
 }
 
@@ -21,6 +39,56 @@ MatchingScene::~MatchingScene()
 
 bool MatchingScene::Load()
 {
+    // camera
+    GameObject* camera = new SimpleCamera();
+    CameraComponent* c = camera->GetComponent<CameraComponent>();
+    c->Use();
+    Vector3 cameraPos = Vector3(0.0f, 5.0f, -20.f);
+    Matrix4 mat       = Matrix4::CreateLookAt(cameraPos, Vector3(0.0f, 2.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+    Instantiate(camera, mat);
+
+    // stage
+    GameObject* stage = new SimpleMeshModel("../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
+    Instantiate(stage);
+
+    // colosseum
+    GameObject* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
+    mat                   = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
+    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
+    Instantiate(colosseum, mat);
+
+    // Player##########################################################
+    //  PlayerInfo
+    PlayerInfo playerInfo(0, "aa", RiderType::BaseHuman, BeyType::Shuriken);
+
+    // player
+    mPlayer = new Player(playerInfo);
+    mPlayer->SetBehaviour(new PlayerMove_C(mPlayer));
+    Instantiate(mPlayer);
+
+    // hero
+    Hero* hero = new Hero(mPlayer, playerInfo.heroInfo, mPhysics);
+    hero->SetBehaviour(new HeroMove_C(hero));
+    mat = Matrix4::CreateTranslation(Vector3(-5.0f, 0.0f, 0.0f));
+    Instantiate(hero, mat, mPlayer->GetTransform());
+
+    // rider
+    Rider_C* rider = new Rider_C(hero, playerInfo.heroInfo.riderType);
+    rider->SetBehaviour(new RiderMove_C(rider));
+    Instantiate(rider, hero->GetTransform(), true);
+
+    // bey
+    Bey_C* bey = new Bey_C(hero, playerInfo.heroInfo.beyType);
+    bey->SetBehaviour(new BeyMove_C(bey));
+    Instantiate(bey, hero->GetTransform(), true);
+    // ##########################################################
+
+    // 接続中の文字
+    mConnectingSprite = new SimpleSprite("../assets/textures/matchingScene/connectingServer.png");
+    mat               = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.3f);
+    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
+    Instantiate(mConnectingSprite, mat);
+
     return true;
 }
 void MatchingScene::Update(bool& exitFrag, float timeStep)
@@ -36,6 +104,19 @@ bool MatchingScene::ProccessInput()
     if (Input::GetKeyUp(SDL_SCANCODE_ESCAPE)) {
         return false;
     }
+
+    // std::cout << "input" << std::endl;
+    CommandData commandData = {
+        Input::GetButton(2),
+        Input::GetButton(3),
+        Input::GetButton(1) || Input::GetButton(4),
+        Vector2(Input::GetAxis(1), -Input::GetAxis(2)),
+        Vector2(Input::GetAxis(3), -Input::GetAxis(4)),
+        currentFrame
+    };
+
+    mPlayer->commandBuffer.push_front(commandData);
+
     switch (mMatchingState) {
     case MatchingState::Init:
         break;
@@ -47,12 +128,13 @@ bool MatchingScene::ProccessInput()
         std::cout << "MatchingState error" << std::endl;
         break;
     }
+
     return true;
 }
 
 bool MatchingScene::ProccessNetowork()
 {
-    std::cout << "pn" << std::endl;
+    // std::cout << "pn" << std::endl;
     switch (mMatchingState) {
     case MatchingState::Init:
         mClient = enet_host_create(
@@ -81,13 +163,18 @@ bool MatchingScene::ProccessNetowork()
         mMatchingState = MatchingState::Connecting;
         break;
     case MatchingState::Connecting: {
-        std::cout << "Connecting" << std::endl;
+        // std::cout << "Connecting" << std::endl;
         while (enet_host_service(mClient, &mENetEvent, 0) > 0) {
             switch (mENetEvent.type) {
-            case ENET_EVENT_TYPE_CONNECT:
+            case ENET_EVENT_TYPE_CONNECT: {
                 std::cout << "Connected to server!" << std::endl;
+                mConnectingSprite->Destroy();
+                mMatchingSprite = new SimpleSprite("../assets/textures/matchingScene/matching.png");
+                Matrix4 mat     = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.3f);
+                mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
+                Instantiate(mMatchingSprite, mat);
                 mMatchingState = MatchingState::Connected;
-                break;
+            } break;
             case ENET_EVENT_TYPE_RECEIVE:
                 std::cout << "recv" << std::endl;
                 // std::cout << "Received message from server: " << (char*)event.packet->data << std::endl;
@@ -100,7 +187,7 @@ bool MatchingScene::ProccessNetowork()
                 break;
             }
         }
-        std::cout << "Connecting" << std::endl;
+        // std::cout << "Connecting" << std::endl;
     } break;
     case MatchingState::Connected: {
         std::cout << "Connected" << std::endl;
@@ -136,7 +223,8 @@ bool MatchingScene::ProccessNetowork()
 
                 } break;
                 case PacketDataType::StartBattle: {
-                    std::cout << "start battle" << std::endl;
+                    // std::cout << "start battle" << std::endl;
+                    mMatchingSprite->Destroy();
                     BattleScene* battleScene = new BattleScene(myPlayerId, mPlayerInfos.size(), mPlayerInfos);
                     battleScene->SetENet(mAddress, mClient, mPeer);
                     SceneManager::LoadScene(battleScene);

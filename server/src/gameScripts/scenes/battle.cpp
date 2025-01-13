@@ -1,5 +1,6 @@
 #include "battle.h"
 #include "../../../../common/src/component/transform.h"
+#include "../../../../common/src/gameScripts/components/behaviour/heroMove.h"
 #include "../../../../common/src/gameScripts/components/behaviour/playerMove.h"
 #include "../../../../common/src/gameScripts/gameObject/player.h"
 #include "../../../../common/src/gameScripts/gameObject/stage.h"
@@ -26,14 +27,21 @@ bool BattleScene::Load()
     // std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
     for (int i = 0; i < mPlayerNum; i++) {
         // std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
+
+        // player
         Player* player = new Player(mPlayerInfos[i]);
         player->SetBehaviour(new PlayerMove(player));
         float r = 13.0f;
-        Vector3 pos(r * Math::Cos(i * Math::PiOver2),
-            0.0f,
-            r * Math::Cos(i * Math::PiOver2));
+        Vector3 pos(r * Math::Cos(i * Math::PiOver2), 0.0f, r * Math::Cos(i * Math::PiOver2));
         Matrix4 mat = Matrix4::CreateTranslation(pos);
         Instantiate(player, mat);
+
+        // hero
+        Hero* hero = new Hero(mPlayerInfos[i].heroInfo, mPhysics);
+        hero->SetBehaviour(new HeroMove(hero));
+        // rider
+
+        // bey
 
         // std::cout << "player gen _" << i << std::endl;
     }

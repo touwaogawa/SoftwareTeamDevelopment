@@ -17,6 +17,12 @@ void HeroMove::Start()
     RigidBody* r = mOwner->GetComponent<RigidBody>();
     if (r) {
         r->SetTransform();
+        mHeroRp3dRigidBody = r->GetRp3dRogidBody();
+        if (!mHeroRp3dRigidBody) {
+            std::cout << "rp3d rigid body error hero move start()" << std::endl;
+        }
+    } else {
+        std::cout << "rigid body error hero move start()" << std::endl;
     }
 }
 namespace {
@@ -44,72 +50,48 @@ void show(Transform* transform)
 void HeroMove::Update()
 {
     // show(mOwner->GetTransform());
-    UpdatePosision();
+    switch (mHero->mCurrentStatus.state) {
+    case HeroState::Idle: {
+    } break;
+    case HeroState::Walking: {
+        float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().WalkSpeed;
+        float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().WalkSpeed;
+        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, 0.0, y));
+    } break;
+    case HeroState::StartRunning: {
+        float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().initialDushSpeed;
+        float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().initialDushSpeed;
+        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, 0.0, y));
+        mHero->mCurrentStatus.state = HeroState::Running;
+    } break;
+    case HeroState::Running: {
+        float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().dushAcceleration;
+        float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().dushAcceleration;
+        mHeroRp3dRigidBody->applyWorldForceAtCenterOfMass(rp3d::Vector3(x, 0.0, y) * mHero->GetBaseStatus().mass);
+        if (mHeroRp3dRigidBody->getLinearVelocity().length() < mHero->GetBaseStatus().maxDushSpeed) {
+        } else {
+            float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().maxDushSpeed;
+            float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().maxDushSpeed;
+            mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, 0.0, y));
+        }
+    } break;
+    case HeroState::StopRunning: {
+        if (mHeroRp3dRigidBody->getLinearVelocity().length() < mHero->GetBaseStatus().initialDushSpeed) {
+            mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(0.0, 0.0, 0.0));
+            mHero->mCurrentStatus.state = HeroState::Idle;
+        }
+    } break;
+    case HeroState::RunningAttack: {
+    } break;
+    case HeroState::PreJump: {
+    } break;
+    default:
+        std::cout << "HeroState error" << std::endl;
+        break;
+    }
 }
 void HeroMove::LateUpdate()
 {
 }
 
 // ##############################################
-void HeroMove::Walking(Vector2 axis)
-{
-    mHero->mCurrentStatus.moveDir = Vector2::Normalize(axis);
-    if (mHero->mCurrentStatus.speed < mHero->GetMaxWalkSpeed()) {
-        mHero->mCurrentStatus.speed = std::min(mHero->GetMaxWalkSpeed(), mHero->mCurrentStatus.speed + mHero->GetWalkAcceleration());
-    }
-}
-void HeroMove::StartRunning(Vector2 axis)
-{
-    mHero->mCurrentStatus.moveDir = Vector2::Normalize(axis);
-    mHero->mCurrentStatus.speed   = std::min(mHero->GetMaxRunSpeed(), mHero->mCurrentStatus.speed + mHero->GetDushAcceleration());
-}
-void HeroMove::Running(Vector2 axis)
-{
-    mHero->mCurrentStatus.moveDir = Vector2::Normalize(axis);
-}
-void HeroMove::StopRunning(Vector2 axis)
-{
-    if (mHero->mCurrentStatus.speed < 0.05f) {
-        mHero->mCurrentStatus.speed = 0.0f;
-    } else {
-        mHero->mCurrentStatus.speed -= mHero->GetTraction() * mHero->GetGravity();
-        if (mHero->mCurrentStatus.speed < 0.0f) {
-            mHero->mCurrentStatus.speed = 0.0f;
-        }
-    }
-}
-void HeroMove::StartRunningAttack(Vector2 axis)
-{
-    mCurrentActionFrame         = 0;
-    mHero->mCurrentStatus.speed = 1.0f;
-}
-bool HeroMove::UpdateRunningAttack()
-{
-    mCurrentActionFrame++;
-    if (10 <= mCurrentActionFrame) {
-        mHero->mCurrentStatus.speed -= 0.5f;
-        if (mHero->mCurrentStatus.speed < 0.05) {
-            mHero->mCurrentStatus.speed = 0.0f;
-            return false;
-        }
-    }
-    return true;
-}
-void HeroMove::UpdatePosision()
-{
-    Vector3 pos = mOwner->GetTransform()->GetLocalPosition();
-    // std::cout << "pos_x: " << pos.x << std::endl;
-    // std::cout << "pos_z: " << pos.z << std::endl;
-    Vector2 ma = mHero->mCurrentStatus.moveDir;
-    float cs   = mHero->mCurrentStatus.speed;
-    // std::cout << "cs " << cs << std::endl;
-    // std::cout << "ma_x " << ma.x << std::endl;
-    // std::cout << "ma_y " << ma.y << std::endl;
-    // pos.x += cs * ma.x;
-    // pos.z -= cs * ma.y;
-    // mOwner->GetTransform()->SetLocalPosition(pos);
-    RigidBody* r = mOwner->GetComponent<RigidBody>();
-    if (r && cs > 0.0f) {
-        r->SetVA(ma.x * 5.0f, 0.0f, ma.y * 5.0f);
-    }
-}

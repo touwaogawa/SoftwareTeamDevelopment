@@ -47,5 +47,5 @@ private:
     bool mVisible;
     bool mUseCustomColor;
     Vector3 mCustomColor;
-    bool mIsSpherical;
+    const bool mIsSpherical;
 };

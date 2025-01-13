@@ -2,8 +2,9 @@
 #include "../components/behaviour/riderMove.h"
 #include <iostream>
 
-Rider::Rider(RiderType riderType)
+Rider::Rider(Hero* hero, RiderType riderType)
     : GameObject()
+    , mHero(hero)
 {
     switch (riderType) {
     case RiderType::BaseHuman:
@@ -19,8 +20,4 @@ Rider::Rider(RiderType riderType)
         break;
     }
     // std::cout << "rider constructor" << std::endl;
-}
-
-Rider::~Rider()
-{
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../component/behaviour.h"
+#include <reactphysics3d/reactphysics3d.h>
 
 class Vector2;
 class HeroMove : public Behaviour {
@@ -11,15 +12,8 @@ public:
     void Update() override;
     void LateUpdate() override;
 
-    void Walking(Vector2 axis);
-    void StartRunning(Vector2 axis);
-    void Running(Vector2 axis);
-    void StopRunning(Vector2 axis);
-    void StartRunningAttack(Vector2 axis);
-    bool UpdateRunningAttack();
-
 private:
-    void UpdatePosision();
     class Hero* mHero;
     int mCurrentActionFrame;
+    rp3d::RigidBody* mHeroRp3dRigidBody;
 };

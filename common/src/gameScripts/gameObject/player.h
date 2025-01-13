@@ -22,12 +22,13 @@ public:
 
     std::deque<CommandData> commandBuffer;
     CommandData prevCommandData;
+
     Hero* GetHero() const { return mHero; }
+    void SetHero(Hero* hero) { mHero = hero; }
+
     int GetID() const { return mPlayerInfo.id; }
 
 protected:
     PlayerInfo mPlayerInfo;
     Hero* mHero;
-
-    Vector3 GetInitialHeroPos(int id);
 };

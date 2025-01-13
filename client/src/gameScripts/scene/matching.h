@@ -5,6 +5,7 @@
 #include <queue>
 #include <utility>
 
+class GameObject;
 enum class MatchingState {
     Init,
     Connecting,
@@ -34,4 +35,10 @@ private:
 
     bool ProccessInput();
     bool ProccessNetowork();
+
+    GameObject* mConnectingSprite;
+    GameObject* mMatchingSprite;
+    GameObject* mPreStartSprite;
+
+    class Player* mPlayer;
 };

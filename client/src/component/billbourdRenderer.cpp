@@ -44,7 +44,13 @@ void BillbourdRenderer::Draw(Shader* shader)
 
         // Set world transform
         shader->SetMatrixUniform("model", model);
-        shader->SetIntUniform("isSpherical", mIsSpherical);
+
+        if (mIsSpherical) {
+            shader->SetIntUniform("isSpherical", 1);
+        } else {
+            shader->SetIntUniform("isSpherical", 0);
+        }
+
         shader->SetVector2Uniform("frameSize", mFrameSize);
         shader->SetVector2Uniform("frameIndex", mFrameIndex);
         if (mUseCustomColor) {

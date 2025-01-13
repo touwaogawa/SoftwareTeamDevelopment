@@ -3,8 +3,8 @@
 #include "../components/behaviour/beyMove.h"
 #include <iostream>
 
-Bey_C::Bey_C(BeyType beyType)
-    : Bey(beyType)
+Bey_C::Bey_C(Hero* hero, BeyType beyType)
+    : Bey(hero, beyType)
 {
     SetBehaviour(new BeyMove_C(this));
     switch (beyType) {
