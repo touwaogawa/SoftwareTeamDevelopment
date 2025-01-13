@@ -1,8 +1,10 @@
 #pragma once
 #include "../../../component/behaviour.h"
+
+class Rider;
 class RiderMove : public Behaviour {
 public:
-    explicit RiderMove(GameObject* owner);
+    explicit RiderMove(Rider* owner);
     virtual ~RiderMove() override = default;
 
     void Start() override;
@@ -10,7 +12,7 @@ public:
     void LateUpdate() override;
 
 private:
-    class Rider* mRider;
+    Rider* mRider;
     float dir_x;
     float dir_y;
 };

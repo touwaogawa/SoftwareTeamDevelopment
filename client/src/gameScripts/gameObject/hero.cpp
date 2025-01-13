@@ -3,7 +3,7 @@
 #include "bey.h"
 #include "rider.h"
 
-Hero_C::Hero_C(Player* player, HeroInfo heroInfo, Physics* physics)
-    : Hero(player, heroInfo, physics)
+Hero_C::Hero_C(Player* player, HeroInfo heroInfo, Physics* physics, const std::string& tag)
+    : Hero(player, heroInfo, physics, tag)
 {
 }

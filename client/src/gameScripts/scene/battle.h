@@ -23,6 +23,8 @@ public:
     class Stage* GetStage() const;
     int GetPlayerNum() const;
 
+    const std::vector<class Player*>& GetPlayers() { return mPlayers; }
+
 private:
     BattleState mBattleState;
 

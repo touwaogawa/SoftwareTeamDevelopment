@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../../common/src/gameObject.h"
+#include <string>
 
 class RiderMove;
 class Hero;
@@ -14,7 +15,7 @@ struct RiderBaseStatus {
 
 class Rider : public GameObject {
 public:
-    explicit Rider(Hero* hero, RiderType riderType);
+    explicit Rider(Hero* hero, RiderType riderType, const std::string& tag);
     virtual ~Rider() override = default;
     Hero* GetHero() const { return mHero; }
 

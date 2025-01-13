@@ -2,13 +2,13 @@
 #include "../../gameObject/bey.h"
 #include <iostream>
 
-BeyMove::BeyMove(GameObject* owner)
+BeyMove::BeyMove(Bey* owner)
     : Behaviour(owner)
+    , mBey(owner)
     , mSpinPower(0.0f)
-    , mBey()
+    , mMinSpinPower(0.0f)
 {
     // std::cout << "beyMove constructor" << std::endl;
-    mBey = static_cast<Bey*>(mOwner);
 }
 
 void BeyMove::Start()

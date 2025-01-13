@@ -3,8 +3,8 @@
 #include "hero.h"
 #include <iostream>
 
-Rider::Rider(Hero* hero, RiderType riderType)
-    : GameObject()
+Rider::Rider(Hero* hero, RiderType riderType, const std::string& tag)
+    : GameObject("Rider", tag)
     , mHero(hero)
 {
     mHero->SetRider(this);

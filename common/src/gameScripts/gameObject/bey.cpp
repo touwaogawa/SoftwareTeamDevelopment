@@ -3,8 +3,8 @@
 #include "hero.h"
 #include <iostream>
 
-Bey::Bey(Hero* hero, BeyType beyType)
-    : GameObject()
+Bey::Bey(Hero* hero, BeyType beyType, const std::string& tag)
+    : GameObject("Bey", tag)
     , mHero(hero)
 {
     mHero->SetBey(this);

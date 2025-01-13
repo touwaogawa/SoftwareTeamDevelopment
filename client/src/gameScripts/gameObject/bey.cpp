@@ -3,8 +3,8 @@
 #include "../components/behaviour/beyMove.h"
 #include <iostream>
 
-Bey_C::Bey_C(Hero* hero, BeyType beyType)
-    : Bey(hero, beyType)
+Bey_C::Bey_C(Hero* hero, BeyType beyType, const std::string& tag)
+    : Bey(hero, beyType, tag)
 {
     switch (beyType) {
     case BeyType::Shuriken:

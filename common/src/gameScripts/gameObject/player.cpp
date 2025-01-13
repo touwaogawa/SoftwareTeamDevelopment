@@ -17,9 +17,11 @@ PlayerInfo::PlayerInfo(int p_id, const char p_name[8], RiderType p_riderType, Be
     heroInfo.riderType     = p_riderType;
     heroInfo.beyType       = p_beyType;
 }
-Player::Player(PlayerInfo playerInfo)
-    : GameObject()
+
+Player::Player(PlayerInfo playerInfo, const std::string& tag)
+    : GameObject("Player", tag)
     , mPlayerInfo(playerInfo)
+    , mPlayrState(PlayerState::Battle)
 {
     // std::cout << "player constructor" << std::endl;
 }

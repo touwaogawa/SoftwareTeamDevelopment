@@ -7,7 +7,7 @@
 #include <vector>
 
 Stage::Stage(Physics* physics, const std::string& meshFileName)
-    : GameObject()
+    : GameObject("Stage")
 {
     // RigidBody setting
     RigidBody* rigidBody  = new RigidBody(this, rp3d::BodyType::STATIC, physics);

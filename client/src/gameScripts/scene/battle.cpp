@@ -4,7 +4,9 @@
 #include "../../../../common/src/physics.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
+#include "../../component/cameraComponent.h"
 #include "../../component/meshRenderer.h"
+#include "../components/behaviour/battleCameraMove.h"
 #include "../components/behaviour/beyMove.h"
 #include "../components/behaviour/heroMove.h"
 #include "../components/behaviour/playerMove.h"
@@ -12,10 +14,12 @@
 #include "../gameObject/bey.h"
 #include "../gameObject/player.h"
 #include "../gameObject/rider.h"
+#include "../gameObject/simpleCamera.h"
 #include "../gameObject/simpleMeshModel.h"
 #include "../gameObject/stage.h"
 #include <enet/enet.h>
 #include <iostream>
+#include <string>
 
 BattleScene::BattleScene(int myPlayerID, int playerNum, std::vector<PlayerInfo> playerInfos)
     : Scene("BattleScene")
@@ -31,22 +35,28 @@ BattleScene::~BattleScene()
 }
 bool BattleScene::Load()
 {
+    // camera
+    GameObject* camera               = new SimpleCamera();
+    CameraComponent* cameraComponent = camera->GetComponent<CameraComponent>();
+    cameraComponent->Use();
+    BattleCameraMove* bcm = new BattleCameraMove(camera);
+    camera->SetBehaviour(bcm);
+
+    Vector3 cameraPos = Vector3(0.0f, 40.0f, -40.f);
+    Matrix4 mat       = Matrix4::CreateLookAt(cameraPos, Vector3(0.0f, 2.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+    Instantiate(camera, mat);
+
     // std::cerr << "playerNum: " << mPlayerNum << std::endl;
-    Matrix4 mat;
     for (int i = 0; i < mPlayerNum; i++) {
-        // std::cout << "1 " << std::endl;
+        std::string tag = "Player" + std::to_string(i);
         // player
-        Player* player = new Player(mPlayerInfos[i]);
-        // std::cout << "1 " << std::endl;
+        Player* player = new Player(mPlayerInfos[i], tag);
         player->SetBehaviour(new PlayerMove_C(player));
-        // std::cout << "1 " << std::endl;
         Instantiate(player);
-        // std::cout << "1 " << std::endl;
         mPlayers.push_back(player);
 
-        // std::cout << "2 " << std::endl;
         // hero
-        Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics);
+        Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics, tag);
         hero->SetBehaviour(new HeroMove_C(hero));
         float r = 13.0f;
         float x = r * Math::Sin(Math::TwoPi / mPlayerNum * i);
@@ -54,23 +64,21 @@ bool BattleScene::Load()
         mat     = Matrix4::CreateTranslation(Vector3(x, 0.0f, z));
         Instantiate(hero, mat, player->GetTransform());
 
+        // camera
+        bcm->AddHero(hero);
+
         // bey
-        Bey_C* bey = new Bey_C(hero, mPlayerInfos[i].heroInfo.beyType);
+        Bey_C* bey = new Bey_C(hero, mPlayerInfos[i].heroInfo.beyType, tag);
         bey->SetBehaviour(new BeyMove_C(bey));
         Instantiate(bey, hero->GetTransform(), false);
-        // std::cout << "5 " << std::endl;
-        // std::cout << "3" << std::endl;
         // rider
-        Rider_C* rider = new Rider_C(hero, mPlayerInfos[i].heroInfo.riderType);
+        Rider_C* rider = new Rider_C(hero, mPlayerInfos[i].heroInfo.riderType, tag);
         rider->SetBehaviour(new RiderMove_C(rider));
         Instantiate(rider, hero->GetTransform(), false);
-        // std::cout << "4 " << std::endl;
     }
     mPlayer = mPlayers[mMyPlayerID];
 
-    // std::cout << "6 " << std::endl;
     mStage = new Stage_C(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
-    // std::cout << "7 " << std::endl;
     Instantiate(mStage);
 
     // colosseum

@@ -3,12 +3,13 @@
 #include "../../../component/rigidBody.h"
 #include "../../../component/transform.h"
 #include "../../gameObject/hero.h"
+#include "../../gameObject/player.h"
 #include <iostream>
-HeroMove::HeroMove(GameObject* owner)
+HeroMove::HeroMove(Hero* owner)
     : Behaviour(owner)
+    , mHero(owner)
 {
     // std::cout << "heroMove constructor" << std::endl;
-    mHero = static_cast<Hero*>(mOwner);
 }
 
 void HeroMove::Start()
@@ -84,12 +85,28 @@ void HeroMove::Update()
     case HeroState::RunningAttack: {
     } break;
     case HeroState::PreJump: {
+        if (mHero->mActionFrame >= 3) {
+        }
+    } break;
+    case HeroState::AirIdle: {
+    } break;
+    case HeroState::Death: {
     } break;
     default:
         std::cout << "HeroState error" << std::endl;
         break;
     }
 
+    if (mHero->mStopFrame) {
+        mHero->mStopFrame--;
+    } else {
+        mHero->mActionFrame++;
+    }
+
+    if (mTransform->GetWorldPosition().y < -20.0f) {
+        mHero->GetPlayer()->SetPlayerState(PlayerState::Defeat);
+        mHero->mCurrentStatus.state = HeroState::Death;
+    }
     // std::cout << "y: " << mHeroRp3dRigidBody->getTransform().getPosition().y << std::endl;
 }
 void HeroMove::LateUpdate()

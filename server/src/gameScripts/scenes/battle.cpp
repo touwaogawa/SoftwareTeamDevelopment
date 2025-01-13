@@ -4,13 +4,17 @@
 #include "../../../../common/src/gameScripts/components/behaviour/heroMove.h"
 #include "../../../../common/src/gameScripts/components/behaviour/playerMove.h"
 #include "../../../../common/src/gameScripts/components/behaviour/riderMove.h"
+#include "../../../../common/src/gameScripts/gameObject/bey.h"
+#include "../../../../common/src/gameScripts/gameObject/hero.h"
 #include "../../../../common/src/gameScripts/gameObject/player.h"
+#include "../../../../common/src/gameScripts/gameObject/rider.h"
 #include "../../../../common/src/gameScripts/gameObject/stage.h"
 #include "../../../../common/src/gameScripts/packetData.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
 #include <iostream>
 #include <reactphysics3d/reactphysics3d.h>
+#include <string>
 
 BattleScene::BattleScene(int playerNum, std::vector<PlayerInfo> playerInfos)
     : Scene("BattleScene")
@@ -25,17 +29,18 @@ BattleScene::~BattleScene()
 bool BattleScene::Load()
 {
 
-    std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
+    // std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
     for (int i = 0; i < mPlayerNum; i++) {
-        std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
+        std::string tag = "Player" + std::to_string(i);
+        // std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
         // player
-        Player* player = new Player(mPlayerInfos[i]);
+        Player* player = new Player(mPlayerInfos[i], tag);
         player->SetBehaviour(new PlayerMove(player));
         Instantiate(player);
         mPlayers.push_back(player);
 
         // hero
-        Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics);
+        Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics, tag);
         hero->SetBehaviour(new HeroMove(hero));
         float r     = 13.0f;
         float x     = r * Math::Sin(Math::TwoPi / mPlayerNum * i);
@@ -44,7 +49,7 @@ bool BattleScene::Load()
         Instantiate(hero, mat, player->GetTransform());
 
         // bey
-        Bey* bey = new Bey(hero, mPlayerInfos[i].heroInfo.beyType);
+        Bey* bey = new Bey(hero, mPlayerInfos[i].heroInfo.beyType, tag);
         // std::cout << "3 " << std::endl;
         bey->SetBehaviour(new BeyMove(bey));
         // std::cout << "3 " << std::endl;
@@ -53,7 +58,7 @@ bool BattleScene::Load()
 
         // std::cout << "2 " << std::endl;
         // rider
-        Rider* rider = new Rider(hero, mPlayerInfos[i].heroInfo.riderType);
+        Rider* rider = new Rider(hero, mPlayerInfos[i].heroInfo.riderType, tag);
         // std::cout << "2 " << std::endl;
         rider->SetBehaviour(new RiderMove(rider));
         // std::cout << "2 " << std::endl;
@@ -64,6 +69,7 @@ bool BattleScene::Load()
 
     mStage = new Stage(mPhysics, "../assets/models/stage.obj");
     Instantiate(mStage);
+    // std::cout << "3 " << std::endl;
     return true;
 }
 void BattleScene::SetENet(ENetAddress address, ENetHost* server)
@@ -73,11 +79,17 @@ void BattleScene::SetENet(ENetAddress address, ENetHost* server)
 }
 void BattleScene::Update(bool& exitFrag, float timeStep)
 {
+    // std::cout << "SendCurrentFram " << std::endl;
     SendCurrentFrame();
+    // std::cout << "pro net " << std::endl;
     ProccessNetowork();
+    // std::cout << "pro inp " << std::endl;
     ProccessInput();
+    // std::cout << "upd" << std::endl;
     Scene::Update(exitFrag, timeStep);
+    // std::cout << "send " << std::endl;
     SendCurrentBattleStatus();
+    // std::cout << ".." << std::endl;
 }
 
 int BattleScene::GetPlayerNum() const
@@ -105,19 +117,19 @@ bool BattleScene::ProccessNetowork()
         break;
     case BattleState::Battle: {
         // std::cout << "BattleScene Battle" << std::endl;
-        ENetEvent event;
-        while (enet_host_service(mServer, &event, 0) > 0) {
-            switch (event.type) {
+        mENetEvent;
+        while (enet_host_service(mServer, &mENetEvent, 0) > 0) {
+            switch (mENetEvent.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 std::cout << "Connected to server!" << std::endl;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                // std::cout << "eetr" << std::endl;
-                switch (PacketData::RecognizePacketDatatype(event.packet)) {
+                std::cout << "eetr" << std::endl;
+                switch (PacketData::RecognizePacketDatatype(mENetEvent.packet)) {
                 case PacketDataType::BattleCommand: {
-                    // std::cout << "recv bcd" << std::endl;
+                    std::cout << "recv bcd" << std::endl;
                     BattleCommandData battleCommandData;
-                    battleCommandData.LoadPacket(event.packet);
+                    battleCommandData.LoadPacket(mENetEvent.packet);
                     // コマンド追加
                     mPlayers[battleCommandData.id]->commandBuffer.push_front(battleCommandData.commandData);
                     // コマンドを全員に送信
@@ -129,7 +141,7 @@ bool BattleScene::ProccessNetowork()
                     std::cout << "default data" << std::endl;
                     break;
                 }
-                enet_packet_destroy(event.packet); // パケットの解放
+                enet_packet_destroy(mENetEvent.packet); // パケットの解放
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 std::cout << "Disconnected from server." << std::endl;

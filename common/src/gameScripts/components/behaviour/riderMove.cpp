@@ -4,11 +4,11 @@
 #include "../../gameObject/rider.h"
 #include <iostream>
 
-RiderMove::RiderMove(GameObject* owner)
+RiderMove::RiderMove(Rider* owner)
     : Behaviour(owner)
+    , mRider(owner)
 {
     // std::cout << "riderMove constructor" << std::endl;
-    mRider = static_cast<Rider*>(mOwner);
 }
 
 void RiderMove::Start()

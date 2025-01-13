@@ -6,10 +6,12 @@
 #include "scene.h"
 #include <algorithm>
 
-GameObject::GameObject(bool isActive)
+GameObject::GameObject(const std::string& name, const std::string& tag, bool isActive)
     : mTransform(new Transform(this))
     , mBehaviour(nullptr)
     , mIsActive(isActive)
+    , mName(name)
+    , mTag(tag)
 {
     AddComponent(mTransform);
 }

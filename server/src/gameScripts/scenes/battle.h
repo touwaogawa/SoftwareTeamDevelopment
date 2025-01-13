@@ -29,6 +29,8 @@ private:
 
     std::vector<PlayerInfo> mPlayerInfos;
 
+    ENetEvent mENetEvent;
+
     ENetAddress mAddress;
     ENetHost* mServer;
 

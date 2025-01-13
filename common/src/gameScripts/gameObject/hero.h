@@ -4,6 +4,7 @@
 #include "../../gameObject.h"
 #include "bey.h"
 #include "rider.h"
+#include <string>
 
 class Physics;
 class Player;
@@ -15,6 +16,8 @@ enum class HeroState {
     StopRunning,
     RunningAttack,
     PreJump,
+    AirIdle,
+    Death,
     HeroStateNum
 
 };
@@ -40,10 +43,13 @@ struct HeroInfo {
 
 class Hero : public GameObject {
 public:
-    Hero(Player* player, HeroInfo heroInfo, Physics* physics);
+    Hero(Player* player, HeroInfo heroInfo, Physics* physics, const std::string& tag);
     virtual ~Hero() override = default;
 
     HeroCurrentStatus mCurrentStatus;
+
+    int mActionFrame;
+    int mStopFrame;
 
     const HeroBaseStatus& GetBaseStatus() const { return mBaseStatus; }
 

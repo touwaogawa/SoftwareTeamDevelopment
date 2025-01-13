@@ -59,25 +59,25 @@ bool MatchingScene::Load()
     // Player##########################################################
     //  PlayerInfo
     PlayerInfo playerInfo(0, "aa", RiderType::BaseHuman, BeyType::Shuriken);
-
+    std::string tag = "Player";
     // player
-    mPlayer = new Player(playerInfo);
+    mPlayer = new Player(playerInfo, tag);
     mPlayer->SetBehaviour(new PlayerMove_C(mPlayer));
     Instantiate(mPlayer);
 
     // hero
-    Hero* hero = new Hero(mPlayer, playerInfo.heroInfo, mPhysics);
+    Hero* hero = new Hero(mPlayer, playerInfo.heroInfo, mPhysics, tag);
     hero->SetBehaviour(new HeroMove_C(hero));
     mat = Matrix4::CreateTranslation(Vector3(5.0f, 0.0f, 0.0f));
     Instantiate(hero, mat, mPlayer->GetTransform());
 
     // rider
-    Rider_C* rider = new Rider_C(hero, playerInfo.heroInfo.riderType);
+    Rider_C* rider = new Rider_C(hero, playerInfo.heroInfo.riderType, tag);
     rider->SetBehaviour(new RiderMove_C(rider));
     Instantiate(rider, hero->GetTransform(), false);
 
     // bey
-    Bey_C* bey = new Bey_C(hero, playerInfo.heroInfo.beyType);
+    Bey_C* bey = new Bey_C(hero, playerInfo.heroInfo.beyType, tag);
     bey->SetBehaviour(new BeyMove_C(bey));
     Instantiate(bey, hero->GetTransform(), false);
     // ##########################################################

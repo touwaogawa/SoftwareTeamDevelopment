@@ -9,10 +9,12 @@
 #include "rider.h"
 #include <iostream>
 
-Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics)
-    : GameObject()
+Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics, const std::string& tag)
+    : GameObject("Hero", tag)
     , mHeroInfo(heroInfo)
     , mPlayer(player)
+    , mActionFrame(0)
+    , mStopFrame(0)
 {
     // std::cout << "hero constructor" << std::endl;
 

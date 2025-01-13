@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <vector>
 
 class Scene;
@@ -12,7 +13,7 @@ public:
     /// @param scene
     /// @param parent
     /// @param behaviour
-    explicit GameObject(bool isActive = true);
+    explicit GameObject(const std::string& name = "GameObject", const std::string& tag = "Default", bool isActive = true);
 
     /// Destructor
     virtual ~GameObject();
@@ -59,6 +60,9 @@ public:
 
     void Destroy();
 
+    const std::string& GetName() const { return mName; }
+    const std::string& GetTag() const { return mTag; }
+
 protected:
     std::vector<Component*> mComponents;
     Transform* mTransform;
@@ -68,6 +72,8 @@ protected:
     Scene* mScene;
 
 private:
+    const std::string mName;
+    const std::string mTag;
     void Enable();
     void Disable();
     void UpdateChildren(bool isActive);

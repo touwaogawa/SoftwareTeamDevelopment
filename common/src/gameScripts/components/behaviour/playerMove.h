@@ -2,6 +2,8 @@
 #include "../../../component/behaviour.h"
 
 class Player;
+class Hero;
+
 class PlayerMove : public Behaviour {
 public:
     explicit PlayerMove(Player* owner);
@@ -11,7 +13,18 @@ public:
     void Update() override;
     void LateUpdate() override;
 
+    virtual void DefeatedAction1() { }
+    virtual void DefeatedAction2() { }
+    void DefeatedAction3();
+    virtual void DefeatedAction3Normal() { }
+    virtual void DefeatedAction3Special() { }
+
 private:
-    class Player* mPlayer;
-    class Hero* mHero;
+    Player* mPlayer;
+    Hero* mHero;
+    rp3d::RigidBody* mHeroRp3dRigidBody;
+
+    void InitUpdate();
+    void BattleUpdate();
+    void DefeatedUpdate();
 };
