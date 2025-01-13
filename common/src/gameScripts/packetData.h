@@ -75,3 +75,11 @@ struct PlayerCurrentData : public PacketData {
     ENetPacket* CreatePacket() override;
     void LoadPacket(ENetPacket* packet) override;
 };
+
+struct StartBattleData : public PacketData {
+    int coutDownFrame;
+
+    StartBattleData();
+    ENetPacket* CreatePacket() override;
+    void LoadPacket(ENetPacket* packet) override;
+};

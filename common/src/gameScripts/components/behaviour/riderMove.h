@@ -3,7 +3,7 @@
 class RiderMove : public Behaviour {
 public:
     explicit RiderMove(GameObject* owner);
-    ~RiderMove() override = default;
+    virtual ~RiderMove() override = default;
 
     void Start() override;
     void Update() override;

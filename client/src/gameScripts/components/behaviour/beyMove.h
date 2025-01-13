@@ -3,6 +3,7 @@
 class BeyMove_C : public BeyMove {
 public:
     explicit BeyMove_C(GameObject* owner);
+    ~BeyMove_C() override = default;
 
 private:
 };

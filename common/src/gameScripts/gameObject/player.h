@@ -18,7 +18,7 @@ struct PlayerInfo {
 class Player : public GameObject {
 public:
     explicit Player(PlayerInfo playerInfo);
-    ~Player() override;
+    virtual ~Player() override = default;
 
     std::deque<CommandData> commandBuffer;
     CommandData prevCommandData;

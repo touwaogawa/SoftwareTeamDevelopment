@@ -51,5 +51,5 @@ private:
     void UpdategameScriptsFromRoot(GameObject* rootObject);
     void LateUpdategameScriptsFromRoot(GameObject* rootObject);
 
-    void DestroyObject(GameObject* rootObject);
+    void DeleteFromRootObject(GameObject* rootObject);
 };

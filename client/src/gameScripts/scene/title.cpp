@@ -17,10 +17,6 @@ TitleScene::TitleScene()
 {
 }
 
-TitleScene::~TitleScene()
-{
-}
-
 bool TitleScene::Load()
 {
 

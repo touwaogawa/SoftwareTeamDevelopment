@@ -6,7 +6,7 @@ class Vector2;
 class HeroMove : public Behaviour {
 public:
     explicit HeroMove(GameObject* owner);
-    ~HeroMove() override = default;
+    virtual ~HeroMove() override = default;
 
     void Start() override;
     void Update() override;

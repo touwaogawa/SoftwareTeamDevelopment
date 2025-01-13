@@ -15,7 +15,7 @@ struct RiderBaseStatus {
 class Rider : public GameObject {
 public:
     explicit Rider(Hero* hero, RiderType riderType);
-    ~Rider() override = default;
+    virtual ~Rider() override = default;
     Hero* GetHero() const { return mHero; }
 
 protected:

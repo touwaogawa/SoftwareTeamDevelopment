@@ -34,10 +34,6 @@ Stage::Stage(Physics* physics, const std::string& meshFileName)
     AddComponent(rigidBody);
 }
 
-Stage::~Stage()
-{
-}
-
 std::vector<Vector3> Stage::LoadObjFile(const std::string& fileName)
 {
     // tinyobjのオブジェクト作成

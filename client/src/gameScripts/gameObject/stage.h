@@ -7,4 +7,5 @@ public:
     Stage_C(Physics* physics,
         const std::string& meshFileName  = "../assets/models/Stage.obj",
         const std::string& imageFileName = "../assets/textures/simpleTile.png", bool isConvex = true);
+    ~Stage_C() override = default;
 };

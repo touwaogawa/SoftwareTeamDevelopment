@@ -10,13 +10,14 @@ enum class MatchingState {
     Init,
     Connecting,
     Connected,
-    MatchingStateNum
+    StartBattle,
+    MatchingStateNum,
 };
 
 class MatchingScene : public Scene {
 public:
     MatchingScene();
-    ~MatchingScene() override;
+    ~MatchingScene() override = default;
     bool Load() override;
 
     void Update(bool& exitFrag, float timeStep) override;
@@ -41,4 +42,6 @@ private:
     GameObject* mPreStartSprite;
 
     class Player* mPlayer;
+
+    int mStartCount;
 };

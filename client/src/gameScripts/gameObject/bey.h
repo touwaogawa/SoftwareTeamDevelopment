@@ -5,6 +5,7 @@ class Hero;
 class Bey_C : public Bey {
 public:
     explicit Bey_C(Hero* hero, BeyType beyType);
+    ~Bey_C() override = default;
 
 private:
 };

@@ -3,7 +3,7 @@
 class PlayerMove : public Behaviour {
 public:
     explicit PlayerMove(GameObject* owner);
-    ~PlayerMove() override = default;
+    virtual ~PlayerMove() override = default;
 
     void Start() override;
     void Update() override;

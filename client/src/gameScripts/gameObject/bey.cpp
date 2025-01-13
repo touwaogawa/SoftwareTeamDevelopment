@@ -6,7 +6,6 @@
 Bey_C::Bey_C(Hero* hero, BeyType beyType)
     : Bey(hero, beyType)
 {
-    SetBehaviour(new BeyMove_C(this));
     switch (beyType) {
     case BeyType::Shuriken:
         AddComponent(new MeshRenderer(this, "../assets/models/Shuriken.obj", "../assets/textures/silver.png"));

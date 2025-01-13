@@ -6,7 +6,6 @@
 Rider_C::Rider_C(Hero* hero, RiderType riderType)
     : Rider(hero, riderType)
 {
-    // SetBehaviour(new RiderMove_C(this));
     // std::cout << "Rider_C constructer" << std::endl;
     switch (riderType) {
     case RiderType::BaseHuman:

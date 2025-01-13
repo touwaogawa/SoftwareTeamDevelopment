@@ -4,6 +4,7 @@
 class Player_C : public Player {
 public:
     Player_C(PlayerInfo playerInfo);
+    ~Player_C() override = default;
 
 private:
 };

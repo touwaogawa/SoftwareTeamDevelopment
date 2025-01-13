@@ -1,11 +1,13 @@
 #include "rider.h"
 #include "../components/behaviour/riderMove.h"
+#include "hero.h"
 #include <iostream>
 
 Rider::Rider(Hero* hero, RiderType riderType)
     : GameObject()
     , mHero(hero)
 {
+    mHero->SetRider(this);
     switch (riderType) {
     case RiderType::BaseHuman:
         mRiderBaseStatus = {

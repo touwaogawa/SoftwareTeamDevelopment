@@ -1,7 +1,9 @@
 #include "battle.h"
 #include "../../../../common/src/component/transform.h"
+#include "../../../../common/src/gameScripts/components/behaviour/beyMove.h"
 #include "../../../../common/src/gameScripts/components/behaviour/heroMove.h"
 #include "../../../../common/src/gameScripts/components/behaviour/playerMove.h"
+#include "../../../../common/src/gameScripts/components/behaviour/riderMove.h"
 #include "../../../../common/src/gameScripts/gameObject/player.h"
 #include "../../../../common/src/gameScripts/gameObject/stage.h"
 #include "../../../../common/src/gameScripts/packetData.h"
@@ -23,28 +25,44 @@ BattleScene::~BattleScene()
 bool BattleScene::Load()
 {
 
-    mStage = new Stage(mPhysics, "../assets/models/stage.obj");
-    // std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
+    std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
     for (int i = 0; i < mPlayerNum; i++) {
-        // std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
-
+        std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
         // player
         Player* player = new Player(mPlayerInfos[i]);
         player->SetBehaviour(new PlayerMove(player));
-        float r = 13.0f;
-        Vector3 pos(r * Math::Cos(i * Math::PiOver2), 0.0f, r * Math::Cos(i * Math::PiOver2));
-        Matrix4 mat = Matrix4::CreateTranslation(pos);
-        Instantiate(player, mat);
+        Instantiate(player);
+        mPlayers.push_back(player);
 
         // hero
-        Hero* hero = new Hero(mPlayerInfos[i].heroInfo, mPhysics);
+        Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics);
         hero->SetBehaviour(new HeroMove(hero));
+        float r     = 13.0f;
+        float x     = r * Math::Cos(i * Math::PiOver2);
+        float z     = r * Math::Sin(i * Math::PiOver2);
+        Matrix4 mat = Matrix4::CreateTranslation(Vector3(x, 0.0f, z));
+        Instantiate(hero, mat, player->GetTransform());
+
+        // std::cout << "2 " << std::endl;
         // rider
+        Rider* rider = new Rider(hero, mPlayerInfos[i].heroInfo.riderType);
+        // std::cout << "2 " << std::endl;
+        rider->SetBehaviour(new RiderMove(rider));
+        // std::cout << "2 " << std::endl;
+        Instantiate(rider, hero->GetTransform(), false);
 
+        // std::cout << "3 " << std::endl;
         // bey
-
+        Bey* bey = new Bey(hero, mPlayerInfos[i].heroInfo.beyType);
+        // std::cout << "3 " << std::endl;
+        bey->SetBehaviour(new BeyMove(bey));
+        // std::cout << "3 " << std::endl;
+        Instantiate(bey, hero->GetTransform(), false);
         // std::cout << "player gen _" << i << std::endl;
     }
+
+    mStage = new Stage(mPhysics, "../assets/models/stage.obj");
+    Instantiate(mStage);
     return true;
 }
 void BattleScene::SetENet(ENetAddress address, ENetHost* server)

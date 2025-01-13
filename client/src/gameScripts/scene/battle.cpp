@@ -29,16 +29,17 @@ BattleScene::~BattleScene()
 }
 bool BattleScene::Load()
 {
-    // std::cerr << "playerNum: " << mPlayerNum << std::endl;
+    std::cerr << "playerNum: " << mPlayerNum << std::endl;
 
     for (int i = 0; i < mPlayerNum; i++) {
-
+        std::cout << "1 " << std::endl;
         // player
         Player* player = new Player(mPlayerInfos[i]);
         mPlayer->SetBehaviour(new PlayerMove_C(mPlayer));
         Instantiate(mPlayer);
         mPlayers.push_back(player);
 
+        std::cout << "2 " << std::endl;
         // hero
         Hero* hero = new Hero(mPlayer, mPlayerInfos[i].heroInfo, mPhysics);
         hero->SetBehaviour(new HeroMove_C(hero));
@@ -48,18 +49,21 @@ bool BattleScene::Load()
         Matrix4 mat = Matrix4::CreateTranslation(Vector3(x, 0.0f, z));
         Instantiate(hero, mat, mPlayer->GetTransform());
 
+        std::cout << "3" << std::endl;
         // rider
         Rider_C* rider = new Rider_C(hero, mPlayerInfos[i].heroInfo.riderType);
         rider->SetBehaviour(new RiderMove_C(rider));
         Instantiate(rider, hero->GetTransform(), false);
-
+        std::cout << "4 " << std::endl;
         // bey
         Bey_C* bey = new Bey_C(hero, mPlayerInfos[i].heroInfo.beyType);
         bey->SetBehaviour(new BeyMove_C(bey));
         Instantiate(bey, hero->GetTransform(), false);
+        std::cout << "5 " << std::endl;
     }
     mPlayer = mPlayers[mMyPlayerID];
     mStage  = new Stage_C(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
+    Instantiate(mStage);
 
     return true;
 }

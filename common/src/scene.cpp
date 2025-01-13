@@ -15,8 +15,11 @@ Scene::Scene(std::string name)
 
 Scene::~Scene()
 {
-    delete mPhysics;
+    // std::cout << "~Scene : " << mName << std::endl;
     DeteleAllObject();
+    // std::cout << "~Scene : " << mName << std::endl;
+    delete mPhysics;
+    // std::cout << "~Scene : " << mName << std::endl;
 }
 
 void Scene::Update(bool& exitFrag, float timeStep_sec)
@@ -34,33 +37,28 @@ void Scene::Update(bool& exitFrag, float timeStep_sec)
         LateUpdategameScriptsFromRoot(gameObject);
     }
     for (GameObject* destroyObject : mDestroyObjects) {
-        auto it = std::find(mRootObjects.begin(), mRootObjects.end(), destroyObject);
-        // 見つかったら削除
-        if (it != mRootObjects.end()) {
-            RemoveRootObject(destroyObject);
-        }
-        DestroyObject(destroyObject);
+        DeleteFromRootObject(destroyObject);
     }
     mDestroyObjects.clear();
 }
 
 void Scene::Instantiate(GameObject* original, Transform* parent, bool instantiateInWorldSpace)
 {
-    // std::cout << "a" << std::endl;
+    std::cout << "a" << std::endl;
     if (original) {
-        // std::cout << "b" << std::endl;
+        std::cout << "b" << std::endl;
         original->SetScene(this);
         original->GetTransform()->SetParent(parent, instantiateInWorldSpace);
         Behaviour* bhv = original->GetBehaviour();
         if (bhv) {
-            // std::cout << "c" << std::endl;
+            std::cout << "c" << std::endl;
             bhv->Awake();
-            // std::cout << "d" << std::endl;
+            std::cout << "d" << std::endl;
             if (original->GetIsActive() || bhv->GetEnabled()) {
-                // std::cout << "e" << std::endl;
+                std::cout << "e" << std::endl;
                 bhv->OnEnable();
             }
-            // std::cout << "f" << std::endl;
+            std::cout << "f" << std::endl;
         }
     }
 }
@@ -103,10 +101,12 @@ std::string Scene::GetName() const
 void Scene::DeteleAllObject()
 {
     for (GameObject* rootObject : mRootObjects) {
-        // std::cout << "root Object" << std::endl;
-        DestroyObject(rootObject);
+        std::cout << "root Object" << std::endl;
+        DeleteFromRootObject(rootObject);
     }
+    std::cout << "rooect" << std::endl;
     mRootObjects.clear();
+    std::cout << "rootct" << std::endl;
 }
 
 // private ######################
@@ -155,10 +155,10 @@ void Scene::LateUpdategameScriptsFromRoot(GameObject* rootObject)
     }
 }
 
-void Scene::DestroyObject(GameObject* rootObject)
+void Scene::DeleteFromRootObject(GameObject* rootObject)
 {
     for (Transform* transform : rootObject->GetTransform()->GetChildren()) {
-        DestroyObject(transform->GetOwner());
+        DeleteFromRootObject(transform->GetOwner());
     }
     delete rootObject;
 }

@@ -3,6 +3,7 @@
 class RiderMove_C : public RiderMove {
 public:
     RiderMove_C(GameObject* owner);
+    ~RiderMove_C() override = default;
 
 private:
 };

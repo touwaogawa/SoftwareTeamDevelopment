@@ -23,7 +23,3 @@ Player::Player(PlayerInfo playerInfo)
 {
     // std::cout << "player constructor" << std::endl;
 }
-
-Player::~Player()
-{
-}

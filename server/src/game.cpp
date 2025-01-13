@@ -48,6 +48,7 @@ void Game::RunLoop(int playerNum)
     while (gameFrag) {
         bool sceneFrag = true;
         SceneManager::AdoptSceneChange();
+        // std::cout << "0" << std::endl;
         SceneManager::GetCurrentScene()->Start();
         while (sceneFrag) {
             // std::cout << "1" << std::endl;
@@ -64,6 +65,7 @@ void Game::RunLoop(int playerNum)
             if (SceneManager::GetiIsChanged()) {
                 break;
             }
+            // std::cout << "6" << std::endl;
             SceneManager::GetCurrentScene()->currentFrame++;
         }
     }

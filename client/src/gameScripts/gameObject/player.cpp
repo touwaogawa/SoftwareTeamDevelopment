@@ -5,5 +5,4 @@
 Player_C::Player_C(PlayerInfo playerInfo)
     : Player(playerInfo)
 {
-    // SetBehaviour(new PlayerMove_C(this));
 }

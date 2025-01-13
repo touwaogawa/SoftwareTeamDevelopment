@@ -7,7 +7,7 @@ class Physics;
 class Stage : public GameObject {
 public:
     Stage(Physics* physics, const std::string& meshFileName);
-    ~Stage() override;
+    virtual ~Stage() override = default;
 
 private:
     std::vector<Vector3> LoadObjFile(const std::string& fileName);

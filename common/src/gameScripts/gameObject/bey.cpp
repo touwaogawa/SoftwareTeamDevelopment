@@ -1,11 +1,13 @@
 #include "bey.h"
 #include "../components/behaviour/beyMove.h"
+#include "hero.h"
 #include <iostream>
 
 Bey::Bey(Hero* hero, BeyType beyType)
     : GameObject()
     , mHero(hero)
 {
+    mHero->SetBey(this);
     switch (beyType) {
     case BeyType::Shuriken:
         mBeyBaseStatus = {

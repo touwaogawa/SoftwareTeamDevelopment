@@ -15,7 +15,9 @@ bool SceneManager::GetiIsChanged()
 {
     if (mIsChanged) {
         if (mCurrentScene) {
+            std::cout << "Scene deleted: " << mCurrentScene->GetName() << std::endl;
             delete mCurrentScene;
+            std::cout << "Scene deleted: " << mCurrentScene->GetName() << std::endl;
         }
     }
     return mIsChanged;

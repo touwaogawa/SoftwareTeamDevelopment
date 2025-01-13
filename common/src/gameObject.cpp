@@ -56,6 +56,10 @@ void GameObject::RemoveComponent(Component* component)
 void GameObject::Destroy()
 {
     mScene->AddDestroyOject(this);
+    if (mTransform->GetParent()) {
+        mTransform->SetParent(nullptr);
+    }
+    mScene->RemoveRootObject(this);
 }
 
 void GameObject::Enable()

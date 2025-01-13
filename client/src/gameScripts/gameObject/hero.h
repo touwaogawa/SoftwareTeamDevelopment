@@ -7,6 +7,7 @@ class Player;
 class Hero_C : public Hero {
 public:
     Hero_C(Player* player, HeroInfo heroInfo, Physics* physics);
+    ~Hero_C() override = default;
 
 private:
 };

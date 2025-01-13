@@ -23,7 +23,7 @@ struct BeyBaseStatus {
 class Bey : public GameObject {
 public:
     explicit Bey(Hero* hero, BeyType beyType);
-    ~Bey() override = default;
+    virtual ~Bey() override = default;
 
     Hero* GetHero() const { return mHero; }
 

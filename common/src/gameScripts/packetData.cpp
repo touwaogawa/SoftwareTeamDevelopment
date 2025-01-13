@@ -235,3 +235,31 @@ void PlayerCurrentData::LoadPacket(ENetPacket* packet)
     data += sizeof(heroCurrentStatus);
     memcpy(&heroTransform, data, sizeof(heroTransform));
 }
+
+StartBattleData::StartBattleData()
+    : PacketData(PacketDataType::StartBattle)
+    , coutDownFrame(0)
+{
+}
+ENetPacket* StartBattleData::CreatePacket()
+{
+    size_t dataSize = sizeof(mPacketDataType) + sizeof(coutDownFrame);
+    uint8_t* buffer = new uint8_t[dataSize];
+    uint8_t* p      = buffer;
+    memcpy(p, &mPacketDataType, sizeof(mPacketDataType));
+    p += sizeof(mPacketDataType);
+    memcpy(p, &coutDownFrame, sizeof(coutDownFrame));
+    ENetPacket* packet = enet_packet_create(buffer, dataSize, ENET_PACKET_FLAG_RELIABLE);
+    delete[] buffer;
+
+    return packet;
+}
+void StartBattleData::LoadPacket(ENetPacket* packet)
+{
+    uint8_t* data = packet->data;
+
+    // mPacketDataType を読み取る
+    memcpy(&mPacketDataType, data, sizeof(mPacketDataType));
+    data += sizeof(mPacketDataType);
+    memcpy(&coutDownFrame, data, sizeof(coutDownFrame));
+}

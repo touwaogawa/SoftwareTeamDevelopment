@@ -14,6 +14,10 @@ Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics)
     , mHeroInfo(heroInfo)
     , mPlayer(player)
 {
+    // std::cout << "hero constructor" << std::endl;
+
+    mPlayer->SetHero(this);
+
     HeroBaseStatus heroBaseStatus;
     switch (mHeroInfo.beyType) {
     case BeyType::Shuriken: {
@@ -23,30 +27,27 @@ Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics)
             18.0f,
             12.0f,
             0.3f,
-            50.0f,
-            9.8f
+            50.0f
         };
     } break;
     case BeyType::Hexagram: {
         heroBaseStatus = {
-            6.0f,
-            6.0f,
+            2.0f,
             3.0f,
-            10.0f,
+            18.0f,
+            12.0f,
             0.3f,
-            50.0f,
-            9.8f
+            50.0f
         };
     } break;
     case BeyType::Snowflake: {
         heroBaseStatus = {
-            6.0f,
-            6.0f,
+            2.0f,
             3.0f,
-            10.0f,
+            18.0f,
+            12.0f,
             0.3f,
-            50.0f,
-            9.8f
+            50.0f
         };
     } break;
     default:
@@ -54,9 +55,6 @@ Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics)
         break;
     }
     mBaseStatus = heroBaseStatus;
-
-    mPlayer->SetHero(this);
-    // std::cout << "hero constructor" << std::endl;
 
     // RigidBody setting
     RigidBody* rigidBody  = new RigidBody(this, rp3d::BodyType::DYNAMIC, physics);

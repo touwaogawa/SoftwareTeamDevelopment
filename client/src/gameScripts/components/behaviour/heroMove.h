@@ -4,6 +4,7 @@
 class HeroMove_C : public HeroMove {
 public:
     HeroMove_C(GameObject* owner);
+    ~HeroMove_C() override = default;
 
 private:
 };

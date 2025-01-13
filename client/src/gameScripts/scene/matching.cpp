@@ -31,10 +31,7 @@ MatchingScene::MatchingScene()
     , mConnectingSprite(nullptr)
     , mMatchingSprite(nullptr)
     , mPreStartSprite(nullptr)
-{
-}
-
-MatchingScene::~MatchingScene()
+    , mStartCount(0)
 {
 }
 
@@ -71,7 +68,7 @@ bool MatchingScene::Load()
     // hero
     Hero* hero = new Hero(mPlayer, playerInfo.heroInfo, mPhysics);
     hero->SetBehaviour(new HeroMove_C(hero));
-    mat = Matrix4::CreateTranslation(Vector3(0.0f, 10.0f, 0.0f));
+    mat = Matrix4::CreateTranslation(Vector3(5.0f, 0.0f, 0.0f));
     Instantiate(hero, mat, mPlayer->GetTransform());
 
     // rider
@@ -126,6 +123,8 @@ bool MatchingScene::ProccessInput()
     } break;
     case MatchingState::Connected: {
     } break;
+    case MatchingState::StartBattle: {
+    } break;
     default:
         std::cout << "MatchingState error" << std::endl;
         break;
@@ -171,10 +170,12 @@ bool MatchingScene::ProccessNetowork()
             case ENET_EVENT_TYPE_CONNECT: {
                 std::cout << "Connected to server!" << std::endl;
                 mConnectingSprite->Destroy();
+                // マッチング中
                 mMatchingSprite = new SimpleSprite("../assets/textures/matchingScene/matching.png");
                 Matrix4 mat     = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.3f);
                 mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
                 Instantiate(mMatchingSprite, mat);
+
                 mMatchingState = MatchingState::Connected;
             } break;
             case ENET_EVENT_TYPE_RECEIVE:
@@ -192,7 +193,7 @@ bool MatchingScene::ProccessNetowork()
         // std::cout << "Connecting" << std::endl;
     } break;
     case MatchingState::Connected: {
-        std::cout << "Connected" << std::endl;
+        // std::cout << "Connected" << std::endl;
         while (enet_host_service(mClient, &mENetEvent, 0) > 0) {
             switch (mENetEvent.type) {
             case ENET_EVENT_TYPE_CONNECT:
@@ -206,7 +207,7 @@ bool MatchingScene::ProccessNetowork()
                     myPlayerId = idInitData.id;
                     std::cout << "idInitData.id" << myPlayerId << std::endl;
                     // プレイヤーの情報仮
-                    PlayerInfo playerInfo(myPlayerId, "name", RiderType::BaseHuman, BeyType::Hexagram);
+                    PlayerInfo playerInfo(myPlayerId, "name", RiderType::BaseHuman, BeyType::Shuriken);
 
                     PlayerInfoData playerInfoData;
                     playerInfoData.playerInfo = playerInfo;
@@ -225,11 +226,18 @@ bool MatchingScene::ProccessNetowork()
 
                 } break;
                 case PacketDataType::StartBattle: {
-                    // std::cout << "start battle" << std::endl;
+                    std::cout << "start battle" << std::endl;
                     mMatchingSprite->Destroy();
-                    BattleScene* battleScene = new BattleScene(myPlayerId, mPlayerInfos.size(), mPlayerInfos);
-                    battleScene->SetENet(mAddress, mClient, mPeer);
-                    SceneManager::LoadScene(battleScene);
+                    StartBattleData startBattleData;
+                    startBattleData.LoadPacket(mENetEvent.packet);
+                    mStartCount = startBattleData.coutDownFrame;
+
+                    mPreStartSprite = new SimpleSprite("../assets/textures/matchingScene/preStart.png");
+                    Matrix4 mat     = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.3f);
+                    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
+                    Instantiate(mPreStartSprite, mat);
+
+                    mMatchingState = MatchingState::StartBattle;
 
                 } break;
                 default:
@@ -245,6 +253,19 @@ bool MatchingScene::ProccessNetowork()
                 break;
             }
         }
+    } break;
+    case MatchingState::StartBattle: {
+        if (mStartCount) {
+            mStartCount--;
+        } else {
+            std::cout << "pre load scene" << std::endl;
+            mPreStartSprite->Destroy();
+            BattleScene* battleScene = new BattleScene(myPlayerId, mPlayerInfos.size(), mPlayerInfos);
+            battleScene->SetENet(mAddress, mClient, mPeer);
+            SceneManager::LoadScene(battleScene);
+            std::cout << "loaded scene" << std::endl;
+        }
+
     } break;
     default:
         std::cout << "MatchingState error" << std::endl;

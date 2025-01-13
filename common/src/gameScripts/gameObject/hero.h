@@ -41,7 +41,7 @@ struct HeroInfo {
 class Hero : public GameObject {
 public:
     Hero(Player* player, HeroInfo heroInfo, Physics* physics);
-    ~Hero() override = default;
+    virtual ~Hero() override = default;
 
     HeroCurrentStatus mCurrentStatus;
 

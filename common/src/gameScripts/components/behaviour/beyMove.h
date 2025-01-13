@@ -3,7 +3,7 @@
 class BeyMove : public Behaviour {
 public:
     explicit BeyMove(GameObject* owner);
-    ~BeyMove() override = default;
+    virtual ~BeyMove() override = default;
 
     void Start() override;
     void Update() override;
