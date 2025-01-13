@@ -10,6 +10,7 @@ public:
     void LateUpdate() override;
 
 private:
+    class Rider* mRider;
     float dir_x;
     float dir_y;
 };

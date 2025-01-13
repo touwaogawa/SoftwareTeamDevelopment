@@ -28,6 +28,5 @@ private:
     void Disable() override { mRigidBody->setIsActive(false); }
 
     rp3d::RigidBody* mRigidBody;
-    rp3d::Transform mTransform;
     class Physics* mPhysics;
 };

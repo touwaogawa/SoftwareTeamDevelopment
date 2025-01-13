@@ -26,7 +26,7 @@ public:
     /// @brief return the Scene in which this class exists
     /// @return
     Scene* GetScene() const { return mScene; }
-    void SetScene(Scene* owner) { mScene = owner; }
+    void SetScene(Scene* scene) { mScene = scene; }
     /// @brief return the Transform Component attached to this GameObject
     Transform* GetTransform() const { return mTransform; }
 

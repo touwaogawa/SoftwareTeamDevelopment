@@ -8,6 +8,7 @@ Rider::Rider(Hero* hero, RiderType riderType)
     , mHero(hero)
 {
     mHero->SetRider(this);
+
     switch (riderType) {
     case RiderType::BaseHuman:
         mRiderBaseStatus = {

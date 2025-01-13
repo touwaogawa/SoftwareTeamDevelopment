@@ -1,8 +1,10 @@
 #pragma once
 #include "../../../component/behaviour.h"
+
+class Player;
 class PlayerMove : public Behaviour {
 public:
-    explicit PlayerMove(GameObject* owner);
+    explicit PlayerMove(Player* owner);
     virtual ~PlayerMove() override = default;
 
     void Start() override;

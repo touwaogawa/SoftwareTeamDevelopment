@@ -7,36 +7,17 @@
 #include "heroMove.h"
 #include <iostream>
 
-PlayerMove::PlayerMove(GameObject* owner)
+PlayerMove::PlayerMove(Player* owner)
     : Behaviour(owner)
+    , mPlayer(owner)
 {
 }
 
 void PlayerMove::Start()
 {
     // std::cout << "playerMove start" << std::endl;
-    mPlayer                     = static_cast<Player*>(mOwner);
     mHero                       = mPlayer->GetHero();
     mHero->mCurrentStatus.state = HeroState::Idle;
-
-    // double radius = 13.0;
-    // switch (mPlayer->GetID()) {
-    // case 0:
-    //     mHero->GetTransform()->SetWorldPosition(radius, 0.0f, 0.0f);
-    //     break;
-    // case 1:
-    //     mHero->GetTransform()->SetWorldPosition(-radius, 0.0f, 0.0f);
-    //     break;
-    // case 2:
-    //     mHero->GetTransform()->SetWorldPosition(0.0f, 0.0f, radius);
-    //     break;
-    // case 3:
-    //     mHero->GetTransform()->SetWorldPosition(0.0f, 0.0f, -radius);
-    //     break;
-    // default:
-    //     std::cout << "player ID error ID: " << mPlayer->GetID() << std::endl;
-    //     break;
-    // }
 }
 namespace {
 

@@ -12,4 +12,5 @@ public:
 private:
     float mSpinPower;
     float mMinSpinPower;
+    class Bey* mBey;
 };

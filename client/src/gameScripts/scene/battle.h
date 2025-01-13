@@ -24,7 +24,10 @@ public:
     int GetPlayerNum() const;
 
 private:
-    BattleState mBattleState = BattleState::CountDown;
+    BattleState mBattleState;
+
+    ENetEvent mENetEvent;
+
     const int mPlayerNum;
     const int mMyPlayerID;
     std::vector<class Player*> mPlayers;

@@ -38,10 +38,18 @@ bool BattleScene::Load()
         Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics);
         hero->SetBehaviour(new HeroMove(hero));
         float r     = 13.0f;
-        float x     = r * Math::Cos(i * Math::PiOver2);
-        float z     = r * Math::Sin(i * Math::PiOver2);
+        float x     = r * Math::Sin(Math::TwoPi / mPlayerNum * i);
+        float z     = r * Math::Cos(Math::TwoPi / mPlayerNum * i);
         Matrix4 mat = Matrix4::CreateTranslation(Vector3(x, 0.0f, z));
         Instantiate(hero, mat, player->GetTransform());
+
+        // bey
+        Bey* bey = new Bey(hero, mPlayerInfos[i].heroInfo.beyType);
+        // std::cout << "3 " << std::endl;
+        bey->SetBehaviour(new BeyMove(bey));
+        // std::cout << "3 " << std::endl;
+        Instantiate(bey, hero->GetTransform(), false);
+        // std::cout << "player gen _" << i << std::endl;
 
         // std::cout << "2 " << std::endl;
         // rider
@@ -52,13 +60,6 @@ bool BattleScene::Load()
         Instantiate(rider, hero->GetTransform(), false);
 
         // std::cout << "3 " << std::endl;
-        // bey
-        Bey* bey = new Bey(hero, mPlayerInfos[i].heroInfo.beyType);
-        // std::cout << "3 " << std::endl;
-        bey->SetBehaviour(new BeyMove(bey));
-        // std::cout << "3 " << std::endl;
-        Instantiate(bey, hero->GetTransform(), false);
-        // std::cout << "player gen _" << i << std::endl;
     }
 
     mStage = new Stage(mPhysics, "../assets/models/stage.obj");
@@ -121,6 +122,7 @@ bool BattleScene::ProccessNetowork()
                     mPlayers[battleCommandData.id]->commandBuffer.push_front(battleCommandData.commandData);
                     // コマンドを全員に送信
                     enet_host_broadcast(mServer, 0, battleCommandData.CreatePacket());
+                    enet_host_flush(mServer);
 
                 } break;
                 default:
@@ -140,7 +142,6 @@ bool BattleScene::ProccessNetowork()
     default:
         break;
     }
-    enet_host_flush(mServer);
     return true;
 }
 

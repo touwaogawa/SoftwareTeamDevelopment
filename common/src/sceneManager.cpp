@@ -25,6 +25,7 @@ bool SceneManager::GetiIsChanged()
 void SceneManager::AdoptSceneChange()
 {
     mCurrentScene = mNextScene;
+    // std::cout << "m next scene: " << mCurrentScene->GetName() << std::endl;
     if (!mCurrentScene->Load()) {
         std::cout << "Failed Scene load : " << mCurrentScene->GetName() << std::endl;
     }

@@ -28,8 +28,8 @@ public:
     void Instantiate(GameObject* original, Transform* parent = nullptr, bool instantiateInWorldSpace = true);
     void Instantiate(GameObject* original, Matrix4 transform, Transform* parent = nullptr);
 
-    void AddRootObject(GameObject* gameObject);
-    void RemoveRootObject(GameObject* gameObject);
+    void AddGameObject(GameObject* gameObject);
+    void RemoveGameObject(GameObject* gameObject);
 
     class Physics* GetPhysics() { return mPhysics; }
 
@@ -40,7 +40,7 @@ public:
 
 protected:
     std::string mName;
-    std::vector<GameObject*> mRootObjects;
+    std::vector<GameObject*> mGameObjects;
     std::vector<GameObject*> mDestroyObjects;
     class Physics* mPhysics;
 

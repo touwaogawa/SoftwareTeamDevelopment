@@ -38,6 +38,8 @@ void Transform::SetParent(Transform* parent, bool instantiateInWorldSpace)
 {
     if (mParent) {
         mParent->RemoveChild(this);
+    } else if (!parent) {
+        return;
     }
     mParent = parent;
     if (mParent) {
@@ -47,8 +49,6 @@ void Transform::SetParent(Transform* parent, bool instantiateInWorldSpace)
         } else {
             AdoptfromLocalMatrix();
         }
-    } else {
-        mOwner->GetScene()->AddRootObject(mOwner);
     }
 }
 

@@ -1,10 +1,14 @@
 #include "riderMove.h"
+#include "../../../../../utils/src/math.h"
+#include "../../../component/transform.h"
+#include "../../gameObject/rider.h"
 #include <iostream>
 
 RiderMove::RiderMove(GameObject* owner)
     : Behaviour(owner)
 {
     // std::cout << "riderMove constructor" << std::endl;
+    mRider = static_cast<Rider*>(mOwner);
 }
 
 void RiderMove::Start()
@@ -14,10 +18,28 @@ void RiderMove::Start()
     dir_y = 0.0f;
 }
 namespace {
-
+void show(Transform* transform)
+{
+    std::cout << "rider move" << std::endl;
+    Quaternion wq = transform->GetWorldRotation();
+    std::cout << " wqx:" << wq.x << " wqy:" << wq.y << " wqz:" << wq.z << " wqw:" << wq.w << std::endl;
+    Quaternion lq = transform->GetLocalRotation();
+    std::cout << " lqx:" << lq.x << " lqy:" << lq.y << " lqz:" << lq.z << " lqw:" << lq.w << std::endl;
+    Vector3 wpos = transform->GetWorldPosition();
+    std::cout << " wposx:" << wpos.x << " wposy:" << wpos.y << " wposz:" << wpos.z << std::endl;
+    Vector3 lpos = transform->GetLocalPosition();
+    std::cout << " lposx:" << lpos.x << " lposy:" << lpos.y << " lposz:" << lpos.z << std::endl;
+    Vector3 wscale = transform->GetWorldScale();
+    std::cout << " wscalex:" << wscale.x << " wscaley:" << wscale.y << " wscalez:" << wscale.z << std::endl;
+    Vector3 lscale = transform->GetLocalScale();
+    std::cout << " lscalex:" << lscale.x << " lscaley:" << lscale.y << " lscalez:" << lscale.z << std::endl;
+    if (transform->GetParent() == nullptr)
+        std::cout << "noparent" << std::endl;
+}
 }
 void RiderMove::Update()
 {
+    // show(mRider->GetTransform());
     // bool isMove = false;
     // dir_x       = 0.0f;
     // dir_y       = 0.0f;

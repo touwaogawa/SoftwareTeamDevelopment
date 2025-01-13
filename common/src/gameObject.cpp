@@ -20,6 +20,7 @@ GameObject::~GameObject()
     for (Component* component : mComponents) {
         delete component;
     }
+    mComponents.clear();
 }
 
 void GameObject::SetIsActive(bool isActive)
@@ -34,6 +35,7 @@ void GameObject::SetBehaviour(Behaviour* behaviour)
 {
     if (mBehaviour) {
         RemoveComponent(mBehaviour);
+        delete mBehaviour;
     }
     mBehaviour = behaviour;
     if (mBehaviour) {
@@ -55,11 +57,14 @@ void GameObject::RemoveComponent(Component* component)
 
 void GameObject::Destroy()
 {
+    for (Transform* child : mTransform->GetChildren()) {
+        child->GetOwner()->Destroy();
+    }
     mScene->AddDestroyOject(this);
+    mScene->RemoveGameObject(this);
     if (mTransform->GetParent()) {
         mTransform->SetParent(nullptr);
     }
-    mScene->RemoveRootObject(this);
 }
 
 void GameObject::Enable()

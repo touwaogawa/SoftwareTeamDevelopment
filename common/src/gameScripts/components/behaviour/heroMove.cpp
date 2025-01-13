@@ -8,12 +8,12 @@ HeroMove::HeroMove(GameObject* owner)
     : Behaviour(owner)
 {
     // std::cout << "heroMove constructor" << std::endl;
+    mHero = static_cast<Hero*>(mOwner);
 }
 
 void HeroMove::Start()
 {
     // std::cout << "heroMove start" << std::endl;
-    mHero        = static_cast<Hero*>(mOwner);
     RigidBody* r = mOwner->GetComponent<RigidBody>();
     if (r) {
         r->SetTransform();
@@ -100,10 +100,10 @@ void HeroMove::LateUpdate()
 
 void HeroMove::OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair)
 {
-    std::cout << "on col hero move" << std::endl;
+    // std::cout << "on col hero move" << std::endl;
 }
 
 void HeroMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair)
 {
-    std::cout << "on overlap hero move" << std::endl;
+    // std::cout << "on overlap hero move" << std::endl;
 }

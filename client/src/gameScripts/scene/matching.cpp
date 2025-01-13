@@ -105,23 +105,22 @@ bool MatchingScene::ProccessInput()
     }
 
     // std::cout << "input" << std::endl;
-    CommandData commandData = {
-        Input::GetButton(2),
-        Input::GetButton(3),
-        Input::GetButton(1) || Input::GetButton(4),
-        Vector2(Input::GetAxis(1), -Input::GetAxis(2)),
-        Vector2(Input::GetAxis(3), -Input::GetAxis(4)),
-        currentFrame
-    };
-
-    mPlayer->commandBuffer.push_front(commandData);
 
     switch (mMatchingState) {
     case MatchingState::Init:
-        break;
+
     case MatchingState::Connecting: {
-    } break;
+    }
     case MatchingState::Connected: {
+        CommandData commandData = {
+            Input::GetButton(2),
+            Input::GetButton(3),
+            Input::GetButton(1) || Input::GetButton(4),
+            Vector2(Input::GetAxis(1), -Input::GetAxis(2)),
+            Vector2(Input::GetAxis(3), -Input::GetAxis(4)),
+            currentFrame
+        };
+        mPlayer->commandBuffer.push_front(commandData);
     } break;
     case MatchingState::StartBattle: {
     } break;
@@ -258,12 +257,12 @@ bool MatchingScene::ProccessNetowork()
         if (mStartCount) {
             mStartCount--;
         } else {
-            std::cout << "pre load scene" << std::endl;
+            // std::cout << "pre load scene" << std::endl;
             mPreStartSprite->Destroy();
             BattleScene* battleScene = new BattleScene(myPlayerId, mPlayerInfos.size(), mPlayerInfos);
             battleScene->SetENet(mAddress, mClient, mPeer);
             SceneManager::LoadScene(battleScene);
-            std::cout << "loaded scene" << std::endl;
+            // std::cout << "loaded scene" << std::endl;
         }
 
     } break;
