@@ -28,8 +28,8 @@ public:
 
     static void AddSpriteRenderer(class SpriteRenderer* spriteRenderer);
     static void RemoveSpriteRenderer(class SpriteRenderer* spriteRenderer);
-    static void AddBillbourdRenderer(class SpriteRenderer* spriteRenderer);
-    static void RemoveBillbourdRenderer(class SpriteRenderer* spriteRenderer);
+    static void AddBillbourdRenderer(class BillbourdRenderer* billbourdRenderer);
+    static void RemoveBillbourdRenderer(class BillbourdRenderer* billbourdRenderer);
 
     static void SetCameraComponent(CameraComponent* cameraComponent) { mCameraComponent = cameraComponent; }
     static CameraComponent* GetCameraComponent() { return mCameraComponent; }
@@ -60,7 +60,7 @@ private:
     static std::vector<class MeshRenderer*> mMeshRenderers;
     static std::vector<class MeshRenderer*> mEffectRenderers;
     static std::vector<class SpriteRenderer*> mSpriteRenderers;
-    static std::vector<class SpriteRenderer*> mBillbourdRenderers;
+    static std::vector<class BillbourdRenderer*> mBillbourdRenderers;
 
     // カメラ情報
     static CameraComponent* mCameraComponent;

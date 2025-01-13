@@ -1,8 +1,7 @@
 #version 330 core
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 viewProjection;
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -16,6 +15,6 @@ void main() {
     FragPos = vec3(vec4(position, 1.0) * model);
     Normal = mat3(transpose(inverse(model))) * normal;
     TexCoord = texcoord;
-    gl_Position = vec4(FragPos, 1.0) * view * projection;
+    gl_Position = vec4(FragPos, 1.0) * viewProjection;
 
 }

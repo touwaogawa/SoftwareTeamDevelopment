@@ -22,13 +22,21 @@ BattleScene::~BattleScene()
 bool BattleScene::Load()
 {
 
-    // mStage new Stage(mPhysics, );
+    mStage = new Stage(mPhysics, "../assets/models/stage.obj");
     // std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
-    // for (int i = 0; i < mPlayerNum; i++) {
-    //     std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
-    //     mPlayers.push_back(new Player(new PlayerMove(), mPlayerInfos[i]));
-    //     std::cout << "player gen _" << i << std::endl;
-    // }
+    for (int i = 0; i < mPlayerNum; i++) {
+        // std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
+        Player* player = new Player(mPlayerInfos[i]);
+        player->SetBehaviour(new PlayerMove(player));
+        float r = 13.0f;
+        Vector3 pos(r * Math::Cos(i * Math::PiOver2),
+            0.0f,
+            r * Math::Cos(i * Math::PiOver2));
+        Matrix4 mat = Matrix4::CreateTranslation(pos);
+        Instantiate(player, mat);
+
+        // std::cout << "player gen _" << i << std::endl;
+    }
     return true;
 }
 void BattleScene::SetENet(ENetAddress address, ENetHost* server)

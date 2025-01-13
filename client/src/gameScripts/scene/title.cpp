@@ -5,6 +5,7 @@
 #include "../components/behaviour/pressAnyButtonMove.h"
 #include "../components/behaviour/titleCameraMove.h"
 #include "../gameObject/player.h"
+#include "../gameObject/simpleBillbourd.h"
 #include "../gameObject/simpleCamera.h"
 #include "../gameObject/simpleEffect.h"
 #include "../gameObject/simpleMeshModel.h"
@@ -24,8 +25,8 @@ bool TitleScene::Load()
 {
 
     // ロゴ
-    GameObject* titleui = new SimpleSprite("../assets/textures/title.png");
-    Instantiate(titleui);
+    // GameObject* titleui = new SimpleSprite("../assets/textures/title.png");
+    // Instantiate(titleui);
 
     // press any button
     GameObject* pressAnyButton = new SimpleSprite("../assets/textures/PressAnyButton.png");
@@ -51,13 +52,22 @@ bool TitleScene::Load()
 
     // colosseum
     GameObject* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
-    mat                   = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
-    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
-    Instantiate(colosseum, mat);
+    Matrix4 mat2          = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
+    mat2 *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
+    Instantiate(colosseum, mat2);
 
     // effect
-    // GameObject* effect = new SimpleEffect("../assets/models/square.obj", "../assets/textures/default.png");
-    // Instantiate(effect);
+    GameObject* effect = new SimpleEffect("../assets/models/square.obj", "../assets/textures/silver.png");
+    Matrix4 mat3       = Matrix4::CreateTranslation(Vector3(7.0f, 9.0f, 0.0f));
+    // mat3 *= Matrix4::CreateRotationX(90.0f);
+    Instantiate(effect, mat3);
+
+    // billbourd
+    GameObject* bill = new SimpleBillbourd("../assets/textures/player2.png");
+
+    Matrix4 mat4 = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.01f);
+    mat4 *= Matrix4::CreateTranslation(Vector3(7.0f, 10.0f, 0.0f));
+    Instantiate(bill);
 
     // std::cout << "aa" << std::endl;
     // PlayerInfo playerInfo(0, "name", RiderType::BaseHuman, BeyType::Hexagram);

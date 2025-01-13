@@ -7,7 +7,6 @@ SimpleSprite::SimpleSprite(const std::string& fileName)
     : GameObject()
 {
     // sprite
-    SpriteRenderer* sprite = new SpriteRenderer(this);
-    sprite->SetTexture(Renderer::GetTexture(fileName));
+    SpriteRenderer* sprite = new SpriteRenderer(this, fileName);
     AddComponent(sprite);
 }
