@@ -1,10 +1,13 @@
 #include "bey.h"
 #include "../components/behaviour/beyMove.h"
+#include "hero.h"
 #include <iostream>
 
-Bey::Bey(Scene* scene, Transform* parent, BeyType beyType, BeyMove* beyMove)
-    : GameObject(scene, parent, beyMove)
+Bey::Bey(Hero* hero, BeyType beyType, const std::string& tag)
+    : GameObject("Bey", tag)
+    , mHero(hero)
 {
+    mHero->SetBey(this);
     switch (beyType) {
     case BeyType::Shuriken:
         mBeyBaseStatus = {
@@ -53,8 +56,4 @@ Bey::Bey(Scene* scene, Transform* parent, BeyType beyType, BeyMove* beyMove)
         break;
     }
     // std::cout << "bey constructor" << std::endl;
-}
-
-Bey::~Bey()
-{
 }

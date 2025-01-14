@@ -5,10 +5,11 @@
 class TitleScene : public Scene {
 public:
     TitleScene();
-    ~TitleScene() override;
+    ~TitleScene() override = default;
     bool Load() override;
     void Update(bool& exitFrag, float timeStep) override;
 
 private:
     bool ProccessInput();
+    class Player_C* mPlayer;
 };

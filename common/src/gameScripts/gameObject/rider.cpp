@@ -1,10 +1,14 @@
 #include "rider.h"
 #include "../components/behaviour/riderMove.h"
+#include "hero.h"
 #include <iostream>
 
-Rider::Rider(Scene* scene, Transform* parent, RiderType riderType, RiderMove* riderMove)
-    : GameObject(scene, parent, riderMove)
+Rider::Rider(Hero* hero, RiderType riderType, const std::string& tag)
+    : GameObject("Rider", tag)
+    , mHero(hero)
 {
+    mHero->SetRider(this);
+
     switch (riderType) {
     case RiderType::BaseHuman:
         mRiderBaseStatus = {
@@ -19,8 +23,4 @@ Rider::Rider(Scene* scene, Transform* parent, RiderType riderType, RiderMove* ri
         break;
     }
     // std::cout << "rider constructor" << std::endl;
-}
-
-Rider::~Rider()
-{
 }

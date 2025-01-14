@@ -11,6 +11,7 @@ MatchingScene::MatchingScene(int playerNum)
     : Scene("MatchingScene")
     , mMatchingState(MatchingState::Init)
     , mPlayerNum(playerNum)
+    , mStartCount(30)
 {
     mPlayerInfos.resize(mPlayerNum);
 }
@@ -101,6 +102,12 @@ bool MatchingScene::ProccessNetowork()
                             ENetPacket* packet = pid.CreatePacket();
                             enet_host_broadcast(mServer, 0, packet);
                         }
+                        std::cout << "all connected_" << std::endl;
+                        StartBattleData sbd;
+                        sbd.coutDownFrame  = mStartCount;
+                        ENetPacket* packet = sbd.CreatePacket();
+                        enet_host_broadcast(mServer, 0, packet);
+                        enet_host_flush(mServer);
                         mMatchingState = MatchingState::AllConnected;
                     }
 
@@ -120,13 +127,10 @@ bool MatchingScene::ProccessNetowork()
         }
     } break;
     case MatchingState::AllConnected:
+        // std::cout << "AllConnected" << std::endl;
         if (mStartCount) {
             mStartCount--;
         } else {
-            PacketData pd(PacketDataType::StartBattle);
-            ENetPacket* packet = pd.CreatePacket();
-            enet_host_broadcast(mServer, 0, packet);
-            enet_host_flush(mServer);
             BattleScene* battleScene = new BattleScene(mPlayerNum, mPlayerInfos);
             battleScene->SetENet(mAddress, mServer);
             SceneManager::LoadScene(battleScene);

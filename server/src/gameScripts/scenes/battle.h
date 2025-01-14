@@ -1,8 +1,9 @@
 #pragma once
+#include "../../../../common/src/gameScripts/gameObject/player.h"
 #include "../../../../common/src/scene.h"
-#include "../gameObject/player.h"
 #include <enet/enet.h>
 #include <vector>
+class Stage;
 
 enum class BattleState {
     CountDown,
@@ -17,16 +18,18 @@ public:
     bool Load() override;
     void SetENet(ENetAddress address, ENetHost* Server);
     void Update(bool& exitFrag, float timeStep) override;
-    class Stage* GetStage() const;
+    Stage* GetStage() const;
     int GetPlayerNum() const;
 
 private:
     BattleState mBattleState = BattleState::CountDown;
     const int mPlayerNum;
-    std::vector<class Player_S*> mPlayers;
-    class Stage* mStage;
+    std::vector<Player*> mPlayers;
+    Stage* mStage;
 
     std::vector<PlayerInfo> mPlayerInfos;
+
+    ENetEvent mENetEvent;
 
     ENetAddress mAddress;
     ENetHost* mServer;

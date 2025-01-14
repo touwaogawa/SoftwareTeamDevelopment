@@ -23,9 +23,12 @@ COMMON_OBJECTS = $(patsubst $(COMMON_SRCDIR)/%, $(COMMON_OBJDIR)/%, $(COMMON_SOU
 UTILS_OBJECTS = $(patsubst $(UTILS_SRCDIR)/%, $(UTILS_OBJDIR)/%, $(UTILS_SOURCES:.cpp=.o))
 
 # コンパイルオプション
-INCLUDE = $(MYINCDIR) -pthread
-LIBRARY = $(MYLIBDIR) -Wl,-rpath,'$$ORIGIN/../lib'  -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL -lGLU -ljoyconlib -lhidapi-hidraw -lm -lGLEW -lenet -lreactphysics3d -ltinyobjloader
+INCLUDE = $(MYINCDIR)
+LIBRARY = $(MYLIBDIR) -lSDL2 -lSDL2_mixer -lSDL2_image -lGL -lGLU -ljoyconlib -lhidapi-hidraw -lm -lGLEW -lenet -lreactphysics3d -ltinyobjloader -lpng -lharfbuzz -lz -pthread 
 
+# -lFLAC
+
+# -Wl,-rpath,'$$ORIGIN/../lib' -lSDL2main -lSDL2_ttf
 # 出力のターゲット
 TARGET = main
 

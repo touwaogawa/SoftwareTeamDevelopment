@@ -12,30 +12,26 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::vector<std::string>& textureFileNames)
+MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::string& textureFileName, bool isEffect)
     : Component(owner)
     , mTextureIndex(0)
+    , mIsEffect(isEffect)
 {
-    Renderer::AddMeshRenderer(this);
-    LoadObj(objFileName);
-    mMesh->LoadTextureFile(textureFileNames);
+    mMesh = Renderer::GetMesh(objFileName);
+    mMesh->SetTexture(Renderer::GetTexture(textureFileName));
+    if (mIsEffect) {
+        Renderer::AddEffectRenderer(this);
+    } else {
+        Renderer::AddMeshRenderer(this);
+    }
 }
-MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, const std::string& textureFileName)
-    : Component(owner)
-    , mTextureIndex(0)
+MeshRenderer::~MeshRenderer()
 {
-    Renderer::AddMeshRenderer(this);
-    LoadObj(objFileName);
-    mMesh->LoadTextureFile(textureFileName);
-}
-
-void MeshRenderer::LoadObj(const std::string& fileName)
-{
-    mMesh = Renderer::GetMesh(fileName);
-}
-void MeshRenderer::LoadTextures(const std::string& fileName)
-{
-    mMesh->LoadTextureFile(fileName);
+    if (mIsEffect) {
+        Renderer::RemoveEffectRenderer(this);
+    } else {
+        Renderer::RemoveMeshRenderer(this);
+    }
 }
 
 void MeshRenderer::Draw(Shader* shader)
@@ -55,4 +51,21 @@ void MeshRenderer::Draw(Shader* shader)
     glDrawArrays(GL_TRIANGLES, 0, va->GetNumVerts());
 
     glBindVertexArray(0);
+}
+
+void MeshRenderer::Enable()
+{
+    if (mIsEffect) {
+        Renderer::AddEffectRenderer(this);
+    } else {
+        Renderer::AddMeshRenderer(this);
+    }
+}
+void MeshRenderer::Disable()
+{
+    if (mIsEffect) {
+        Renderer::RemoveEffectRenderer(this);
+    } else {
+        Renderer::RemoveMeshRenderer(this);
+    }
 }

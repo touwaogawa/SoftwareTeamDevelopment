@@ -29,5 +29,5 @@ private:
     std::map<int, ENetPeer*> mClientID_Peer;
     int mPlayerNum;
     std::vector<PlayerInfo> mPlayerInfos;
-    int mStartCount = 10;
+    int mStartCount;
 };

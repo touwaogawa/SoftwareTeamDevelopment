@@ -23,11 +23,16 @@ public:
     class Stage* GetStage() const;
     int GetPlayerNum() const;
 
+    const std::vector<class Player*>& GetPlayers() { return mPlayers; }
+
 private:
-    BattleState mBattleState = BattleState::CountDown;
+    BattleState mBattleState;
+
+    ENetEvent mENetEvent;
+
     const int mPlayerNum;
     const int mMyPlayerID;
-    std::vector<class Player_C*> mPlayers;
+    std::vector<class Player*> mPlayers;
 
     ENetAddress mAddress;
     ENetHost* mClient;
@@ -35,8 +40,8 @@ private:
 
     std::vector<struct PlayerInfo> mPlayerInfos;
 
-    class Player_C* mPlayer;
-    class Stage_C* mStage;
+    class Player* mPlayer;
+    class Stage* mStage;
 
     bool ProccessInput();
     bool ProccessNetowork();

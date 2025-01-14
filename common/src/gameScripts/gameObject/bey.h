@@ -1,5 +1,9 @@
 #pragma once
 #include "../../../../common/src/gameObject.h"
+#include <string>
+
+class BeyMove;
+class Hero;
 enum class BeyType {
     Shuriken,
     Hexagram,
@@ -19,9 +23,12 @@ struct BeyBaseStatus {
 
 class Bey : public GameObject {
 public:
-    Bey(Scene* scene, Transform* parent, BeyType beyType, class BeyMove* beyMove);
-    ~Bey() override;
+    explicit Bey(Hero* hero, BeyType beyType, const std::string& tag);
+    virtual ~Bey() override = default;
+
+    Hero* GetHero() const { return mHero; }
 
 private:
     BeyBaseStatus mBeyBaseStatus;
+    Hero* mHero;
 };

@@ -5,17 +5,19 @@
 #include <queue>
 #include <utility>
 
+class GameObject;
 enum class MatchingState {
     Init,
     Connecting,
     Connected,
-    MatchingStateNum
+    StartBattle,
+    MatchingStateNum,
 };
 
 class MatchingScene : public Scene {
 public:
     MatchingScene();
-    ~MatchingScene() override;
+    ~MatchingScene() override = default;
     bool Load() override;
 
     void Update(bool& exitFrag, float timeStep) override;
@@ -23,7 +25,8 @@ public:
 private:
     MatchingState mMatchingState;
 
-    // int battleId;
+    ENetEvent mENetEvent;
+
     ENetAddress mAddress;
     ENetHost* mClient;
     ENetPeer* mPeer;
@@ -33,4 +36,12 @@ private:
 
     bool ProccessInput();
     bool ProccessNetowork();
+
+    GameObject* mConnectingSprite;
+    GameObject* mMatchingSprite;
+    GameObject* mPreStartSprite;
+
+    class Player* mPlayer;
+
+    int mStartCount;
 };

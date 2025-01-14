@@ -11,14 +11,24 @@ void SceneManager::LoadScene(Scene* nextScene)
     mIsChanged = true;
 }
 
+bool SceneManager::GetiIsChanged()
+{
+    if (mIsChanged) {
+        if (mCurrentScene) {
+            // std::cout << "Scene deleted: " << mCurrentScene->GetName() << std::endl;
+            delete mCurrentScene;
+            // std::cout << "Scene deleted: " << mCurrentScene->GetName() << std::endl;
+        }
+    }
+    return mIsChanged;
+}
 void SceneManager::AdoptSceneChange()
 {
-    if (mCurrentScene != nullptr) {
-        delete mCurrentScene;
-    }
     mCurrentScene = mNextScene;
+    // std::cout << "m next scene: " << mCurrentScene->GetName() << std::endl;
     if (!mCurrentScene->Load()) {
-        std::cout << "Failed Scene load : " << mCurrentScene->GetName() << std::endl;
+        // std::cout << "Failed Scene load : " << mCurrentScene->GetName() << std::endl;
     }
+    // std::cout << "m next scene: " << mCurrentScene->GetName() << std::endl;
     mIsChanged = false;
 }

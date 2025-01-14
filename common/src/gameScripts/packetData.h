@@ -14,6 +14,7 @@ enum class PacketDataType : uint8_t {
     CurrentFrame,
     PlayerCurrentData,
     INVALID,
+    GameEnd,
     PacketDataTypeNum
 };
 
@@ -72,6 +73,14 @@ struct PlayerCurrentData : public PacketData {
     HeroCurrentStatus heroCurrentStatus;
     Matrix4 heroTransform;
     PlayerCurrentData();
+    ENetPacket* CreatePacket() override;
+    void LoadPacket(ENetPacket* packet) override;
+};
+
+struct StartBattleData : public PacketData {
+    int coutDownFrame;
+
+    StartBattleData();
     ENetPacket* CreatePacket() override;
     void LoadPacket(ENetPacket* packet) override;
 };

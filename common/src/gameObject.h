@@ -1,5 +1,11 @@
 #pragma once
+#include <string>
 #include <vector>
+
+class Scene;
+class Transform;
+class Behaviour;
+class Component;
 
 class GameObject {
 public:
@@ -7,20 +13,28 @@ public:
     /// @param scene
     /// @param parent
     /// @param behaviour
-    GameObject(class Scene* scene, class Transform* parent, class Behaviour* behaviour = nullptr);
+    explicit GameObject(const std::string& name = "GameObject", const std::string& tag = "Default", bool isActive = true);
 
     /// Destructor
     virtual ~GameObject();
 
+    bool GetIsActive() const { return mIsActive; }
+    void SetIsActive(bool isActive);
+
+    /// @brief
+    // virtual void Init() = 0;
+
     /// @brief return the Scene in which this class exists
     /// @return
-    class Scene* GetScene() const { return mScene; }
-
+    Scene* GetScene() const { return mScene; }
+    void SetScene(Scene* scene) { mScene = scene; }
     /// @brief return the Transform Component attached to this GameObject
-    class Transform* GetTransform() const { return mTransform; }
+    Transform* GetTransform() const { return mTransform; }
 
     /// @brief Return the Behaviour Component attached to this GameObject
-    class Behaviour* GetBehaviour() const { return mBehaviour; }
+    Behaviour* GetBehaviour() const { return mBehaviour; }
+
+    void SetBehaviour(Behaviour* behaviour);
 
     /// @brief Return a specified type of component
     /// @tparam T
@@ -39,15 +53,28 @@ public:
 
     /// @brief Add the specified Component into the component list of this GameObject
     /// @param component
-    void AddComponent(class Component* component) { mComponents.push_back(component); }
-
+    void AddComponent(Component* component);
     /// @brief Remove the specified and erase the component from the conponent list of this GameObject
     /// @param component
-    void RemoveComponent(class Component* component);
+    void RemoveComponent(Component* component);
+
+    void Destroy();
+
+    const std::string& GetName() const { return mName; }
+    const std::string& GetTag() const { return mTag; }
 
 protected:
-    class Scene* mScene;
-    class Transform* mTransform;
-    class Behaviour* mBehaviour;
-    std::vector<class Component*> mComponents;
+    std::vector<Component*> mComponents;
+    Transform* mTransform;
+    Behaviour* mBehaviour;
+    bool mIsActive;
+
+    Scene* mScene;
+
+private:
+    const std::string mName;
+    const std::string mTag;
+    void Enable();
+    void Disable();
+    void UpdateChildren(bool isActive);
 };

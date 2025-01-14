@@ -1,6 +1,9 @@
 #pragma once
+#include "../../utils/src/math.h"
 #include <string>
 #include <vector>
+class GameObject;
+class Transform;
 class Scene {
 public:
     /// @brief Constructor
@@ -15,34 +18,38 @@ public:
     virtual bool Load() = 0;
 
     /// @brief Call the Start methos of all gameobject
-    virtual void Start();
+    virtual void Start() {};
 
     /// @brief Call the Update method and LateUpdate method of all gameobject and update physics
     /// @param exitFrag
     /// @param timeStep //seccond
     virtual void Update(bool& exitFrag, float timeStep_sec);
 
-    void AddGameObject(class GameObject* gameObject);
-    void RemoveGameObject(class GameObject* gameObject);
+    void Instantiate(GameObject* original, Transform* parent = nullptr, bool instantiateInWorldSpace = true);
+    void Instantiate(GameObject* original, Matrix4 transform, Transform* parent = nullptr);
 
-    void AddRootObject(class GameObject* gameObject);
-    void RemoveRootObject(class GameObject* gameObject);
+    void AddGameObject(GameObject* gameObject);
+    void RemoveGameObject(GameObject* gameObject);
 
     class Physics* GetPhysics() { return mPhysics; }
 
     std::string GetName() const;
     int currentFrame;
 
+    void AddDestroyOject(GameObject* gameObject) { mDestroyObjects.push_back(gameObject); }
+
 protected:
     std::string mName;
-    std::vector<class GameObject*> mRootObjects;
-    std::vector<class GameObject*> mgameObjects;
+    std::vector<GameObject*> mGameObjects;
+    std::vector<GameObject*> mDestroyObjects;
     class Physics* mPhysics;
 
-    void RemoveAllObject();
+    void DeteleAllObject();
 
 private:
-    void StartgameScriptsFromRoot(class GameObject* rootObject);
-    void UpdategameScriptsFromRoot(class GameObject* rootObject);
-    void LateUpdategameScriptsFromRoot(class GameObject* rootObject);
+    void StartgameScriptsFromRoot(GameObject* rootObject);
+    void UpdategameScriptsFromRoot(GameObject* rootObject);
+    void LateUpdategameScriptsFromRoot(GameObject* rootObject);
+
+    void DeleteFromRootObject(GameObject* rootObject);
 };

@@ -10,7 +10,7 @@ public:
 
     /// @brief Check if the LoadSecne method was called
     /// @return return true if the LoadScene methos was called, otherwise return false
-    static bool GetiIsChanged() { return mIsChanged; }
+    static bool GetiIsChanged();
 
     /// @brief Adopt the next scene
     static void AdoptSceneChange();

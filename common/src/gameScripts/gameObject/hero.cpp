@@ -1,81 +1,87 @@
 #include "hero.h"
-#include "../../component/collider.h"
 #include "../../component/rigidBody.h"
 #include "../../component/transform.h"
 #include "../../physics.h"
 #include "../../scene.h"
 #include "../components/behaviour/heroMove.h"
 #include "bey.h"
+#include "player.h"
 #include "rider.h"
 #include <iostream>
-Hero::Hero(Scene* scene, Transform* parent, Vector3 initialPos, HeroInfo heroInfo, HeroMove* heroMove)
-    : GameObject(scene, parent, heroMove)
+
+Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics, const std::string& tag)
+    : GameObject("Hero", tag)
     , mHeroInfo(heroInfo)
+    , mPlayer(player)
+    , mActionFrame(0)
+    , mStopFrame(0)
+    , mDownFrame(0)
 {
     // std::cout << "hero constructor" << std::endl;
-    mBaseStatus.gravity = 9.8f;
-    mTransform->SetWorldPosition(initialPos);
+
+    mPlayer->SetHero(this);
+
+    HeroBaseStatus heroBaseStatus;
+    switch (mHeroInfo.beyType) {
+    case BeyType::Shuriken: {
+        heroBaseStatus.WalkSpeed         = 4.0f;
+        heroBaseStatus.initialDushSpeed  = 3.0f;
+        heroBaseStatus.dushAcceleration  = 1.5f;
+        heroBaseStatus.maxDushSpeed      = 9.5f;
+        heroBaseStatus.traction          = 0.93f;
+        heroBaseStatus.mass              = 50.0f;
+        heroBaseStatus.bigJumpVelocity   = 12.0f;
+        heroBaseStatus.smallJumpVelocity = 8.0f;
+        heroBaseStatus.airMoveSpeed      = 2.0f;
+        heroBaseStatus.attackSpeed       = 23.0f;
+    } break;
+    case BeyType::Hexagram: {
+        heroBaseStatus.WalkSpeed         = 3.0f;
+        heroBaseStatus.initialDushSpeed  = 3.0f;
+        heroBaseStatus.dushAcceleration  = 1.5f;
+        heroBaseStatus.maxDushSpeed      = 7.5f;
+        heroBaseStatus.traction          = 0.9f;
+        heroBaseStatus.mass              = 50.0f;
+        heroBaseStatus.bigJumpVelocity   = 12.0f;
+        heroBaseStatus.smallJumpVelocity = 8.0f;
+        heroBaseStatus.airMoveSpeed      = 1.0f;
+        heroBaseStatus.attackSpeed       = 23.0f;
+    } break;
+    case BeyType::Snowflake: {
+        heroBaseStatus.WalkSpeed         = 3.0f;
+        heroBaseStatus.initialDushSpeed  = 3.0f;
+        heroBaseStatus.dushAcceleration  = 1.5f;
+        heroBaseStatus.maxDushSpeed      = 7.5f;
+        heroBaseStatus.traction          = 0.9f;
+        heroBaseStatus.mass              = 50.0f;
+        heroBaseStatus.bigJumpVelocity   = 4.0f;
+        heroBaseStatus.smallJumpVelocity = 2.0f;
+        heroBaseStatus.airMoveSpeed      = 1.0f;
+        heroBaseStatus.attackSpeed       = 23.0f;
+    } break;
+    default:
+        std::cout << "BeyType error Hero" << std::endl;
+        break;
+    }
+    mBaseStatus = heroBaseStatus;
+
     // RigidBody setting
-    RigidBody* rigidBody = new RigidBody(this, rp3d::BodyType::DYNAMIC, mScene->GetPhysics());
-    rigidBody->GetRp3dRogidBody()->enableGravity(false);
-    rigidBody->GetRp3dRogidBody()->setMass(2.0f);
-    rigidBody->GetRp3dRogidBody()->setAngularLockAxisFactor(rp3d::Vector3(0, 1, 0));
+    RigidBody* rigidBody  = new RigidBody(this, rp3d::BodyType::DYNAMIC, physics);
+    rp3d::RigidBody* rprb = rigidBody->GetRp3dRogidBody();
+    // rprb->enableGravity(true);
+    rprb->setMass(mBaseStatus.mass);
+    rprb->setAngularLockAxisFactor(rp3d::Vector3(0, 1, 0));
+
+    rp3d::Vector3 position(0.0, 1.3, 0.0);
+    rp3d::Quaternion rotation(rp3d::Quaternion::identity()); // 回転なし
+    rp3d::Transform offset(position, rotation);
+
+    reactphysics3d::decimal radius = 1.3f; // 半径
+
+    rp3d::CollisionShape* shape = physics->GetPhysicsCommon().createSphereShape(radius);
+    rp3d::Collider* collider    = rprb->addCollider(shape, offset);
+    collider->getMaterial().setFrictionCoefficient(mBaseStatus.traction);
+    collider->getMaterial().setBounciness(0.3f);
+
     AddComponent(rigidBody);
-
-    // Collider setting
-    rp3d::Vector3 position(0.0f, 1.0f, 0.0f);
-    rp3d::Quaternion rotation; // 回転なし
-    rp3d::Transform transform(position, rotation);
-    Collider* collider = new Collider(this,
-        mScene->GetPhysics()->GetPhysicsWorld(),
-        Physics::GetPhysicsCommon().createSphereShape(2.0),
-        rigidBody->GetRp3dRogidBody(),
-        transform);
-    AddComponent(collider);
-}
-
-Hero::~Hero()
-{
-}
-
-float Hero::GetWalkAcceleration() const
-{
-    return mBaseStatus.walkAcceleration;
-}
-float Hero::GetMaxWalkSpeed() const
-{
-    return mBaseStatus.maxWalkSpeed;
-}
-float Hero::GetInitialDushSpeed() const
-{
-    return mBaseStatus.initialDushSpeed;
-}
-float Hero::GetDushAcceleration() const
-{
-    return mBaseStatus.dushAcceleration;
-}
-float Hero::GetMaxRunSpeed() const
-{
-    return mBaseStatus.maxRunSpeed;
-}
-float Hero::GetTraction() const
-{
-    return mBaseStatus.traction;
-}
-float Hero::GetMass() const
-{
-    return mBaseStatus.mass;
-}
-float Hero::GetGravity() const
-{
-    return mBaseStatus.gravity;
-}
-
-Bey* Hero::GetBey() const
-{
-    return mBey;
-}
-Rider* Hero::GetRider() const
-{
-    return mRider;
 }

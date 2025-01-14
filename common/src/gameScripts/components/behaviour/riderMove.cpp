@@ -1,8 +1,14 @@
 #include "riderMove.h"
+#include "../../../../../utils/src/math.h"
+#include "../../../component/transform.h"
+#include "../../gameObject/hero.h"
+#include "../../gameObject/rider.h"
 #include <iostream>
 
-RiderMove::RiderMove(GameObject* owner)
+RiderMove::RiderMove(Rider* owner)
     : Behaviour(owner)
+    , mRider(owner)
+    , mHero(nullptr)
 {
     // std::cout << "riderMove constructor" << std::endl;
 }
@@ -10,40 +16,49 @@ RiderMove::RiderMove(GameObject* owner)
 void RiderMove::Start()
 {
     // std::cout << "riderMove start" << std::endl;
+    mHero = mRider->GetHero();
     dir_x = 0.0f;
     dir_y = 0.0f;
 }
-namespace {
 
-}
 void RiderMove::Update()
 {
-    // bool isMove = false;
-    // dir_x       = 0.0f;
-    // dir_y       = 0.0f;
-    // if (Input::GetKey(SDL_SCANCODE_W) && !Input::GetKey(SDL_SCANCODE_S)) {
-    //     dir_y -= 1.0f;
-    //     isMove = true;
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_S) && !Input::GetKey(SDL_SCANCODE_W)) {
-    //     dir_y += 1.0f;
-    //     isMove = true;
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_A) && !Input::GetKey(SDL_SCANCODE_D)) {
-    //     dir_x -= 1.0f;
-    //     isMove = true;
-    // }
-    // if (Input::GetKey(SDL_SCANCODE_D) && !Input::GetKey(SDL_SCANCODE_A)) {
-    //     dir_x += 1.0f;
-    //     isMove = true;
-    // }
+    switch (mHero->mCurrentStatus.state) {
+    case HeroState::Idle:
+    case HeroState::Walking:
+    case HeroState::StartRunning:
+    case HeroState::Running:
+    case HeroState::StopRunning:
+    case HeroState::RunningAttack: {
+        if (mHero->mStopFrame <= 0) {
+            Vector2 faceDir = mHero->mCurrentStatus.faceDir;
 
-    // if (isMove) {
-    //     float angle = Math::Atan2(dir_y, dir_x);
-    //     Vector3 axis(0.0f, 1.0f, 0.0f);
-    //     Quaternion q(axis, angle - Math::PiOver2);
-    //     mOwner->GetTransform()->SetWorldRotation(q);
-    // }
+            // ベクトルの長さがゼロでないことを確認
+            if (faceDir.Length() > 0.0f) {
+                // Y軸回転角度を計算
+                float angle = Math::Atan2(faceDir.y, faceDir.x) - Math::PiOver2;
+
+                // オイラー角を直接設定
+                Vector3 eulerAngles(0.0f, angle, 0.0f); // XとZは0で、Yだけ設定
+                mTransform->SetWorldEulerAngles(eulerAngles);
+                mTransform->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
+            }
+        }
+    } break;
+    case HeroState::PreJump: {
+    } break;
+    case HeroState::AirIdle: {
+    } break;
+    case HeroState::KnockBack: {
+    } break;
+    case HeroState::HitStop: {
+    } break;
+    case HeroState::Death: {
+    } break;
+    default:
+        std::cout << "HeroState error" << std::endl;
+        break;
+    }
 }
 void RiderMove::LateUpdate()
 {

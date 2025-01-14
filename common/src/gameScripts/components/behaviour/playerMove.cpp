@@ -1,121 +1,155 @@
 #include "playerMove.h"
 #include "../../../component/transform.h"
+#include "../../../scene.h"
 #include "../../gameObject/hero.h"
 #include "../../gameObject/player.h"
 #include "../../gameObject/stage.h"
 #include "heroMove.h"
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 
-PlayerMove::PlayerMove(GameObject* owner)
+PlayerMove::PlayerMove(Player* owner)
     : Behaviour(owner)
+    , mPlayer(owner)
 {
 }
 
 void PlayerMove::Start()
 {
     // std::cout << "playerMove start" << std::endl;
-    mPlayer                     = static_cast<Player*>(mOwner);
     mHero                       = mPlayer->GetHero();
-    mHeroMove                   = static_cast<HeroMove*>(mHero->GetBehaviour());
     mHero->mCurrentStatus.state = HeroState::Idle;
-
-    double radius = 13.0;
-    switch (mPlayer->GetID()) {
-    case 0:
-        mHero->GetTransform()->SetWorldPosition(radius, 0.0f, 0.0f);
-        break;
-    case 1:
-        mHero->GetTransform()->SetWorldPosition(-radius, 0.0f, 0.0f);
-        break;
-    case 2:
-        mHero->GetTransform()->SetWorldPosition(0.0f, 0.0f, radius);
-        break;
-    case 3:
-        mHero->GetTransform()->SetWorldPosition(0.0f, 0.0f, -radius);
-        break;
-    default:
-        std::cout << "player ID error ID: " << mPlayer->GetID() << std::endl;
-        break;
-    }
 }
 namespace {
 
 }
 void PlayerMove::Update()
 {
+    switch (mPlayer->GetPlayerState()) {
+    case PlayerState::Init:
+        InitUpdate();
+        break;
+    case PlayerState::Battle:
+        BattleUpdate();
+        break;
+    case PlayerState::Defeat:
+        DefeatedUpdate();
+        // std::cout << "defeat" << std::endl;
+        break;
+    default:
+        std::cout << "PlayerState error" << std::endl;
+        break;
+    }
+}
+void PlayerMove::LateUpdate()
+{
+}
+
+// ##############################################
+
+void PlayerMove::InitUpdate()
+{
+    // if (!mPlayer->commandBuffer.empty()) {
+    //     CommandData commandData = mPlayer->commandBuffer.back();
+    //     int commandDelay        = 1;
+    //     if (commandData.frame <= mPlayer->GetScene()->currentFrame - commandDelay) {
+    //     }
+    // }
+}
+void PlayerMove::BattleUpdate()
+{
     if (!mPlayer->commandBuffer.empty()) {
-        CommandData commandData = mPlayer->commandBuffer.back();
-        int commandDelay        = 1;
-        if (commandData.frame <= mPlayer->GetCurrentSceneFrame() - commandDelay) {
+        CommandData commandData     = mPlayer->commandBuffer.back();
+        CommandData prevCommandData = mPlayer->prevCommandData;
+        int commandDelay            = 1;
+        if (commandData.frame <= mPlayer->GetScene()->currentFrame - commandDelay) {
             // commandDelayフレームより過去のコマンドを実行
             // CommandDataCout(commandData);
-            float stickDeadZone = 0.1;
+            float stickDeadZone           = 0.1;
+            mHero->mCurrentStatus.moveDir = Vector2::Normalize(commandData.moveAxis);
             switch (mHero->mCurrentStatus.state) {
             case HeroState::Idle:
                 // std::cout << "idle" << std::endl;
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (commandData.moveAxis.Length() > stickDeadZone) {
                     // 移動スティック倒していた場合
-                    if (commandData.moveAxis.Length() - mPlayer->prevCommandData.moveAxis.Length() < 0.3) {
+                    if (commandData.moveAxis.Length() - prevCommandData.moveAxis.Length() < 0.3) {
+                        // 弱く倒す
                         mHero->mCurrentStatus.state = HeroState::Walking;
                     } else {
+                        // 強く倒す
                         mHero->mCurrentStatus.state = HeroState::StartRunning;
-                        mHero->mCurrentStatus.speed = mHero->GetInitialDushSpeed();
-                    }
-                } else {
-                    if (mHero->mCurrentStatus.speed != 0.0f) {
-                        mHero->mCurrentStatus.speed = 0.0f;
                     }
                 }
                 break;
             case HeroState::Walking:
                 // std::cout << "walk" << std::endl;
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (commandData.moveAxis.Length() < stickDeadZone) {
                     mHero->mCurrentStatus.state = HeroState::Idle;
-                } else {
-                    mHeroMove->Walking(commandData.moveAxis);
+                } else if (commandData.attack1 && !prevCommandData.attack1) {
+                    mHero->mCurrentStatus.state = HeroState::RunningAttack;
+                    break;
                 }
                 break;
             case HeroState::StartRunning:
                 // std::cout << "Startrun" << std::endl;
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (commandData.moveAxis.Length() < stickDeadZone) {
                     mHero->mCurrentStatus.state = HeroState::StopRunning;
-                } else {
-                    mHeroMove->StartRunning(commandData.moveAxis);
-                    if (mHero->mCurrentStatus.speed >= mHero->GetMaxRunSpeed()) {
-                        mHero->mCurrentStatus.state = HeroState::Running;
-                    }
-                }
-                break;
-            case HeroState::Running:
-                // std::cout << "run" << std::endl;
-                if (commandData.attack1 && !mPlayer->prevCommandData.attack1) {
-                    mHeroMove->StartRunningAttack(commandData.moveAxis);
+                } else if (commandData.attack1 && !prevCommandData.attack1) {
                     mHero->mCurrentStatus.state = HeroState::RunningAttack;
                     break;
                 }
+                break;
+            case HeroState::Running:
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
+                // std::cout << "run" << std::endl;
                 if (commandData.moveAxis.Length() < stickDeadZone) {
                     mHero->mCurrentStatus.state = HeroState::StopRunning;
-                } else {
-                    mHeroMove->Running(commandData.moveAxis);
+                } else if (commandData.attack1 && !prevCommandData.attack1) {
+                    mHero->mCurrentStatus.state = HeroState::RunningAttack;
+                    break;
+                }
+                if (commandData.jump && !prevCommandData.jump) {
+                    // mHero->mCurrentStatus.state = HeroState::PreJump;
+                    break;
                 }
                 break;
             case HeroState::StopRunning:
                 // std::cout << "stoprun" << std::endl;
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (commandData.moveAxis.Length() >= stickDeadZone) {
                     mHero->mCurrentStatus.state = HeroState::StartRunning;
-                } else {
-                    mHeroMove->StopRunning(commandData.moveAxis);
-                    if (0.0f == mHero->mCurrentStatus.speed) {
-                        mHero->mCurrentStatus.state = HeroState::Idle;
-                    }
                 }
                 break;
-            case HeroState::RunningAttack:
-                // std::cout << "runAtk" << std::endl;
-                if (!mHeroMove->UpdateRunningAttack())
-                    mHero->mCurrentStatus.state = HeroState::Idle;
+            case HeroState::RunningAttack: {
+            } break;
+            case HeroState::PreJump: {
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
+                if (mHero->mActionFrame >= 3) {
+                    if (commandData.jump) {
+                        // 大ジャンプ
+                        // mHero->SetState(HeroState::BigJump);
+                        break;
+                    } else {
+                        // 小ジャンプ
+                        // mHero->SetState(HeroState::SmallJump);
+                        break;
+                    }
+                }
+            } break;
 
-                break;
+            case HeroState::AirIdle: {
+
+            } break;
+            case HeroState::KnockBack: {
+            } break;
+            case HeroState::HitStop: {
+            } break;
+            case HeroState::Death: {
+            } break;
             default:
                 break;
             }
@@ -127,8 +161,39 @@ void PlayerMove::Update()
         // コマンドバッファが空のとき
     }
 }
-void PlayerMove::LateUpdate()
+void PlayerMove::DefeatedUpdate()
 {
+    if (!mPlayer->commandBuffer.empty()) {
+        // std::cout << "def empty" << std::endl;
+        CommandData commandData     = mPlayer->commandBuffer.back();
+        CommandData prevCommandData = mPlayer->prevCommandData;
+        int commandDelay            = 1;
+        if (commandData.frame <= mPlayer->GetScene()->currentFrame - commandDelay) {
+            if (commandData.attack1 && !prevCommandData.attack1) {
+                DefeatedAction1();
+                // std::cout << "defeat1" << std::endl;
+            }
+            if (commandData.attack2 && !prevCommandData.attack2) {
+                DefeatedAction2();
+                // std::cout << "defeat2" << std::endl;
+            }
+            if (commandData.jump && !prevCommandData.jump) {
+                DefeatedAction3();
+                // std::cout << "defeat3" << std::endl;
+            }
+            mPlayer->commandBuffer.pop_back();
+        }
+        mPlayer->prevCommandData = commandData;
+    }
 }
 
-// ##############################################
+void PlayerMove::DefeatedAction3()
+{
+    std::srand(std::time(nullptr));
+    int random = std::rand();
+    if (random % 20) {
+        DefeatedAction3Normal();
+    } else {
+        DefeatedAction3Special();
+    }
+}

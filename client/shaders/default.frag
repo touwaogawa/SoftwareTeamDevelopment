@@ -8,9 +8,10 @@ in vec2 TexCoord;
 // ライト関連の uniform 変数
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+
 uniform vec3 diffuseLightColor;
 uniform vec3 ambientLightColor;
-uniform vec3 objectColor;
+// uniform vec3 objectColor;
 
 // アンビエントライトの強度
 uniform float ambientStrength;

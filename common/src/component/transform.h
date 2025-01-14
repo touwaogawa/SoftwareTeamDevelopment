@@ -4,11 +4,11 @@
 #include <vector>
 class Transform : public Component {
 public:
-    Transform(class GameObject* owner, Transform* parent = nullptr);
+    Transform(class GameObject* owner);
     ~Transform() override;
 
     Transform* GetParent() const;
-    void SetParent(Transform* newParent);
+    void SetParent(Transform* parent, bool instantiateInWorldSpace = true);
     std::vector<Transform*> GetChildren();
 
     // ワールド
@@ -44,6 +44,10 @@ public:
     void TransformationLocalMatrix(Matrix4 translationMat);
 
 private:
+    void Enable() override { mIsOwnerActive = true; }
+    void Disable() override { mIsOwnerActive = false; }
+    bool mIsOwnerActive;
+
     Transform* mParent;
     std::vector<Transform*> mChildren;
 
@@ -75,6 +79,5 @@ private:
         Vector3& scaleOut,
         Vector3& eulerAngleOut);
 
-    void AddChild(Transform* child);
     void RemoveChild(Transform* child);
 };

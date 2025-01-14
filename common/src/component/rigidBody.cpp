@@ -16,6 +16,8 @@ RigidBody::RigidBody(GameObject* owner, rp3d::BodyType bodyType, Physics* physic
     mRigidBody = mPhysics->GetPhysicsWorld()->createRigidBody(t);
     mRigidBody->setType(bodyType);
     mPhysics->AddRigidBody(this);
+    mRigidBody->setUserData(static_cast<void*>(mOwner));
+    SetTransform();
 }
 
 RigidBody::~RigidBody()
@@ -46,10 +48,4 @@ void RigidBody::UpdateTransform()
     //           << std::endl;
     mOwner->GetTransform()->SetWorldPosition(static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
     mOwner->GetTransform()->SetWorldRotation(Quaternion(static_cast<float>(q.x), static_cast<float>(q.y), static_cast<float>(q.z), static_cast<float>(q.w)));
-}
-
-void RigidBody::SetVA(float x, float y, float z)
-{
-    // mRigidBody->setLinearLockAxisFactor(rp3d::Vector3(static_cast<rp3d::decimal>(x), static_cast<rp3d::decimal>(y), static_cast<rp3d::decimal>(z)));
-    mRigidBody->setLinearVelocity(rp3d::Vector3(static_cast<rp3d::decimal>(x), static_cast<rp3d::decimal>(y), static_cast<rp3d::decimal>(z)));
 }

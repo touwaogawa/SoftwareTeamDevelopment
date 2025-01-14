@@ -54,6 +54,22 @@ bool Texture::Load(const std::string& fileName)
     return true;
 }
 
+void Texture::CreateTextureFromAtlas(const unsigned char* atlasData, int atlasWidth, int atlasHeight)
+{
+    mTextureID;
+    glGenTextures(1, &mTextureID);
+    glBindTexture(GL_TEXTURE_2D, mTextureID);
+
+    // OpenGL のテクスチャパラメータを設定
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // アトラスをテクスチャとしてアップロード
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlasWidth, atlasHeight, 0, GL_RED, GL_UNSIGNED_BYTE, atlasData);
+}
+
 void Texture::UnLoad()
 {
     glDeleteTextures(1, &mTextureID);

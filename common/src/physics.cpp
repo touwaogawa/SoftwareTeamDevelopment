@@ -1,6 +1,8 @@
 #include "physics.h"
-#include "component/collider.h"
+#include "component/behaviour.h"
 #include "component/rigidBody.h"
+#include "gameObject.h"
+
 reactphysics3d::PhysicsCommon Physics::mPhysicsCommon;
 
 Physics::Physics()
@@ -8,6 +10,7 @@ Physics::Physics()
     // Create the world settings
     rp3d::PhysicsWorld::WorldSettings settings;
     settings.defaultVelocitySolverNbIterations = 20;
+    settings.defaultPositionSolverNbIterations = 20;
     settings.isSleepingEnabled                 = false;
     settings.gravity                           = rp3d::Vector3(0, -9.81, 0);
 
@@ -30,8 +33,10 @@ void Physics::Update(float timeStep_sec)
 {
     // Transform -> rp3d::Transform
     for (RigidBody* rigidBody : mRigidBodies) {
-        if (rigidBody->GetRp3dRogidBody()->getType() == rp3d::BodyType::KINEMATIC) {
-            rigidBody->SetTransform();
+        if (rigidBody->GetOwner()->GetIsActive()) {
+            if (rigidBody->GetRp3dRogidBody()->getType() == rp3d::BodyType::KINEMATIC) {
+                rigidBody->SetTransform();
+            }
         }
     }
     // 物理演算
@@ -39,8 +44,10 @@ void Physics::Update(float timeStep_sec)
     mPhysicsWorld->update(static_cast<rp3d::decimal>(timeStep_sec));
     // rp3d::Transfrom ->Transform
     for (RigidBody* rigidBody : mRigidBodies) {
-        if (rigidBody->GetRp3dRogidBody()->getType() == rp3d::BodyType::DYNAMIC) {
-            rigidBody->UpdateTransform();
+        if (rigidBody->GetOwner()->GetIsActive()) {
+            if (rigidBody->GetRp3dRogidBody()->getType() == rp3d::BodyType::DYNAMIC) {
+                rigidBody->UpdateTransform();
+            }
         }
     }
 }
@@ -62,32 +69,62 @@ void Physics::RemoveRigidBody(RigidBody* rigidBody)
 
 void MyEventListener::onContact(const CallbackData& callbackData)
 {
+    // EventListener::onContact(callbackData);
     int numPairs = callbackData.getNbContactPairs();
     for (int i = 0; i < numPairs; i++) {
         const rp3d::CollisionCallback::ContactPair pair = callbackData.getContactPair(i);
+        const rp3d::Body* body1                         = pair.getBody1();
+        const rp3d::Body* body2                         = pair.getBody2();
         const rp3d::Collider* collider1                 = pair.getCollider1();
         const rp3d::Collider* collider2                 = pair.getCollider2();
-        Collider* colliderComponent1                    = static_cast<Collider*>(collider1->getUserData());
-        Collider* colliderComponent2                    = static_cast<Collider*>(collider2->getUserData());
+        GameObject* gameObject1                         = static_cast<GameObject*>(body1->getUserData());
+        GameObject* gameObject2                         = static_cast<GameObject*>(body2->getUserData());
+
+        Behaviour* bhv1 = gameObject1->GetBehaviour();
+        Behaviour* bhv2 = gameObject2->GetBehaviour();
 
         switch (pair.getEventType()) {
         case rp3d::CollisionCallback::ContactPair::EventType::ContactStart:
-            colliderComponent1->OnCollisionEnter(collider1, collider2, pair);
-            colliderComponent2->OnCollisionEnter(collider2, collider1, pair);
+            if (bhv1) {
+                if (bhv1->GetIsActiveAndEnabled()) {
+                    bhv1->OnCollisionEnter(collider1, collider2, pair);
+                }
+            }
+            if (bhv2) {
+                if (bhv2->GetIsActiveAndEnabled()) {
+                    bhv2->OnCollisionEnter(collider2, collider1, pair);
+                }
+            }
             break;
         case rp3d::CollisionCallback::ContactPair::EventType::ContactStay:
-            colliderComponent1->OnCollisionStay(collider1, collider2, pair);
-            colliderComponent2->OnCollisionStay(collider2, collider1, pair);
+            if (bhv1) {
+                if (bhv1->GetIsActiveAndEnabled()) {
+                    bhv1->OnCollisionStay(collider1, collider2, pair);
+                }
+            }
+            if (bhv2) {
+                if (bhv2->GetIsActiveAndEnabled()) {
+                    bhv2->OnCollisionStay(collider2, collider1, pair);
+                }
+            }
             break;
         case rp3d::CollisionCallback::ContactPair::EventType::ContactExit:
-            colliderComponent1->OnCollisionExit(collider1, collider2, pair);
-            colliderComponent2->OnCollisionExit(collider2, collider1, pair);
+            if (bhv1) {
+                if (bhv1->GetIsActiveAndEnabled()) {
+                    bhv1->OnCollisionExit(collider1, collider2, pair);
+                }
+            }
+            if (bhv2) {
+                if (bhv2->GetIsActiveAndEnabled()) {
+                    bhv2->OnCollisionExit(collider2, collider1, pair);
+                }
+            }
             break;
         default:
             std::cout << "rp3d::CollisionCallback::ContactPair::EventType error" << std::endl;
             break;
         }
-        std::cout << "collision" << std::endl;
+        // std::cout << "collision" << std::endl;
     }
 }
 
@@ -97,28 +134,57 @@ void MyEventListener::onTrigger(const rp3d::OverlapCallback::CallbackData& callb
     int numPairs = callbackData.getNbOverlappingPairs();
     for (int i = 0; i < numPairs; i++) {
         const rp3d::OverlapCallback::OverlapPair pair = callbackData.getOverlappingPair(i);
+        const rp3d::Body* body1                       = pair.getBody1();
+        const rp3d::Body* body2                       = pair.getBody2();
         const rp3d::Collider* collider1               = pair.getCollider1();
         const rp3d::Collider* collider2               = pair.getCollider2();
-        Collider* colliderComponent1                  = static_cast<Collider*>(collider1->getUserData());
-        Collider* colliderComponent2                  = static_cast<Collider*>(collider2->getUserData());
+        GameObject* gameObject1                       = static_cast<GameObject*>(body1->getUserData());
+        GameObject* gameObject2                       = static_cast<GameObject*>(body2->getUserData());
+
+        Behaviour* bhv1 = gameObject1->GetBehaviour();
+        Behaviour* bhv2 = gameObject2->GetBehaviour();
 
         switch (pair.getEventType()) {
         case rp3d::OverlapCallback::OverlapPair::EventType::OverlapStart:
-            colliderComponent1->OnOverlapEnter(collider1, collider2, pair);
-            colliderComponent2->OnOverlapEnter(collider2, collider1, pair);
+            if (bhv1) {
+                if (bhv1->GetIsActiveAndEnabled()) {
+                    bhv1->OnOverlapEnter(collider1, collider2, pair);
+                }
+            }
+            if (bhv2) {
+                if (bhv2->GetIsActiveAndEnabled()) {
+                    bhv2->OnOverlapEnter(collider2, collider1, pair);
+                }
+            }
             break;
         case rp3d::OverlapCallback::OverlapPair::EventType::OverlapStay:
-            colliderComponent1->OnOverlapStay(collider1, collider2, pair);
-            colliderComponent2->OnOverlapStay(collider2, collider1, pair);
+            if (bhv1) {
+                if (bhv1->GetIsActiveAndEnabled()) {
+                    bhv1->OnOverlapStay(collider1, collider2, pair);
+                }
+            }
+            if (bhv2) {
+                if (bhv2->GetIsActiveAndEnabled()) {
+                    bhv2->OnOverlapStay(collider2, collider1, pair);
+                }
+            }
             break;
         case rp3d::OverlapCallback::OverlapPair::EventType::OverlapExit:
-            colliderComponent1->OnOverlapExit(collider1, collider2, pair);
-            colliderComponent2->OnOverlapExit(collider2, collider1, pair);
+            if (bhv1) {
+                if (bhv1->GetIsActiveAndEnabled()) {
+                    bhv1->OnOverlapExit(collider1, collider2, pair);
+                }
+            }
+            if (bhv2) {
+                if (bhv2->GetIsActiveAndEnabled()) {
+                    bhv2->OnOverlapExit(collider2, collider1, pair);
+                }
+            }
             break;
         default:
             std::cout << "rp3d::CollisionCallback::ContactPair::EventType error" << std::endl;
             break;
         }
+        std::cout << "trigger" << std::endl;
     }
-    std::cout << "trigger" << std::endl;
 }

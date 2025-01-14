@@ -6,7 +6,10 @@
 #include <unordered_map>
 #include <vector>
 
-class Camera;
+class CameraComponent;
+class LightComponent;
+class VertexArray;
+
 class Renderer {
 public:
     static bool Init(float window_w, float window_h);
@@ -17,18 +20,27 @@ public:
     static void Draw();
     static class Texture* GetTexture(const std::string& fileName);
     static class Mesh* GetMesh(const std::string& fileName);
+
     static void AddMeshRenderer(class MeshRenderer* meshRenderer);
     static void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
-    // static void SetViewMatrix(const Matrix4& view) { mView = view; }
-    static void AddCamera(const std::string& cameraName, Camera* camera)
-    {
-        mCameras.emplace(cameraName, camera);
-    }
-    static void RemoveCamera(const std::string& cameraName)
-    {
-        mCameras.erase(cameraName);
-    }
-    static void UseCamera(const std::string& cameraName);
+    static void AddEffectRenderer(class MeshRenderer* meshRenderer);
+    static void RemoveEffectRenderer(class MeshRenderer* meshRenderer);
+
+    static void AddSpriteRenderer(class SpriteRenderer* spriteRenderer);
+    static void RemoveSpriteRenderer(class SpriteRenderer* spriteRenderer);
+    static void AddBillbourdRenderer(class BillbourdRenderer* billbourdRenderer);
+    static void RemoveBillbourdRenderer(class BillbourdRenderer* billbourdRenderer);
+
+    static void SetCameraComponent(CameraComponent* cameraComponent) { mCameraComponent = cameraComponent; }
+    static CameraComponent* GetCameraComponent() { return mCameraComponent; }
+
+    static void SetLightComponent(LightComponent* lightComponent) { mLightComponent = lightComponent; }
+    static LightComponent* GetLightComponent() { return mLightComponent; }
+
+    static float GetWindowWidth() { return mWindowWidth; }
+    static float GetWindowHeight() { return mWindowHeight; }
+
+    static void CameraShake(int frame);
 
 private:
     static SDL_Window* mWindow;
@@ -40,15 +52,44 @@ private:
     static class Shader* mMeshShader;
     static class Shader* mDepthShader;
     static class Shader* mShadowMeshShader;
+    static class Shader* mSpriteShader;
+    static class Shader* mEffectShader;
+    static class Shader* mBillbourdShader;
 
     static std::unordered_map<std::string, class Texture*> mTextures;
     static std::unordered_map<std::string, class Mesh*> mMeshes;
+
     static std::vector<class MeshRenderer*> mMeshRenderers;
+    static std::vector<class MeshRenderer*> mEffectRenderers;
+    static std::vector<class SpriteRenderer*> mSpriteRenderers;
+    static std::vector<class BillbourdRenderer*> mBillbourdRenderers;
 
     // カメラ情報
-    static std::unordered_map<std::string, Camera*> mCameras;
-    static Camera* mCamera;
+    static CameraComponent* mCameraComponent;
+    static LightComponent* mLightComponent;
+
+    // 描画基本情報
+    static Vector3 mViewPos;    // カメラの位置
+    static Matrix4 mView;       // カメラのビュー
+    static Matrix4 mProjection; // カメラのプロジェクション
+
+    static Vector3 mLightPos;        // ライトの位置
+    static Matrix4 mLightView;       // ライトのビュー
+    static Matrix4 mLightProjection; // ライトのプロジェクション
+    static Vector3 mLightColor;      // ライトの色
+
+    static float mAmbientLightStrength;
+    static Vector3 mAmbientLightColor;
 
     static GLuint mDepthMapFBO;
     static GLuint mDepthMap;
+
+    // スプライト
+    static VertexArray* mSpriteVerts;
+
+    static void Draw3DObjects();
+    static void DrawEffects();
+    static void DrawBillbourds();
+    static void DrawSprites();
+    static void CreateSpriteVerts();
 };

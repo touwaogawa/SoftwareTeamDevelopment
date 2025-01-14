@@ -3,7 +3,7 @@ out vec4 FragColor;
 
 in vec3 FragPos;
 in vec3 Normal;
-in vec2 TexCoords;
+in vec2 TexCoord;
 in vec4 FragPosLightSpace;
 
 uniform sampler2D shadowMap;
@@ -55,7 +55,7 @@ void main()
     vec3 specular = specularStrength * spec * diffuseLightColor;
 
     // テクスチャから色を取得
-    vec3 texColor = texture(texture1, TexCoords).rgb;
+    vec3 texColor = texture(texture1, TexCoord).rgb;
 
     // 影の計算
     float shadow = ShadowCalculation(FragPosLightSpace);

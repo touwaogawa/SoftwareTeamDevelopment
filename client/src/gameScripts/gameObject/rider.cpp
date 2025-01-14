@@ -3,8 +3,8 @@
 #include "../components/behaviour/riderMove.h"
 #include <iostream>
 
-Rider_C::Rider_C(Scene* scene, Transform* parent, RiderType riderType)
-    : Rider(scene, parent, riderType, new RiderMove_C(this))
+Rider_C::Rider_C(Hero* hero, RiderType riderType, const std::string& tag)
+    : Rider(hero, riderType, tag)
 {
     // std::cout << "Rider_C constructer" << std::endl;
     switch (riderType) {
