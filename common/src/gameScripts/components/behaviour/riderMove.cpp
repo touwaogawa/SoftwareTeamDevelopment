@@ -41,6 +41,7 @@ void RiderMove::Update()
                 // オイラー角を直接設定
                 Vector3 eulerAngles(0.0f, angle, 0.0f); // XとZは0で、Yだけ設定
                 mTransform->SetWorldEulerAngles(eulerAngles);
+                mTransform->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
             }
         }
     } break;
