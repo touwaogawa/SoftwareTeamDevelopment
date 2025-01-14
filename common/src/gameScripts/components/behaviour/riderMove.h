@@ -2,6 +2,7 @@
 #include "../../../component/behaviour.h"
 
 class Rider;
+class Hero;
 class RiderMove : public Behaviour {
 public:
     explicit RiderMove(Rider* owner);
@@ -13,6 +14,7 @@ public:
 
 private:
     Rider* mRider;
+    Hero* mHero;
     float dir_x;
     float dir_y;
 };

@@ -14,6 +14,7 @@ enum class PacketDataType : uint8_t {
     CurrentFrame,
     PlayerCurrentData,
     INVALID,
+    GameEnd,
     PacketDataTypeNum
 };
 

@@ -5,7 +5,7 @@
 
 class SimpleEffect : public GameObject {
 public:
-    explicit SimpleEffect(const std::string& objFileName, const std::string& imageFileName);
+    SimpleEffect(const std::string& objFileName, const std::string& imageFileName);
     ~SimpleEffect() override = default;
 
 private:

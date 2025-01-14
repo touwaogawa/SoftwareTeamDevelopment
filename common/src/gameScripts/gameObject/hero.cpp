@@ -15,6 +15,7 @@ Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics, const std::strin
     , mPlayer(player)
     , mActionFrame(0)
     , mStopFrame(0)
+    , mDownFrame(0)
 {
     // std::cout << "hero constructor" << std::endl;
 
@@ -23,34 +24,40 @@ Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics, const std::strin
     HeroBaseStatus heroBaseStatus;
     switch (mHeroInfo.beyType) {
     case BeyType::Shuriken: {
-        heroBaseStatus = {
-            2.0f,
-            3.0f,
-            18.0f,
-            12.0f,
-            0.3f,
-            50.0f
-        };
+        heroBaseStatus.WalkSpeed         = 4.0f;
+        heroBaseStatus.initialDushSpeed  = 3.0f;
+        heroBaseStatus.dushAcceleration  = 1.5f;
+        heroBaseStatus.maxDushSpeed      = 9.5f;
+        heroBaseStatus.traction          = 0.93f;
+        heroBaseStatus.mass              = 50.0f;
+        heroBaseStatus.bigJumpVelocity   = 12.0f;
+        heroBaseStatus.smallJumpVelocity = 8.0f;
+        heroBaseStatus.airMoveSpeed      = 2.0f;
+        heroBaseStatus.attackSpeed       = 23.0f;
     } break;
     case BeyType::Hexagram: {
-        heroBaseStatus = {
-            2.0f,
-            3.0f,
-            18.0f,
-            12.0f,
-            0.3f,
-            50.0f
-        };
+        heroBaseStatus.WalkSpeed         = 3.0f;
+        heroBaseStatus.initialDushSpeed  = 3.0f;
+        heroBaseStatus.dushAcceleration  = 1.5f;
+        heroBaseStatus.maxDushSpeed      = 7.5f;
+        heroBaseStatus.traction          = 0.9f;
+        heroBaseStatus.mass              = 50.0f;
+        heroBaseStatus.bigJumpVelocity   = 12.0f;
+        heroBaseStatus.smallJumpVelocity = 8.0f;
+        heroBaseStatus.airMoveSpeed      = 1.0f;
+        heroBaseStatus.attackSpeed       = 23.0f;
     } break;
     case BeyType::Snowflake: {
-        heroBaseStatus = {
-            2.0f,
-            3.0f,
-            18.0f,
-            12.0f,
-            0.3f,
-            50.0f
-        };
+        heroBaseStatus.WalkSpeed         = 3.0f;
+        heroBaseStatus.initialDushSpeed  = 3.0f;
+        heroBaseStatus.dushAcceleration  = 1.5f;
+        heroBaseStatus.maxDushSpeed      = 7.5f;
+        heroBaseStatus.traction          = 0.9f;
+        heroBaseStatus.mass              = 50.0f;
+        heroBaseStatus.bigJumpVelocity   = 4.0f;
+        heroBaseStatus.smallJumpVelocity = 2.0f;
+        heroBaseStatus.airMoveSpeed      = 1.0f;
+        heroBaseStatus.attackSpeed       = 23.0f;
     } break;
     default:
         std::cout << "BeyType error Hero" << std::endl;
@@ -61,7 +68,7 @@ Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics, const std::strin
     // RigidBody setting
     RigidBody* rigidBody  = new RigidBody(this, rp3d::BodyType::DYNAMIC, physics);
     rp3d::RigidBody* rprb = rigidBody->GetRp3dRogidBody();
-    rprb->enableGravity(true);
+    // rprb->enableGravity(true);
     rprb->setMass(mBaseStatus.mass);
     rprb->setAngularLockAxisFactor(rp3d::Vector3(0, 1, 0));
 

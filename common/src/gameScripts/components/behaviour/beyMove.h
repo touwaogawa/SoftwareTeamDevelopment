@@ -2,6 +2,7 @@
 #include "../../../component/behaviour.h"
 
 class Bey;
+class Hero;
 class BeyMove : public Behaviour {
 public:
     explicit BeyMove(Bey* owner);
@@ -13,6 +14,7 @@ public:
 
 private:
     Bey* mBey;
+    Hero* mHero;
     float mSpinPower;
     float mMinSpinPower;
 };

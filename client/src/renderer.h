@@ -40,6 +40,8 @@ public:
     static float GetWindowWidth() { return mWindowWidth; }
     static float GetWindowHeight() { return mWindowHeight; }
 
+    static void CameraShake(int frame);
+
 private:
     static SDL_Window* mWindow;
     static SDL_GLContext mContext;

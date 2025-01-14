@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../../../utils/src/math.h"
 #include "../../../component/behaviour.h"
 #include <reactphysics3d/reactphysics3d.h>
 
@@ -13,13 +14,14 @@ public:
     void Update() override;
     void LateUpdate() override;
 
-    void OnDamage(int stopFrame, float damage, Vector3 vector);
-
     void OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair) override;
 
     void OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair) override;
 
+    void OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector);
+
 private:
     Hero* mHero;
     rp3d::RigidBody* mHeroRp3dRigidBody;
+    rp3d::Vector3 mKnockBackVectorBuffer;
 };

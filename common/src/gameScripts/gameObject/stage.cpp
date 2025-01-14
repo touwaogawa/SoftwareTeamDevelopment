@@ -29,7 +29,7 @@ Stage::Stage(Physics* physics, const std::string& meshFileName)
 
     // メッシュ代入
     rp3d::Collider* collider = rprb->addCollider(shape, offset);
-    collider->getMaterial().setFrictionCoefficient(0.2f);
+    collider->getMaterial().setFrictionCoefficient(1.0f);
     collider->getMaterial().setBounciness(0.0f);
     AddComponent(rigidBody);
 }

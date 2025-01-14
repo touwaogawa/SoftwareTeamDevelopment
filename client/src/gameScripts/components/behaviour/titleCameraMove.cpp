@@ -18,8 +18,8 @@ void TitleCameraMove::Start()
     Matrix4 view = Matrix4::CreateLookAt(transform->GetWorldPosition(), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
 
     transform->SetWorldMatrix(view);
+    Audio::SetMusicVolume(0.4);
     Audio::FadeInMusic("../assets/sounds/bgm/Who_Is_the_Champion.mp3", 1000);
-    // Audio::PlayMusic("../assets/sounds/bgm/Who_Is_the_Champion.mp3");
 }
 void TitleCameraMove::Update()
 {

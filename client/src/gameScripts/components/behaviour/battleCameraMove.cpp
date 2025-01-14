@@ -11,7 +11,7 @@
 
 BattleCameraMove::BattleCameraMove(GameObject* owner)
     : Behaviour(owner)
-    , mMaxFromCenter(9.0f)
+    , mMaxFromCenter(5.0f)
 {
 }
 

@@ -16,24 +16,32 @@ enum class HeroState {
     StopRunning,
     RunningAttack,
     PreJump,
+    BigJump,
+    SmallJump,
     AirIdle,
+    KnockBack,
+    HitStop,
     Death,
     HeroStateNum
 
 };
 struct HeroBaseStatus {
-    float WalkSpeed        = 0.1f * 60.0f;  // 最大歩行スピード
-    float initialDushSpeed = 0.1f * 60.0f;  // ダッシュ初速度
-    float dushAcceleration = 0.05f * 60.0f; // ダッシュ加速量
-    float maxDushSpeed     = 0.25f * 60.0f; // 最大ダッシュ速度
-    float traction         = 0.1f;          // 地上抵抗
-    float mass             = 50.0f;         // 質量
+    float WalkSpeed         = 4.0f;  // 最大歩行スピード
+    float initialDushSpeed  = 3.0f;  // ダッシュ初速度
+    float dushAcceleration  = 1.5f;  // ダッシュ加速量
+    float maxDushSpeed      = 10.5f; // 最大ダッシュ速度
+    float traction          = 0.9f;  // 地上抵抗
+    float mass              = 50.0f; // 質量
+    float bigJumpVelocity   = 4.0f;
+    float smallJumpVelocity = 2.0f;
+    float airMoveSpeed      = 1.0f;
+    float attackSpeed       = 23.0f;
 };
 
 struct HeroCurrentStatus {
     HeroState state = HeroState::Idle;     // 現在の状態
     Vector2 moveDir = Vector2(0.0f, 0.0f); // 移動している方向
-    // float speed     = 0.0f;
+    Vector2 faceDir = Vector2(0.0f, 0.0f); // 顔のほうこう
 };
 
 struct HeroInfo {
@@ -48,8 +56,16 @@ public:
 
     HeroCurrentStatus mCurrentStatus;
 
+    void SetState(HeroState heroState)
+    {
+        mCurrentStatus.state = heroState;
+        mActionFrame         = 0;
+    }
+    HeroState GetState() const { return mCurrentStatus.state; }
+
     int mActionFrame;
     int mStopFrame;
+    int mDownFrame;
 
     const HeroBaseStatus& GetBaseStatus() const { return mBaseStatus; }
 

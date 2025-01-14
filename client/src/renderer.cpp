@@ -299,6 +299,10 @@ void Renderer::RemoveBillbourdRenderer(BillbourdRenderer* billbourdRenderer)
     mBillbourdRenderers.erase(end, mBillbourdRenderers.end());
 }
 
+void Renderer::CameraShake(int frame)
+{
+}
+
 void Renderer::Draw3DObjects()
 {
     glEnable(GL_DEPTH_TEST);

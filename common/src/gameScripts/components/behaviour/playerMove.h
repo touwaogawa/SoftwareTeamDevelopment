@@ -22,9 +22,9 @@ public:
 private:
     Player* mPlayer;
     Hero* mHero;
-    rp3d::RigidBody* mHeroRp3dRigidBody;
 
-    void InitUpdate();
+    void
+    InitUpdate();
     void BattleUpdate();
     void DefeatedUpdate();
 };

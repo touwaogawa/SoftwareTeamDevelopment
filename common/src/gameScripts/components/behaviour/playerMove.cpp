@@ -1,5 +1,4 @@
 #include "playerMove.h"
-#include "../../../component/rigidBody.h"
 #include "../../../component/transform.h"
 #include "../../../scene.h"
 #include "../../gameObject/hero.h"
@@ -21,17 +20,6 @@ void PlayerMove::Start()
     // std::cout << "playerMove start" << std::endl;
     mHero                       = mPlayer->GetHero();
     mHero->mCurrentStatus.state = HeroState::Idle;
-
-    RigidBody* r = mHero->GetComponent<RigidBody>();
-    if (r) {
-        r->SetTransform();
-        mHeroRp3dRigidBody = r->GetRp3dRogidBody();
-        if (!mHeroRp3dRigidBody) {
-            std::cout << "rp3d rigid body error hero move start()" << std::endl;
-        }
-    } else {
-        std::cout << "rigid body error hero move start()" << std::endl;
-    }
 }
 namespace {
 
@@ -47,6 +35,7 @@ void PlayerMove::Update()
         break;
     case PlayerState::Defeat:
         DefeatedUpdate();
+        // std::cout << "defeat" << std::endl;
         break;
     default:
         std::cout << "PlayerState error" << std::endl;
@@ -61,18 +50,19 @@ void PlayerMove::LateUpdate()
 
 void PlayerMove::InitUpdate()
 {
-    if (!mPlayer->commandBuffer.empty()) {
-        CommandData commandData = mPlayer->commandBuffer.back();
-        int commandDelay        = 1;
-        if (commandData.frame <= mPlayer->GetScene()->currentFrame - commandDelay) {
-        }
-    }
+    // if (!mPlayer->commandBuffer.empty()) {
+    //     CommandData commandData = mPlayer->commandBuffer.back();
+    //     int commandDelay        = 1;
+    //     if (commandData.frame <= mPlayer->GetScene()->currentFrame - commandDelay) {
+    //     }
+    // }
 }
 void PlayerMove::BattleUpdate()
 {
     if (!mPlayer->commandBuffer.empty()) {
-        CommandData commandData = mPlayer->commandBuffer.back();
-        int commandDelay        = 1;
+        CommandData commandData     = mPlayer->commandBuffer.back();
+        CommandData prevCommandData = mPlayer->prevCommandData;
+        int commandDelay            = 1;
         if (commandData.frame <= mPlayer->GetScene()->currentFrame - commandDelay) {
             // commandDelayフレームより過去のコマンドを実行
             // CommandDataCout(commandData);
@@ -81,9 +71,10 @@ void PlayerMove::BattleUpdate()
             switch (mHero->mCurrentStatus.state) {
             case HeroState::Idle:
                 // std::cout << "idle" << std::endl;
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (commandData.moveAxis.Length() > stickDeadZone) {
                     // 移動スティック倒していた場合
-                    if (commandData.moveAxis.Length() - mPlayer->prevCommandData.moveAxis.Length() < 0.3) {
+                    if (commandData.moveAxis.Length() - prevCommandData.moveAxis.Length() < 0.3) {
                         // 弱く倒す
                         mHero->mCurrentStatus.state = HeroState::Walking;
                     } else {
@@ -94,32 +85,41 @@ void PlayerMove::BattleUpdate()
                 break;
             case HeroState::Walking:
                 // std::cout << "walk" << std::endl;
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (commandData.moveAxis.Length() < stickDeadZone) {
                     mHero->mCurrentStatus.state = HeroState::Idle;
+                } else if (commandData.attack1 && !prevCommandData.attack1) {
+                    mHero->mCurrentStatus.state = HeroState::RunningAttack;
+                    break;
                 }
                 break;
             case HeroState::StartRunning:
                 // std::cout << "Startrun" << std::endl;
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (commandData.moveAxis.Length() < stickDeadZone) {
                     mHero->mCurrentStatus.state = HeroState::StopRunning;
+                } else if (commandData.attack1 && !prevCommandData.attack1) {
+                    mHero->mCurrentStatus.state = HeroState::RunningAttack;
+                    break;
                 }
                 break;
             case HeroState::Running:
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 // std::cout << "run" << std::endl;
-                // if (commandData.attack1 && !mPlayer->prevCommandData.attack1) {
-                //     mHero->mCurrentStatus.state = HeroState::RunningAttack;
-                //     break;
-                // }
-                if (commandData.jump) {
-                    mHero->mCurrentStatus.state = HeroState::PreJump;
-                    break;
-                }
                 if (commandData.moveAxis.Length() < stickDeadZone) {
                     mHero->mCurrentStatus.state = HeroState::StopRunning;
+                } else if (commandData.attack1 && !prevCommandData.attack1) {
+                    mHero->mCurrentStatus.state = HeroState::RunningAttack;
+                    break;
+                }
+                if (commandData.jump && !prevCommandData.jump) {
+                    // mHero->mCurrentStatus.state = HeroState::PreJump;
+                    break;
                 }
                 break;
             case HeroState::StopRunning:
                 // std::cout << "stoprun" << std::endl;
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (commandData.moveAxis.Length() >= stickDeadZone) {
                     mHero->mCurrentStatus.state = HeroState::StartRunning;
                 }
@@ -127,19 +127,26 @@ void PlayerMove::BattleUpdate()
             case HeroState::RunningAttack: {
             } break;
             case HeroState::PreJump: {
+                mHero->mCurrentStatus.faceDir = Vector2::Normalize(commandData.moveAxis);
                 if (mHero->mActionFrame >= 3) {
-                    rp3d::Vector3 vel = mHeroRp3dRigidBody->getLinearVelocity();
                     if (commandData.jump) {
                         // 大ジャンプ
-                        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, 20.0, vel.z));
+                        // mHero->SetState(HeroState::BigJump);
+                        break;
                     } else {
                         // 小ジャンプ
-                        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, 8.0, vel.z));
+                        // mHero->SetState(HeroState::SmallJump);
+                        break;
                     }
-                    mHero->mCurrentStatus.state = HeroState::AirIdle;
                 }
             } break;
+
             case HeroState::AirIdle: {
+
+            } break;
+            case HeroState::KnockBack: {
+            } break;
+            case HeroState::HitStop: {
             } break;
             case HeroState::Death: {
             } break;
@@ -157,19 +164,26 @@ void PlayerMove::BattleUpdate()
 void PlayerMove::DefeatedUpdate()
 {
     if (!mPlayer->commandBuffer.empty()) {
-        CommandData commandData = mPlayer->commandBuffer.back();
-        int commandDelay        = 1;
+        // std::cout << "def empty" << std::endl;
+        CommandData commandData     = mPlayer->commandBuffer.back();
+        CommandData prevCommandData = mPlayer->prevCommandData;
+        int commandDelay            = 1;
         if (commandData.frame <= mPlayer->GetScene()->currentFrame - commandDelay) {
-            if (commandData.attack1) {
+            if (commandData.attack1 && !prevCommandData.attack1) {
                 DefeatedAction1();
+                // std::cout << "defeat1" << std::endl;
             }
-            if (commandData.attack2) {
+            if (commandData.attack2 && !prevCommandData.attack2) {
                 DefeatedAction2();
+                // std::cout << "defeat2" << std::endl;
             }
-            if (commandData.jump) {
+            if (commandData.jump && !prevCommandData.jump) {
                 DefeatedAction3();
+                // std::cout << "defeat3" << std::endl;
             }
+            mPlayer->commandBuffer.pop_back();
         }
+        mPlayer->prevCommandData = commandData;
     }
 }
 

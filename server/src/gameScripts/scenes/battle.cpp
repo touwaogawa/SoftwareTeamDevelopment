@@ -31,7 +31,7 @@ bool BattleScene::Load()
 
     // std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
     for (int i = 0; i < mPlayerNum; i++) {
-        std::string tag = "Player" + std::to_string(i);
+        std::string tag = "Player" + std::to_string(mPlayerInfos[i].id);
         // std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
         // player
         Player* player = new Player(mPlayerInfos[i], tag);
@@ -43,8 +43,8 @@ bool BattleScene::Load()
         Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics, tag);
         hero->SetBehaviour(new HeroMove(hero));
         float r     = 13.0f;
-        float x     = r * Math::Sin(Math::TwoPi / mPlayerNum * i);
-        float z     = r * Math::Cos(Math::TwoPi / mPlayerNum * i);
+        float x     = r * Math::Sin(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id);
+        float z     = r * Math::Cos(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id);
         Matrix4 mat = Matrix4::CreateTranslation(Vector3(x, 0.0f, z));
         Instantiate(hero, mat, player->GetTransform());
 
@@ -90,6 +90,20 @@ void BattleScene::Update(bool& exitFrag, float timeStep)
     // std::cout << "send " << std::endl;
     SendCurrentBattleStatus();
     // std::cout << ".." << std::endl;
+
+    if (mPlayerNum > 1) {
+        int defeatplayer = 0;
+        for (Player* player : mPlayers) {
+            if (player->GetHero()->GetState() == HeroState::Death) {
+                defeatplayer++;
+            }
+        }
+        if (defeatplayer == mPlayerNum - 1) {
+            PacketData packetData(PacketDataType::GameEnd);
+            enet_host_broadcast(mServer, 0, packetData.CreatePacket());
+            enet_host_flush(mServer);
+        }
+    }
 }
 
 int BattleScene::GetPlayerNum() const
@@ -124,10 +138,10 @@ bool BattleScene::ProccessNetowork()
                 std::cout << "Connected to server!" << std::endl;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                std::cout << "eetr" << std::endl;
+                // std::cout << "eetr" << std::endl;
                 switch (PacketData::RecognizePacketDatatype(mENetEvent.packet)) {
                 case PacketDataType::BattleCommand: {
-                    std::cout << "recv bcd" << std::endl;
+                    // std::cout << "recv bcd" << std::endl;
                     BattleCommandData battleCommandData;
                     battleCommandData.LoadPacket(mENetEvent.packet);
                     // コマンド追加

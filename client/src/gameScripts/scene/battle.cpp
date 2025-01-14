@@ -4,6 +4,7 @@
 #include "../../../../common/src/physics.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
+#include "../../audio.h"
 #include "../../component/cameraComponent.h"
 #include "../../component/meshRenderer.h"
 #include "../components/behaviour/battleCameraMove.h"
@@ -14,8 +15,10 @@
 #include "../gameObject/bey.h"
 #include "../gameObject/player.h"
 #include "../gameObject/rider.h"
+#include "../gameObject/simpleBillbourd.h"
 #include "../gameObject/simpleCamera.h"
 #include "../gameObject/simpleMeshModel.h"
+#include "../gameObject/simplesprite.h"
 #include "../gameObject/stage.h"
 #include <enet/enet.h>
 #include <iostream>
@@ -48,7 +51,7 @@ bool BattleScene::Load()
 
     // std::cerr << "playerNum: " << mPlayerNum << std::endl;
     for (int i = 0; i < mPlayerNum; i++) {
-        std::string tag = "Player" + std::to_string(i);
+        std::string tag = "Player" + std::to_string(mPlayerInfos[i].id);
         // player
         Player* player = new Player(mPlayerInfos[i], tag);
         player->SetBehaviour(new PlayerMove_C(player));
@@ -59,10 +62,18 @@ bool BattleScene::Load()
         Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics, tag);
         hero->SetBehaviour(new HeroMove_C(hero));
         float r = 13.0f;
-        float x = r * Math::Sin(Math::TwoPi / mPlayerNum * i);
-        float z = r * Math::Cos(Math::TwoPi / mPlayerNum * i);
+        float x = r * Math::Sin(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id);
+        float z = r * Math::Cos(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id);
         mat     = Matrix4::CreateTranslation(Vector3(x, 0.0f, z));
         Instantiate(hero, mat, player->GetTransform());
+
+        // player name
+        std::string namefile = "../assets/textures/battleScene/player" + std::to_string(mPlayerInfos[i].id + 1) + ".png";
+        GameObject* bill     = new SimpleBillbourd(namefile);
+        Matrix4 mat4         = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.01f);
+        mat4 *= Matrix4::CreateTranslation(Vector3(0.0f, 4.0f, 0.0f));
+        bill->GetTransform()->SetLocalMatrix(mat4);
+        Instantiate(bill, hero->GetTransform(), false);
 
         // camera
         bcm->AddHero(hero);
@@ -75,6 +86,7 @@ bool BattleScene::Load()
         Rider_C* rider = new Rider_C(hero, mPlayerInfos[i].heroInfo.riderType, tag);
         rider->SetBehaviour(new RiderMove_C(rider));
         Instantiate(rider, hero->GetTransform(), false);
+        rider->GetTransform()->SetParent(hero->GetTransform());
     }
     mPlayer = mPlayers[mMyPlayerID];
 
@@ -161,6 +173,8 @@ bool BattleScene::ProccessNetowork()
     case BattleState::CountDown:
         // std::cout << "BattleScene ContDown" << std::endl;
         std::cout << "my Id " << mMyPlayerID << std::endl;
+        Audio::SetMusicVolume(0.25);
+        Audio::PlayMusic("../assets/sounds/bgm/Comet_Trails.mp3");
         mBattleState = BattleState::Battle;
         break;
     case BattleState::Battle: {
@@ -195,6 +209,12 @@ bool BattleScene::ProccessNetowork()
                     int id                                  = playerCurrentData.id;
                     mPlayers[id]->GetHero()->mCurrentStatus = playerCurrentData.heroCurrentStatus;
                     mPlayers[id]->GetHero()->GetTransform()->SetWorldMatrix(playerCurrentData.heroTransform);
+                } break;
+                case PacketDataType::GameEnd: {
+                    Audio::PlayMusic("../assets/sounds/bgm/ピエロは暗闇で踊る.mp3");
+                    Audio::PlayChunk("../assets/sounds/se/歓声と拍手1.mp3");
+                    SimpleSprite* ss = new SimpleSprite("../assets/textures/gameend.png");
+                    Instantiate(ss);
                 } break;
                 default:
                     std::cout << "PacketData error" << std::endl;
