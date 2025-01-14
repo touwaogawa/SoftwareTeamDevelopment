@@ -26,6 +26,13 @@ void HeroMove::Start()
     } else {
         std::cout << "rigid body error hero move start()" << std::endl;
     }
+
+    // if (mTransform->GetParent()) {
+    //     std::cout << "Hero has pa from Heromove mTransform" << std::endl;
+    // }
+    // if (mOwner->GetTransform()->GetParent()) {
+    //     std::cout << "Hero has pa ffrom Heromove mOwner Gettrans" << std::endl;
+    // }
 }
 namespace {
 // デバッグ用

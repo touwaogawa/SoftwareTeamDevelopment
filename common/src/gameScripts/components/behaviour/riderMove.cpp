@@ -9,6 +9,8 @@ RiderMove::RiderMove(Rider* owner)
     : Behaviour(owner)
     , mRider(owner)
     , mHero(nullptr)
+    , dir_x(0.0f)
+    , dir_y(0.0f)
 {
     // std::cout << "riderMove constructor" << std::endl;
 }
@@ -19,10 +21,25 @@ void RiderMove::Start()
     mHero = mRider->GetHero();
     dir_x = 0.0f;
     dir_y = 0.0f;
+
+    // if (mTransform->GetParent()) {
+    //     std::cout << "rider has pa from ridermove mTransform" << std::endl;
+    // }
+    // if (mOwner->GetTransform()->GetParent()) {
+    //     std::cout << "rider has pa ffrom ridermove mOwner Gettrans" << std::endl;
+    // }
 }
 
 void RiderMove::Update()
 {
+    // std::cout << "rider pos x: " << mTransform->GetWorldPosition().x << std::endl;
+    // std::cout << "rider pos y: " << mTransform->GetWorldPosition().y << std::endl;
+    // std::cout << "rider pos z: " << mTransform->GetWorldPosition().z << std::endl;
+
+    // std::cout << "ow rider pos x: " << mOwner->GetTransform()->GetWorldPosition().x << std::endl;
+    // std::cout << "ow rider pos y: " << mOwner->GetTransform()->GetWorldPosition().y << std::endl;
+    // std::cout << "ow rider pos z: " << mOwner->GetTransform()->GetWorldPosition().z << std::endl;
+
     switch (mHero->mCurrentStatus.state) {
     case HeroState::Idle:
     case HeroState::Walking:
@@ -39,9 +56,9 @@ void RiderMove::Update()
                 float angle = Math::Atan2(faceDir.y, faceDir.x) - Math::PiOver2;
 
                 // オイラー角を直接設定
-                Vector3 eulerAngles(0.0f, angle, 0.0f); // XとZは0で、Yだけ設定
-                mTransform->SetWorldEulerAngles(eulerAngles);
-                mTransform->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
+                // Vector3 eulerAngles(0.0f, angle, 0.0f); // XとZは0で、Yだけ設定
+                Quaternion q = Quaternion(Vector3(0.0f, 1.0f, 0.0f), angle);
+                mTransform->SetWorldRotation(q);
             }
         }
     } break;

@@ -32,7 +32,6 @@ bool BattleScene::Load()
     // std::cout << "mPlayeyNum " << mPlayerNum << std::endl;
     for (int i = 0; i < mPlayerNum; i++) {
         std::string tag = "Player" + std::to_string(mPlayerInfos[i].id);
-        // std::cout << "player gen " << mPlayerInfos[i].id << std::endl;
         // player
         Player* player = new Player(mPlayerInfos[i], tag);
         player->SetBehaviour(new PlayerMove(player));
@@ -50,21 +49,13 @@ bool BattleScene::Load()
 
         // bey
         Bey* bey = new Bey(hero, mPlayerInfos[i].heroInfo.beyType, tag);
-        // std::cout << "3 " << std::endl;
         bey->SetBehaviour(new BeyMove(bey));
-        // std::cout << "3 " << std::endl;
         Instantiate(bey, hero->GetTransform(), false);
-        // std::cout << "player gen _" << i << std::endl;
 
-        // std::cout << "2 " << std::endl;
         // rider
         Rider* rider = new Rider(hero, mPlayerInfos[i].heroInfo.riderType, tag);
-        // std::cout << "2 " << std::endl;
         rider->SetBehaviour(new RiderMove(rider));
-        // std::cout << "2 " << std::endl;
         Instantiate(rider, hero->GetTransform(), false);
-
-        // std::cout << "3 " << std::endl;
     }
 
     mStage = new Stage(mPhysics, "../assets/models/stage.obj");

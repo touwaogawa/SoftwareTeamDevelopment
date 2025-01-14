@@ -44,7 +44,6 @@ bool BattleScene::Load()
     cameraComponent->Use();
     BattleCameraMove* bcm = new BattleCameraMove(camera);
     camera->SetBehaviour(bcm);
-
     Vector3 cameraPos = Vector3(0.0f, 40.0f, -40.f);
     Matrix4 mat       = Matrix4::CreateLookAt(cameraPos, Vector3(0.0f, 2.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
     Instantiate(camera, mat);
@@ -53,6 +52,8 @@ bool BattleScene::Load()
     for (int i = 0; i < mPlayerNum; i++) {
         std::string tag = "Player" + std::to_string(mPlayerInfos[i].id);
         // player
+        // std::cout << "i " << i << std::endl;
+        // std::cout << "playerid " << mPlayerInfos[i].id << std::endl;
         Player* player = new Player(mPlayerInfos[i], tag);
         player->SetBehaviour(new PlayerMove_C(player));
         Instantiate(player);
@@ -78,15 +79,14 @@ bool BattleScene::Load()
         // camera
         bcm->AddHero(hero);
 
-        // bey
-        Bey_C* bey = new Bey_C(hero, mPlayerInfos[i].heroInfo.beyType, tag);
-        bey->SetBehaviour(new BeyMove_C(bey));
-        Instantiate(bey, hero->GetTransform(), false);
         // rider
         Rider_C* rider = new Rider_C(hero, mPlayerInfos[i].heroInfo.riderType, tag);
         rider->SetBehaviour(new RiderMove_C(rider));
         Instantiate(rider, hero->GetTransform(), false);
-        rider->GetTransform()->SetParent(hero->GetTransform());
+        // bey
+        Bey_C* bey = new Bey_C(hero, mPlayerInfos[i].heroInfo.beyType, tag);
+        bey->SetBehaviour(new BeyMove_C(bey));
+        Instantiate(bey, hero->GetTransform(), false);
     }
     mPlayer = mPlayers[mMyPlayerID];
 
@@ -204,11 +204,11 @@ bool BattleScene::ProccessNetowork()
                         mPlayers[battleCommandData.id]->commandBuffer.push_front(battleCommandData.commandData);
                 } break;
                 case PacketDataType::PlayerCurrentData: {
-                    PlayerCurrentData playerCurrentData;
-                    playerCurrentData.LoadPacket(mENetEvent.packet);
-                    int id                                  = playerCurrentData.id;
-                    mPlayers[id]->GetHero()->mCurrentStatus = playerCurrentData.heroCurrentStatus;
-                    mPlayers[id]->GetHero()->GetTransform()->SetWorldMatrix(playerCurrentData.heroTransform);
+                    // PlayerCurrentData playerCurrentData;
+                    // playerCurrentData.LoadPacket(mENetEvent.packet);
+                    // int id                                  = playerCurrentData.id;
+                    // mPlayers[id]->GetHero()->mCurrentStatus = playerCurrentData.heroCurrentStatus;
+                    // mPlayers[id]->GetHero()->GetTransform()->SetWorldMatrix(playerCurrentData.heroTransform);
                 } break;
                 case PacketDataType::GameEnd: {
                     Audio::PlayMusic("../assets/sounds/bgm/ピエロは暗闇で踊る.mp3");

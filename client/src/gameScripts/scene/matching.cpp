@@ -258,7 +258,6 @@ bool MatchingScene::ProccessNetowork()
             mStartCount--;
         } else {
             // std::cout << "pre load scene" << std::endl;
-            mPreStartSprite->Destroy();
             BattleScene* battleScene = new BattleScene(myPlayerId, mPlayerInfos.size(), mPlayerInfos);
             battleScene->SetENet(mAddress, mClient, mPeer);
             SceneManager::LoadScene(battleScene);

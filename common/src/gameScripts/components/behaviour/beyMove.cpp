@@ -21,6 +21,13 @@ void BeyMove::Start()
     // std::cout << "beyMove start" << std::endl;
     mSpinPower    = 0.1;
     mMinSpinPower = 0.1;
+
+    // if (mTransform->GetParent()) {
+    //     std::cout << "Bey has pa from Beymove mTransform" << std::endl;
+    // }
+    // if (mOwner->GetTransform()->GetParent()) {
+    //     std::cout << "Bey has pa ffrom Beymove mOwner Gettrans" << std::endl;
+    // }
 }
 namespace {
 

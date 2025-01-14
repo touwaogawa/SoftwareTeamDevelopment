@@ -25,7 +25,6 @@ class Bey : public GameObject {
 public:
     explicit Bey(Hero* hero, BeyType beyType, const std::string& tag);
     virtual ~Bey() override = default;
-
     Hero* GetHero() const { return mHero; }
 
 private:
