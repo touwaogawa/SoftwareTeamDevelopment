@@ -7,39 +7,39 @@ public:
     Transform(class GameObject* owner);
     ~Transform() override;
 
-    Transform* GetParent() const;
+    Transform* GetParent() const { return mParent; }
     void SetParent(Transform* parent, bool instantiateInWorldSpace = true);
-    std::vector<Transform*> GetChildren();
+    std::vector<Transform*> GetChildren() { return mChildren; }
 
     // ワールド
-    Matrix4 GetWorldMatrix();
+    Matrix4 GetWorldMatrix() const { return mWorldMatrix; }
     void SetWorldMatrix(Matrix4 matrix);
-    Vector3 GetWorldPosition();
+    Vector3 GetWorldPosition() const { return mWorldPosition; }
     void SetWorldPosition(Vector3 position);
     void SetWorldPosition(float x, float y, float z);
-    Vector3 GetWorldScale();
+    Vector3 GetWorldScale() const { return mWorldScale; }
     void SetWorldScale(float x, float y, float z);
     void SetWorldScale(Vector3 scale);
     void SetWorldScale(float scale);
-    Quaternion GetWorldRotation();
+    Quaternion GetWorldRotation() const { return mWorldRotation; }
     void SetWorldRotation(Quaternion rotation);
-    Vector3 GetWorldEulerAngles();
+    Vector3 GetWorldEulerAngles() const { return mWorldEulerAngles; }
     void SetWorldEulerAngles(Vector3 eulerAngles);
     void TransformationWorldMatrix(Matrix4 translationMat);
 
     // ローカル
-    Matrix4 GetLocalMatrix();
+    Matrix4 GetLocalMatrix() const { return mLocalMatrix; }
     void SetLocalMatrix(Matrix4 matrix);
-    Vector3 GetLocalPosition();
+    Vector3 GetLocalPosition() const { return mLocalPosition; }
     void SetLocalPosition(Vector3 position);
     void SetLocalPosition(float x, float y, float z);
-    Vector3 GetLocalScale();
+    Vector3 GetLocalScale() const { return mLocalScale; }
     void SetLocalScale(float x, float y, float z);
     void SetLocalScale(Vector3 scale);
     void SetLocalScale(float scale);
-    Quaternion GetLocalRotation();
+    Quaternion GetLocalRotation() const { return mLocalRotation; }
     void SetLocalRotation(Quaternion rotation);
-    Vector3 GetLocalEulerAngles();
+    Vector3 GetLocalEulerAngles() const { return mLocalEulerAngles; }
     void SetLocalEulerAngles(Vector3 eulerAngles);
     void TransformationLocalMatrix(Matrix4 translationMat);
 
@@ -80,4 +80,5 @@ private:
         Vector3& eulerAngleOut);
 
     void RemoveChild(Transform* child);
+    void AddChild(Transform* child) { mChildren.push_back(this); }
 };

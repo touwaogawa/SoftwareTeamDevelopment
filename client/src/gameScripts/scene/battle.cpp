@@ -110,18 +110,17 @@ void BattleScene::SetENet(ENetAddress address, ENetHost* client, ENetPeer* peer)
 }
 void BattleScene::Update(bool& exitFrag, float timeStep)
 {
-    // std::cout << "1" << std::endl;
+    std::cout << "1" << std::endl;
     ProccessNetowork();
-    // std::cout << "2" << std::endl;
-    // Transformをdynamic objectのrp3d::Transformに反映
-    // if (mBattleState == BattleState::Battle)
-    mPhysics->SetDynamicTransform();
+    std::cout << "2" << std::endl;
 
-    // std::cout << "3" << std::endl;
+    // Transformをdynamic objectのrp3d::Transformに反映
+    mPhysics->SetDynamicTransform();
+    std::cout << "3" << std::endl;
     ProccessInput();
-    // std::cout << "4" << std::endl;
+    std::cout << "4" << std::endl;
     Scene::Update(exitFrag, timeStep);
-    // std::cout << "5" << std::endl;
+    std::cout << "5" << std::endl;
 }
 
 Stage* BattleScene::GetStage() const

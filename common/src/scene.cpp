@@ -55,22 +55,16 @@ void Scene::Update(bool& exitFrag, float timeStep_sec)
 
 void Scene::Instantiate(GameObject* original, Transform* parent, bool instantiateInWorldSpace)
 {
-    // std::cout << "a" << std::endl;
     if (original) {
-        // std::cout << "b" << std::endl;
         original->SetScene(this);
         AddGameObject(original);
         original->GetTransform()->SetParent(parent, instantiateInWorldSpace);
         Behaviour* bhv = original->GetBehaviour();
         if (bhv) {
-            // std::cout << "c" << std::endl;
             bhv->Awake();
-            // std::cout << "d" << std::endl;
             if (original->GetIsActive() || bhv->GetEnabled()) {
-                // std::cout << "e" << std::endl;
                 bhv->OnEnable();
             }
-            // std::cout << "f" << std::endl;
         }
     }
 }
