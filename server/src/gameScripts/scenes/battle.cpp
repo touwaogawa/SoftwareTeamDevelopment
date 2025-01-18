@@ -12,6 +12,7 @@
 #include "../../../../common/src/gameScripts/packetData.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
+#include "matching.h"
 #include <iostream>
 #include <reactphysics3d/reactphysics3d.h>
 #include <string>
@@ -19,6 +20,7 @@
 BattleScene::BattleScene(int playerNum, std::vector<PlayerInfo> playerInfos)
     : Scene("BattleScene")
     , mPlayerNum(playerNum)
+    , mConnectedPlayerNum(mPlayerNum)
 {
 }
 
@@ -43,20 +45,8 @@ void BattleScene::Update(bool& exitFrag, float timeStep)
     ProccessInput();
     // std::cout << "upd" << std::endl;
     Scene::Update(exitFrag, timeStep);
-
-    if (mPlayerNum > 1) {
-        int defeatplayer = 0;
-
-        for (const auto& [id, playerState] : mPlayerStates) {
-            if (playerState == PlayerState::Defeat) {
-                defeatplayer++;
-            }
-        }
-        if (defeatplayer == mPlayerNum - 1) {
-            PacketData packetData(PacketDataType::GameEnd);
-            enet_host_broadcast(mServer, 0, packetData.CreatePacket());
-            enet_host_flush(mServer);
-        }
+    if (mConnectedPlayerNum <= 0) {
+        SceneManager::LoadScene(new MatchingScene(mPlayerNum, mAddress, mServer));
     }
 }
 
@@ -90,32 +80,12 @@ bool BattleScene::ProccessNetowork()
                 // std::cout << "eetr" << std::endl;
                 switch (PacketData::RecognizePacketDatatype(mENetEvent.packet)) {
                 case PacketDataType::BattleCommand: {
-                    // std::cout << "recv bcd1" << std::endl;
                     BattleCommandData battleCommandData;
-                    // std::cout << "recv bcd2" << std::endl;
                     battleCommandData.LoadPacket(mENetEvent.packet);
-                    // std::cout << "recv bcd3" << std::endl;
-                    // コマンド追加
-                    // mPlayerCommandsBuffer[battleCommandData.commandData.frame][battleCommandData.id] = battleCommandData.commandData;
-
-                    // auto oldestPlayerCommands = mPlayerCommandsBuffer.begin();
-                    // if (oldestPlayerCommands->second.size() == mPlayerNum) {
-                    //     mPlayerCommandsBuffer.erase(oldestPlayerCommands);
-                    // } else if (oldestPlayerCommands->second.size() > mPlayerNum) {
-                    //     std::cout << "too much player commands in the same frame" << std::endl;
-                    // }
-                    // std::cout << "recv bcd4" << std::endl;
                     // コマンドを全員に送信
                     enet_host_broadcast(mServer, 0, battleCommandData.CreatePacket());
-                    // std::cout << "recv bcd5" << std::endl;
                     enet_host_flush(mServer);
-                    // std::cout << "recv bcd6" << std::endl;
 
-                } break;
-                case PacketDataType::PlayerCurrentData: {
-                    PlayerCurrentData playerCurrentData;
-                    playerCurrentData.LoadPacket(mENetEvent.packet);
-                    mPlayerStates[playerCurrentData.id] = playerCurrentData.playerState;
                 } break;
                 default:
                     std::cout << "default data" << std::endl;
@@ -123,9 +93,15 @@ bool BattleScene::ProccessNetowork()
                 }
                 enet_packet_destroy(mENetEvent.packet); // パケットの解放
                 break;
-            case ENET_EVENT_TYPE_DISCONNECT:
+            case ENET_EVENT_TYPE_DISCONNECT: {
                 std::cout << "Disconnected from server." << std::endl;
+                PacketData packetData(PacketDataType::PlayerDisConnected);
+                enet_host_broadcast(mServer, 0, packetData.CreatePacket());
+                enet_host_flush(mServer);
+                mConnectedPlayerNum--;
+
                 return false;
+            } break;
             default:
                 break;
             }

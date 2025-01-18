@@ -18,6 +18,8 @@ public:
 
     const Matrix4 GetView();
 
+    void SetOffset(Vector3 offset) { mOffset = offset; }
+
 private:
     void Enable() override {};
     void Disable() override;
@@ -25,4 +27,5 @@ private:
     bool mUseTarget;
     Vector3 mTarget;
     Vector3 mUp;
+    Vector3 mOffset;
 };

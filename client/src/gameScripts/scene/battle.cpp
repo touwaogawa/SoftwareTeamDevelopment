@@ -1,5 +1,6 @@
 #include "battle.h"
 #include "../../../../common/src/component/transform.h"
+#include "../../../../common/src/gameScripts/gameObject/safeArea.h"
 #include "../../../../common/src/gameScripts/packetData.h"
 #include "../../../../common/src/physics.h"
 #include "../../../../common/src/sceneManager.h"
@@ -14,6 +15,7 @@
 #include "../components/behaviour/riderMove.h"
 #include "../gameObject/bey.h"
 #include "../gameObject/player.h"
+#include "../gameObject/playerUI.h"
 #include "../gameObject/rider.h"
 #include "../gameObject/simpleBillbourd.h"
 #include "../gameObject/simpleCamera.h"
@@ -29,6 +31,7 @@ BattleScene::BattleScene(int myPlayerID, int playerNum, std::vector<PlayerInfo> 
     , mBattleState(BattleState::CountDown)
     , mNextBattleState(BattleState::CountDown)
     , mPlayerNum(playerNum)
+    , mConnectPlayerNum(playerNum)
     , mMyPlayerID(myPlayerID)
     , mPlayerInfos(playerInfos)
 {
@@ -46,6 +49,9 @@ bool BattleScene::Load()
     camera->GetTransform()->SetWorldPosition(Vector3(0.0f, 40.0f, -40.f));
     BattleCameraMove* bcm = new BattleCameraMove(camera);
     camera->SetBehaviour(bcm);
+
+    // safe area
+    new SafeArea();
 
     // std::cerr << "playerNum: " << mPlayerNum << std::endl;
     for (int i = 0; i < mPlayerNum; i++) {
@@ -69,7 +75,7 @@ bool BattleScene::Load()
         // player name
         std::string namefile       = "../assets/textures/battleScene/player" + std::to_string(mPlayerInfos[i].id + 1) + ".png";
         SimpleBillbourd* billbourd = new SimpleBillbourd(namefile);
-        billbourd->GetTransform()->SetLocalScale(Vector3(1.0f, 1.0f, 1.0f) * 0.01f);
+        billbourd->GetTransform()->SetLocalScale(Vector3(1.0f, 1.0f, 1.0f) * 0.005f);
         billbourd->GetTransform()->SetLocalPosition(Vector3(0.0f, 4.0f, 0.0f));
         billbourd->GetTransform()->SetParent(hero->GetTransform(), false);
 
@@ -84,6 +90,14 @@ bool BattleScene::Load()
         Bey_C* bey = new Bey_C(hero, mPlayerInfos[i].heroInfo.beyType, tag);
         bey->SetBehaviour(new BeyMove_C(bey));
         bey->GetTransform()->SetParent(hero->GetTransform(), false);
+
+        // playerUi
+        PlayerUI* playerUI = new PlayerUI(mPlayerInfos[i].id);
+        float width        = 300.0f + 240.0f / mPlayerNum;
+        float uipos_x      = -(width * (mPlayerNum - 1) * 0.5f) + (width * mPlayerInfos[i].id);
+        float uipos_y      = Renderer::GetWindowHeight() / 2.0f - 100.0f;
+        playerUI->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 0.2f);
+        playerUI->GetTransform()->SetWorldPosition(Vector3(uipos_x, uipos_y, 0.0f));
     }
     mPlayer = mPlayers[mMyPlayerID];
 
@@ -109,15 +123,6 @@ void BattleScene::Update(bool& exitFrag, float timeStep)
 {
     mBattleState = mNextBattleState;
     ProccessNetowork();
-    // while (true) {
-    //     // std::cout << "now frame : " << currentFrame << std::endl;
-    //     ProccessInput();
-    //     if (mServerCurrentFrame > currentFrame) {
-    //         currentFrame++;
-    //     } else {
-    //         break;
-    //     }
-    // }
     ProccessInput();
     switch (mBattleState) {
     case BattleState::CountDown: {
@@ -126,7 +131,7 @@ void BattleScene::Update(bool& exitFrag, float timeStep)
         while (true) {
             bool allCommand = true;
             bool allNothing = true;
-            for (int i = 0; i < mPlayerNum; i++) {
+            for (int i = 0; i < mConnectPlayerNum; i++) {
                 if (mPlayerCommands[i].begin()->second.frame != currentFrame) {
                     allCommand = false;
                 } else {
@@ -134,7 +139,7 @@ void BattleScene::Update(bool& exitFrag, float timeStep)
                 }
             }
             if (allCommand) {
-                for (int i = 0; i < mPlayerNum; i++) {
+                for (int i = 0; i < mConnectPlayerNum; i++) {
                     mPlayers[i]->SetCommandData(mPlayerCommands[i].begin()->second);
                     mPlayerCommands[i].erase(mPlayerCommands[i].begin());
                 }
@@ -148,13 +153,37 @@ void BattleScene::Update(bool& exitFrag, float timeStep)
         }
 
     } break;
+    case BattleState::Result: {
+        Scene::Update(exitFrag, timeStep);
+
+    } break;
     default:
         std::cout << "battle state error" << std::endl;
         break;
     }
-    //
-    // Transformをdynamic objectのrp3d::Transformに反映
-    // mPhysics->SetDynamicTransform();
+    int alivePlayerNum = mPlayerNum;
+    for (Player* player : mPlayers) {
+        if (player->GetPlayerState() == PlayerState::Defeat) {
+            alivePlayerNum--;
+        }
+    }
+    if (mPlayerNum > 1) {
+        if (alivePlayerNum <= 1) {
+            Audio::PlayMusic("../assets/sounds/bgm/ピエロは暗闇で踊る.mp3");
+            Audio::PlayChunk("../assets/sounds/se/歓声と拍手1.mp3");
+            // SimpleSprite* ss =
+            new SimpleSprite("../assets/textures/gameend.png");
+            SetNextBattleState(BattleState::Result);
+        }
+    } else {
+        if (alivePlayerNum <= 0) {
+            Audio::PlayMusic("../assets/sounds/bgm/ピエロは暗闇で踊る.mp3");
+            Audio::PlayChunk("../assets/sounds/se/歓声と拍手1.mp3");
+            // SimpleSprite* ss =
+            new SimpleSprite("../assets/textures/gameend.png");
+            SetNextBattleState(BattleState::Result);
+        }
+    }
 }
 
 Stage* BattleScene::GetStage() const
@@ -194,6 +223,9 @@ bool BattleScene::ProccessInput()
             std::cerr << "Failed to send packet!!" << std::endl;
         }
     } break;
+    case BattleState::Result: {
+
+    } break;
     default:
         std::cout << "battle state error" << std::endl;
         break;
@@ -220,11 +252,6 @@ bool BattleScene::ProccessNetowork()
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 switch (PacketData::RecognizePacketDatatype(mENetEvent.packet)) {
-                case PacketDataType::CurrentFrame: {
-                    CurrentFrameData currentFrameData;
-                    currentFrameData.LoadPacket(mENetEvent.packet);
-                    // サーバーのフレームと同じフレームに更新
-                } break;
                 case PacketDataType::BattleCommand: {
                     // std::cout << "recv battle command" << std::endl;
                     BattleCommandData battleCommandData;
@@ -235,22 +262,9 @@ bool BattleScene::ProccessNetowork()
                     // コマンドバッファに追加
                     if (battleCommandData.id != mMyPlayerID)
                         mPlayerCommands[battleCommandData.id][battleCommandData.commandData.frame] = battleCommandData.commandData;
-                    // mPlayerCommandsBuffer[battleCommandData.commandData.frame][battleCommandData.id] = battleCommandData.commandData;
                 } break;
-                case PacketDataType::PlayerCurrentData: {
-                    PlayerCurrentData playerCurrentData;
-                    playerCurrentData.LoadPacket(mENetEvent.packet);
-                    // int id = playerCurrentData.id;
-                    // mPlayers[id]->GetHero()->mCurrentStatus = playerCurrentData.heroCurrentStatus;
-                    // mPlayers[id]->GetHero()->GetTransform()->SetWorldPosition(playerCurrentData.heroWorldPosition);
-                    // mPlayers[id]->GetHero()->GetTransform()->SetWorldRotation(playerCurrentData.heroWorldRotation);
-                    // mPlayers[id]->GetHero()->GetTransform()->SetWorldScale(playerCurrentData.heroWorldScale);
-                } break;
-                case PacketDataType::GameEnd: {
-                    Audio::PlayMusic("../assets/sounds/bgm/ピエロは暗闇で踊る.mp3");
-                    Audio::PlayChunk("../assets/sounds/se/歓声と拍手1.mp3");
-                    // SimpleSprite* ss =
-                    new SimpleSprite("../assets/textures/gameend.png");
+                case PacketDataType::PlayerDisConnected: {
+                    mConnectPlayerNum--;
                 } break;
                 default:
                     std::cout << "PacketData error" << std::endl;
@@ -266,6 +280,9 @@ bool BattleScene::ProccessNetowork()
             }
         }
         // enet_host_flush(mClient);
+    } break;
+    case BattleState::Result: {
+
     } break;
     default:
         break;

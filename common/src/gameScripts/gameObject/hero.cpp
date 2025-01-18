@@ -83,10 +83,11 @@ Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics, const std::strin
     RigidBody* rigidBody  = new RigidBody(this, rp3d::BodyType::DYNAMIC, physics);
     rp3d::RigidBody* rprb = rigidBody->GetRp3dRogidBody();
     rprb->setMass(mBaseStatus.mass);
-    rprb->setAngularLockAxisFactor(rp3d::Vector3(0, 1, 0));
+    rprb->setAngularLockAxisFactor(rp3d::Vector3(0, 0, 0));
 
     // collider(hero body)
-    reactphysics3d::decimal radius = 1.8f; // 半径
+    reactphysics3d::decimal radius = 1.5f; // 半径
+    // reactphysics3d::decimal height = 0.9f; // 高さ
     rp3d::Vector3 position(0.0, radius, 0.0);
     rp3d::Quaternion rotation(rp3d::Quaternion::identity()); // 回転なし
     rp3d::Transform offset(position, rotation);
@@ -94,7 +95,7 @@ Hero::Hero(Player* player, HeroInfo heroInfo, Physics* physics, const std::strin
     rp3d::CollisionShape* shape = physics->GetPhysicsCommon().createSphereShape(radius);
     rp3d::Collider* collider1   = rprb->addCollider(shape, offset);
     collider1->getMaterial().setFrictionCoefficient(mBaseStatus.traction);
-    collider1->getMaterial().setBounciness(0.3f);
+    collider1->getMaterial().setBounciness(0.0f);
 
     // collider(foot)
     radius   = 0.05f;

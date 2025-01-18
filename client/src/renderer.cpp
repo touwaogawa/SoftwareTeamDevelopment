@@ -33,6 +33,8 @@ std::vector<MeshRenderer*> Renderer::mMeshRenderers;
 std::vector<MeshRenderer*> Renderer::mEffectRenderers;
 std::vector<SpriteRenderer*> Renderer::mSpriteRenderers;
 std::vector<BillbourdRenderer*> Renderer::mBillbourdRenderers;
+int Renderer::mCameraShakeFrame             = 0;
+float Renderer::mCameraShakePower           = 1.0f;
 CameraComponent* Renderer::mCameraComponent = nullptr;
 LightComponent* Renderer::mLightComponent   = nullptr;
 GLuint Renderer::mDepthMapFBO               = 0;
@@ -157,6 +159,10 @@ void Renderer::UnLoad()
 }
 void Renderer::Draw()
 {
+    if (mCameraShakeFrame >= 0) {
+        CameraShake(mCameraShakeFrame, mCameraShakePower);
+        mCameraShakeFrame--;
+    }
     if (mCameraComponent) {
         mViewPos    = mCameraComponent->GetOwner()->GetTransform()->GetWorldPosition();
         mView       = mCameraComponent->GetView();
@@ -288,10 +294,11 @@ void Renderer::RemoveBillbourdRenderer(BillbourdRenderer* billbourdRenderer)
     mBillbourdRenderers.erase(end, mBillbourdRenderers.end());
 }
 
-void Renderer::CameraShake(int frame)
+void Renderer::CameraShakeStart(int frame, float power)
 {
+    mCameraShakeFrame = frame;
+    mCameraShakePower = power;
 }
-
 void Renderer::Draw3DObjects()
 {
     glEnable(GL_DEPTH_TEST);
@@ -427,4 +434,15 @@ void Renderer::CreateSpriteVerts()
     const void* ptr = static_cast<const void*>(vertices);
     // std::cout << "Create Sprite verts before new" << std::endl;
     mSpriteVerts = new VertexArray(ptr, 6, VertexArray::Layout::PosNormTex);
+}
+
+void Renderer::CameraShake(int frame, float power)
+{
+    if (mCameraComponent) {
+        float value = static_cast<float>(frame) * 0.3f;
+        float x     = Math::Clamp(Math::Sqrt(value), 0.0f, power * 1.0f) * Math::Sin(value);
+        float y     = Math::Clamp(Math::Sqrt(value), 0.0f, power * 2.0f) * Math::Cos(value + 1);
+        float z     = Math::Clamp(Math::Sqrt(value), 0.0f, power * 0.2f) * Math::Sin(value + 2);
+        mCameraComponent->SetOffset(Vector3(x, y, z));
+    }
 }

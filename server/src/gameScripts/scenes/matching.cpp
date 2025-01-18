@@ -15,6 +15,17 @@ MatchingScene::MatchingScene(int playerNum)
 {
     mPlayerInfos.resize(mPlayerNum);
 }
+MatchingScene::MatchingScene(int playerNum, ENetAddress address, ENetHost* Server)
+    : Scene("MatchingScene")
+    , mMatchingState(MatchingState::Waiting)
+    , mPlayerNum(playerNum)
+    , mStartCount(30)
+    , mAddress(address)
+    , mServer(Server)
+{
+    mPlayerInfos.resize(mPlayerNum);
+}
+
 MatchingScene::~MatchingScene()
 {
 }

@@ -20,7 +20,8 @@ public:
     void OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair) override;
     void OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair) override;
 
-    void OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector);
+    virtual void OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector);
+    virtual void HitOther(int stopFrame, float power);
 
 private:
     Hero* const mHero;

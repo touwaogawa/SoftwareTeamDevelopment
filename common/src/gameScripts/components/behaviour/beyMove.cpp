@@ -36,22 +36,20 @@ namespace {
 void BeyMove::Update()
 {
     mRotationSpeed += mSpinPower;
-    if (mHero->mCurrentStatus.stopFrame <= 0) {
-        GetTransform()->SetWorldRotation(
-            Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(mRotationSpeed)));
-    }
     switch (mHero->mCurrentStatus.state) {
     case HeroState::Idle:
     case HeroState::Walking:
     case HeroState::Running:
+        break;
     case HeroState::RunningAttack: {
-        // mTransform->SetWorldEulerAngles(Vector3())
+        mRotationSpeed += 4.0f;
     } break;
     case HeroState::PreJump: {
     } break;
     case HeroState::AirIdle: {
     } break;
     case HeroState::KnockBack: {
+        mRotationSpeed -= 1.0f;
     } break;
     case HeroState::HitStop: {
     } break;
@@ -60,6 +58,10 @@ void BeyMove::Update()
     default:
         // std::cout << "HeroState error" << std::endl;
         break;
+    }
+    if (mHero->mCurrentStatus.stopFrame <= 0) {
+        GetTransform()->SetLocalRotation(
+            Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(mRotationSpeed)));
     }
 }
 void BeyMove::LateUpdate()

@@ -9,9 +9,11 @@
 #include <unordered_map>
 #include <vector>
 
+class Stage;
 enum class BattleState {
     CountDown,
     Battle,
+    Result,
     BattleStateNum
 };
 
@@ -43,6 +45,8 @@ private:
     ENetEvent mENetEvent;
 
     const int mPlayerNum;
+    int mConnectPlayerNum;
+
     const int mMyPlayerID;
     std::vector<Player*> mPlayers;
     // <id, <frame, commanddata>>
@@ -57,7 +61,7 @@ private:
     std::vector<struct PlayerInfo> mPlayerInfos;
 
     Player* mPlayer;
-    class Stage* mStage;
+    Stage* mStage;
 
     bool ProccessInput();
     bool ProccessNetowork();

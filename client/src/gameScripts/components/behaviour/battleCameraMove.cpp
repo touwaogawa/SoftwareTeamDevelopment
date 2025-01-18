@@ -30,17 +30,22 @@ void BattleCameraMove::LateUpdate()
 {
     if (mAliiveHeroes.size() > 0) {
 
+        // 全プレイヤーの重心
         Vector3 centerPos(0.0f, 0.0f, 0.0f);
         int num = 0;
         for (Hero* hero : mAliiveHeroes) {
             centerPos += hero->GetTransform()->GetWorldPosition();
             num++;
         }
+        // y軸の追従は減らす
+        centerPos.y *= 0.3f;
         if (num > 0) {
             centerPos.x /= num;
             centerPos.y /= num;
             centerPos.z /= num;
         }
+
+        centerPos.y += 5.0f;
 
         float maxDistance = 0.0f;
 
@@ -60,10 +65,12 @@ void BattleCameraMove::LateUpdate()
             cc->SetProjection(proj);
         }
         Vector3 vecFromCenter = centerPos - Vector3(0.0f, 0.0f, 0.0f);
-        Vector3 targetpos;
+        Vector3 targetpos; // 正中線
         if (vecFromCenter.Length() > mMaxFromCenter) {
+            // 重心が範囲外
             targetpos = mMaxFromCenter * Vector3::Normalize(vecFromCenter);
         } else {
+            // 重心が範囲内
             targetpos = centerPos;
         }
         cc->SetTarget(targetpos);

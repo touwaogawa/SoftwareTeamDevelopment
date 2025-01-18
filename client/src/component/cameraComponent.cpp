@@ -28,9 +28,7 @@ const Matrix4 CameraComponent::GetView()
 {
     if (mUseTarget) {
         // std::cout << "mUseTarget" << std::endl;
-        GetTransform()->GetWorldPosition();
-        // std::cout << "mUseTarget" << std::endl;
-        return Matrix4::CreateLookAt(GetTransform()->GetWorldPosition(), mTarget, mUp);
+        return Matrix4::CreateLookAt(GetTransform()->GetWorldPosition() + mOffset, mTarget, mUp);
         // std::cout << "mUseTarget" << std::endl;
     } else {
         // std::cout << "!mUseTarget" << std::endl;

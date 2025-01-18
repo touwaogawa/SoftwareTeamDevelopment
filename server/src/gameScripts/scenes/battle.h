@@ -21,13 +21,13 @@ public:
     bool Load() override;
     void SetENet(ENetAddress address, ENetHost* Server);
     void Update(bool& exitFrag, float timeStep) override;
-    Stage* GetStage() const;
     int GetPlayerNum() const;
 
 private:
     BattleState mBattleState = BattleState::CountDown;
     const int mPlayerNum;
-    std::map<int, PlayerState> mPlayerStates;
+    int mConnectedPlayerNum;
+
     //<frame, <id, commandData>>
     std::map<int, std::unordered_map<int, class CommandData>> mPlayerCommandsBuffer;
 

@@ -40,7 +40,7 @@ public:
     static float GetWindowWidth() { return mWindowWidth; }
     static float GetWindowHeight() { return mWindowHeight; }
 
-    static void CameraShake(int frame);
+    static void CameraShakeStart(int frame, float power);
 
 private:
     static SDL_Window* mWindow;
@@ -65,6 +65,8 @@ private:
     static std::vector<class BillbourdRenderer*> mBillbourdRenderers;
 
     // カメラ情報
+    static int mCameraShakeFrame;
+    static float mCameraShakePower;
     static CameraComponent* mCameraComponent;
     static LightComponent* mLightComponent;
 
@@ -92,4 +94,6 @@ private:
     static void DrawBillbourds();
     static void DrawSprites();
     static void CreateSpriteVerts();
+
+    static void CameraShake(int frame, float power);
 };

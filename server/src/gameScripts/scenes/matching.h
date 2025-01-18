@@ -15,6 +15,7 @@ enum class MatchingState {
 class MatchingScene : public Scene {
 public:
     MatchingScene(int playerNum);
+    MatchingScene(int playerNum, ENetAddress address, ENetHost* Server);
     ~MatchingScene() override;
     bool Load() override;
     void Update(bool& exitFrag, float timeStep) override;
