@@ -29,10 +29,7 @@ public:
     explicit Player(PlayerInfo playerInfo, const std::string& tag);
     virtual ~Player() override = default;
 
-    std::deque<CommandData> commandBuffer;
-    CommandData prevCommandData;
-
-    Hero* GetHero() const { return mHero; }
+    Hero* const GetHero() const { return mHero; }
     void SetHero(Hero* hero) { mHero = hero; }
 
     int GetID() const { return mPlayerInfo.id; }
@@ -40,8 +37,20 @@ public:
     void SetPlayerState(PlayerState playerState) { mPlayrState = playerState; }
     PlayerState GetPlayerState() const { return mPlayrState; }
 
+    const CommandData& GetCommandData() const { return mCommandData; }
+    void SetCommandData(CommandData commandData)
+    {
+        mPreCommandData = mCommandData;
+        mCommandData    = commandData;
+    }
+
+    const CommandData& GetPreCommandData() const { return mPreCommandData; }
+
 protected:
     PlayerInfo mPlayerInfo;
     Hero* mHero;
     PlayerState mPlayrState;
+
+    CommandData mCommandData;
+    CommandData mPreCommandData;
 };

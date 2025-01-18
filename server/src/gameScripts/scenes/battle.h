@@ -2,7 +2,10 @@
 #include "../../../../common/src/gameScripts/gameObject/player.h"
 #include "../../../../common/src/scene.h"
 #include <enet/enet.h>
+#include <map>
+#include <unordered_map>
 #include <vector>
+
 class Stage;
 
 enum class BattleState {
@@ -24,18 +27,14 @@ public:
 private:
     BattleState mBattleState = BattleState::CountDown;
     const int mPlayerNum;
-    std::vector<Player*> mPlayers;
-    Stage* mStage;
-
-    std::vector<PlayerInfo> mPlayerInfos;
+    std::map<int, PlayerState> mPlayerStates;
+    //<frame, <id, commandData>>
+    std::map<int, std::unordered_map<int, class CommandData>> mPlayerCommandsBuffer;
 
     ENetEvent mENetEvent;
-
     ENetAddress mAddress;
     ENetHost* mServer;
 
     bool ProccessInput();
     bool ProccessNetowork();
-    void SendCurrentFrame();
-    void SendCurrentBattleStatus();
 };

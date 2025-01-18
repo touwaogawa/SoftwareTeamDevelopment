@@ -1,6 +1,6 @@
 #pragma once
+#include "../../../../../utils/src/math.h"
 #include "../../../component/behaviour.h"
-
 class Player;
 class Hero;
 
@@ -20,11 +20,13 @@ public:
     virtual void DefeatedAction3Special() { }
 
 private:
-    Player* mPlayer;
+    Player* const mPlayer;
     Hero* mHero;
+    int mCommandDelay;
+    Vector2 mMoveAxisNorm;
+    float mStickDeadZone;
 
-    void
-    InitUpdate();
+    void InitUpdate();
     void BattleUpdate();
     void DefeatedUpdate();
 };

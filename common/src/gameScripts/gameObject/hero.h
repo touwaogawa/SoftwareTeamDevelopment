@@ -11,14 +11,14 @@ class Player;
 enum class HeroState {
     Idle,
     Walking,
-    StartRunning,
     Running,
-    StopRunning,
     RunningAttack,
     PreJump,
     BigJump,
     SmallJump,
     AirIdle,
+    AirMove,
+    AirPreJump,
     KnockBack,
     HitStop,
     Death,
@@ -26,22 +26,31 @@ enum class HeroState {
 
 };
 struct HeroBaseStatus {
-    float WalkSpeed         = 4.0f;  // 最大歩行スピード
-    float initialDushSpeed  = 3.0f;  // ダッシュ初速度
-    float dushAcceleration  = 1.5f;  // ダッシュ加速量
-    float maxDushSpeed      = 10.5f; // 最大ダッシュ速度
-    float traction          = 0.9f;  // 地上抵抗
-    float mass              = 50.0f; // 質量
-    float bigJumpVelocity   = 4.0f;
-    float smallJumpVelocity = 2.0f;
-    float airMoveSpeed      = 1.0f;
-    float attackSpeed       = 23.0f;
+    float mass               = 50.0f; // 質量
+    float walkAcceleration   = 4.0f;  // 歩行加速
+    float maxWalkSpeed       = 4.0f;  // 最大歩行スピード
+    float initialDushSpeed   = 3.0f;  // ダッシュ初速度
+    float dushAcceleration   = 1.5f;  // ダッシュ加速量
+    float maxDushSpeed       = 10.5f; // 最大ダッシュ速度
+    float traction           = 0.9f;  // 地上抵抗
+    float airAcceleration    = 5.0f;  // 空中加速
+    float maxAirSpeed        = 1.0f;  // 空中最大速度
+    float airFriction        = 4.0f;  // 空中抵抗
+    float maxFallSpeed       = 3.0f;  // 最大落下速度
+    float fastFallSpeed      = 5.0f;  // 急降下速度
+    float fullJumpVelocity   = 9.0f;  // 大ジャンプ初速度
+    float shortJumpVelocity  = 4.0f;  // 小ジャンプ初速度
+    float doubleJumpVelocity = 9.0f;  // 2段ジャンプ初速
 };
 
 struct HeroCurrentStatus {
-    HeroState state = HeroState::Idle;     // 現在の状態
-    Vector2 moveDir = Vector2(0.0f, 0.0f); // 移動している方向
-    Vector2 faceDir = Vector2(0.0f, 0.0f); // 顔のほうこう
+    HeroState state  = HeroState::Idle;     // 現在の状態
+    Vector2 faceDir  = Vector2(0.0f, 0.0f); // 顔の方向(Normalized or 0)
+    Vector2 velocity = Vector2(0.0f, 0.0f);
+    int actionFrame  = 0;
+    int stopFrame    = 0;
+    int downFrame    = 0;
+    int airJumpCount = 0;
 };
 
 struct HeroInfo {
@@ -58,14 +67,10 @@ public:
 
     void SetState(HeroState heroState)
     {
-        mCurrentStatus.state = heroState;
-        mActionFrame         = 0;
+        mCurrentStatus.state       = heroState;
+        mCurrentStatus.actionFrame = 0;
     }
     HeroState GetState() const { return mCurrentStatus.state; }
-
-    int mActionFrame;
-    int mStopFrame;
-    int mDownFrame;
 
     const HeroBaseStatus& GetBaseStatus() const { return mBaseStatus; }
 
@@ -80,7 +85,7 @@ public:
 protected:
     HeroInfo mHeroInfo;
     HeroBaseStatus mBaseStatus;
-    Player* mPlayer;
+    Player* const mPlayer;
     Rider* mRider;
     Bey* mBey;
 };

@@ -3,7 +3,6 @@
 
 class Time {
 public:
-    Time();
     static bool Init(int fps);
 
     // フレームごとに呼び出されるメソッド
@@ -16,11 +15,15 @@ public:
         std::chrono::duration<float> duration = mTime - mLastTime;
         return duration.count();
     }
+    static float GetStaticTimeStepSecond()
+    {
+        return 1.0f / mFps;
+    }
 
 private:
     static int mFps;
     static int mFrameTime;
-    static int frameCount;
+    // static int frameCount;
     static std::chrono::time_point<std::chrono::high_resolution_clock> mTime;
     static std::chrono::time_point<std::chrono::high_resolution_clock> mLastTime;
 };

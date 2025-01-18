@@ -21,6 +21,7 @@ public:
 
 private:
     MatchingState mMatchingState;
+    ENetEvent mENetEvent;
     bool ProccessInput();
     bool ProccessNetowork();
 

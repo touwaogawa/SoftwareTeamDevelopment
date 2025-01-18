@@ -1,4 +1,5 @@
 #include "matching.h"
+#include "../../../../common/src/component/transform.h"
 #include "../../../../common/src/gameScripts/gameObject/bey.h"
 #include "../../../../common/src/gameScripts/gameObject/hero.h"
 #include "../../../../common/src/gameScripts/gameObject/player.h"
@@ -38,62 +39,59 @@ MatchingScene::MatchingScene()
 bool MatchingScene::Load()
 {
     // camera
-    GameObject* camera = new SimpleCamera();
-    CameraComponent* c = camera->GetComponent<CameraComponent>();
-    c->Use();
-    Vector3 cameraPos = Vector3(0.0f, 5.0f, -20.f);
-    Matrix4 mat       = Matrix4::CreateLookAt(cameraPos, Vector3(0.0f, 2.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-    Instantiate(camera, mat);
+    SimpleCamera* camera             = new SimpleCamera();
+    CameraComponent* cameraComponent = camera->GetComponent<CameraComponent>();
+    cameraComponent->Use();
+    camera->GetTransform()->SetWorldPosition(Vector3(0.0f, 5.0f, -20.f));
 
     // stage
-    Stage_C* stage = new Stage_C(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
-    mat            = Matrix4::CreateTranslation(Vector3(0.0f, 0.0f, 0.0f));
-    Instantiate(stage, mat);
+    // Stage_C* stage =
+    new Stage_C(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
 
     // colosseum
     GameObject* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
-    mat                   = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
-    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
-    Instantiate(colosseum, mat);
+    colosseum->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
+    colosseum->GetTransform()->SetWorldPosition(Vector3(0.0f, -40.0f, 0.0f));
 
     // Player##########################################################
-    //  PlayerInfo
+
     PlayerInfo playerInfo(0, "aa", RiderType::BaseHuman, BeyType::Shuriken);
     std::string tag = "Player";
     // player
     mPlayer = new Player(playerInfo, tag);
-    mPlayer->SetBehaviour(new PlayerMove_C(mPlayer));
-    Instantiate(mPlayer);
+    // mPlayer->SetBehaviour(new PlayerMove_C(mPlayer));
 
     // hero
     Hero* hero = new Hero(mPlayer, playerInfo.heroInfo, mPhysics, tag);
     hero->SetBehaviour(new HeroMove_C(hero));
-    mat = Matrix4::CreateTranslation(Vector3(5.0f, 0.0f, 0.0f));
-    Instantiate(hero, mat, mPlayer->GetTransform());
+    hero->GetTransform()->SetParent(mPlayer->GetTransform());
+    hero->GetTransform()->SetWorldPosition(Vector3(5.0f, 0.0f, 0.0f));
 
     // rider
     Rider_C* rider = new Rider_C(hero, playerInfo.heroInfo.riderType, tag);
     rider->SetBehaviour(new RiderMove_C(rider));
-    Instantiate(rider, hero->GetTransform(), false);
+    rider->GetTransform()->SetParent(hero->GetTransform(), false);
 
     // bey
     Bey_C* bey = new Bey_C(hero, playerInfo.heroInfo.beyType, tag);
     bey->SetBehaviour(new BeyMove_C(bey));
-    Instantiate(bey, hero->GetTransform(), false);
+    bey->GetTransform()->SetParent(hero->GetTransform(), false);
     // ##########################################################
 
     // 接続中の文字
     mConnectingSprite = new SimpleSprite("../assets/textures/matchingScene/connectingServer.png");
-    mat               = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.3f);
-    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
-    Instantiate(mConnectingSprite, mat);
+    mConnectingSprite->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 0.6f);
+    mConnectingSprite->GetTransform()->SetWorldPosition(Vector3(0.0f, -350.0f, 0.0f));
 
+    std::cout << "loaded" << std::endl;
     return true;
 }
 void MatchingScene::Update(bool& exitFrag, float timeStep)
 {
     ProccessNetowork();
+    // std::cout << "after proccessNetwork" << std::endl;
     ProccessInput();
+    // std::cout << "after proccessInput" << std::endl;
     // std::cout << "rgonum : " << mRootObjects.size() << std::endl;
     Scene::Update(exitFrag, timeStep);
 }
@@ -109,8 +107,7 @@ bool MatchingScene::ProccessInput()
     switch (mMatchingState) {
     case MatchingState::Init:
 
-    case MatchingState::Connecting: {
-    }
+    case MatchingState::Connecting:
     case MatchingState::Connected: {
         CommandData commandData = {
             Input::GetButton(2),
@@ -120,7 +117,7 @@ bool MatchingScene::ProccessInput()
             Vector2(Input::GetAxis(3), -Input::GetAxis(4)),
             currentFrame
         };
-        mPlayer->commandBuffer.push_front(commandData);
+        mPlayer->SetCommandData(commandData);
     } break;
     case MatchingState::StartBattle: {
     } break;
@@ -171,9 +168,8 @@ bool MatchingScene::ProccessNetowork()
                 mConnectingSprite->Destroy();
                 // マッチング中
                 mMatchingSprite = new SimpleSprite("../assets/textures/matchingScene/matching.png");
-                Matrix4 mat     = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.3f);
-                mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
-                Instantiate(mMatchingSprite, mat);
+                mMatchingSprite->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 0.6f);
+                mMatchingSprite->GetTransform()->SetWorldPosition(Vector3(0.0f, -350.0f, 0.0f));
 
                 mMatchingState = MatchingState::Connected;
             } break;
@@ -232,9 +228,8 @@ bool MatchingScene::ProccessNetowork()
                     mStartCount = startBattleData.coutDownFrame;
 
                     mPreStartSprite = new SimpleSprite("../assets/textures/matchingScene/preStart.png");
-                    Matrix4 mat     = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 0.3f);
-                    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
-                    Instantiate(mPreStartSprite, mat);
+                    mPreStartSprite->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 0.6f);
+                    mPreStartSprite->GetTransform()->SetWorldPosition(Vector3(0.0f, -350.0f, 0.0f));
 
                     mMatchingState = MatchingState::StartBattle;
 

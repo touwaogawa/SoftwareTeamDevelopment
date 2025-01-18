@@ -2,6 +2,15 @@
 #include "../component.h"
 #include <reactphysics3d/reactphysics3d.h>
 
+class Physics;
+
+struct RigidbodySnapshot {
+    rp3d::Vector3 position;
+    rp3d::Quaternion rotation;
+    rp3d::Vector3 velocity;
+    rp3d::Vector3 angularVelocity;
+};
+
 class RigidBody : public Component {
 public:
     /// @brief Constructor
@@ -28,5 +37,5 @@ private:
     void Disable() override { mRigidBody->setIsActive(false); }
 
     rp3d::RigidBody* mRigidBody;
-    class Physics* mPhysics;
+    Physics* mPhysics;
 };

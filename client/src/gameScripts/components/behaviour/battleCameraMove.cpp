@@ -66,15 +66,13 @@ void BattleCameraMove::LateUpdate()
         } else {
             targetpos = centerPos;
         }
-        Matrix4 view = Matrix4::CreateLookAt(Vector3(0.0f, 40.0f, -40.f), targetpos, Vector3(0.0f, 1.0f, 0.0f));
-        mOwner->GetTransform()->SetWorldMatrix(view);
+        cc->SetTarget(targetpos);
     } else {
         CameraComponent* cc = mOwner->GetComponent<CameraComponent>();
         Matrix4 proj        = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f), Renderer::GetWindowWidth(), Renderer::GetWindowHeight(), 1.0f, 150.0f);
         cc->SetProjection(proj);
 
-        Matrix4 view = Matrix4::CreateLookAt(Vector3(0.0f, 40.0f, -40.f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        mOwner->GetTransform()->SetWorldMatrix(view);
+        cc->SetTarget(Vector3(0.0f, 0.0f, 0.0f));
     }
 }
 

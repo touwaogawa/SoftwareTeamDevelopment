@@ -13,8 +13,9 @@ public:
     void LateUpdate() override;
 
 private:
-    Bey* mBey;
+    Bey* const mBey;
     Hero* mHero;
     float mSpinPower;
     float mMinSpinPower;
+    float mRotationSpeed;
 };

@@ -43,22 +43,14 @@ void RiderMove::Update()
     switch (mHero->mCurrentStatus.state) {
     case HeroState::Idle:
     case HeroState::Walking:
-    case HeroState::StartRunning:
     case HeroState::Running:
-    case HeroState::StopRunning:
     case HeroState::RunningAttack: {
-        if (mHero->mStopFrame <= 0) {
+        if (mHero->mCurrentStatus.stopFrame <= 0) {
             Vector2 faceDir = mHero->mCurrentStatus.faceDir;
-
-            // ベクトルの長さがゼロでないことを確認
             if (faceDir.Length() > 0.0f) {
-                // Y軸回転角度を計算
-                float angle = Math::Atan2(faceDir.y, faceDir.x) - Math::PiOver2;
-
-                // オイラー角を直接設定
-                // Vector3 eulerAngles(0.0f, angle, 0.0f); // XとZは0で、Yだけ設定
-                Quaternion q = Quaternion(Vector3(0.0f, 1.0f, 0.0f), angle);
-                mTransform->SetWorldRotation(q);
+                float angle  = Math::Atan2(faceDir.x, -faceDir.y);
+                Quaternion q = Quaternion(Vector3(0.0f, 1.0f, 0.0f), -angle);
+                GetTransform()->SetWorldRotation(q);
             }
         }
     } break;
@@ -73,7 +65,7 @@ void RiderMove::Update()
     case HeroState::Death: {
     } break;
     default:
-        std::cout << "HeroState error" << std::endl;
+        // std::cout << "HeroState error" << std::endl;
         break;
     }
 }

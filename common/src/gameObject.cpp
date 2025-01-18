@@ -4,6 +4,7 @@
 #include "component/rigidBody.h"
 #include "component/transform.h"
 #include "scene.h"
+#include "sceneManager.h"
 #include <algorithm>
 
 GameObject::GameObject(const std::string& name, const std::string& tag, bool isActive)
@@ -14,6 +15,8 @@ GameObject::GameObject(const std::string& name, const std::string& tag, bool isA
     , mTag(tag)
 {
     AddComponent(mTransform);
+    // std::cout << "scene: " << SceneManager::GetCurrentScene() << std::endl;
+    SceneManager::GetCurrentScene()->AddGameObject(this);
 }
 
 GameObject::~GameObject()
@@ -29,7 +32,7 @@ void GameObject::SetIsActive(bool isActive)
 {
     if (mIsActive != isActive) {
         mIsActive = isActive;
-        UpdateChildren(isActive);
+        UpdateChildrenActive(isActive);
     }
 }
 
@@ -42,13 +45,17 @@ void GameObject::SetBehaviour(Behaviour* behaviour)
     mBehaviour = behaviour;
     if (mBehaviour) {
         AddComponent(mBehaviour);
+        mBehaviour->Awake();
+        if (mIsActive && mBehaviour->GetEnabled()) {
+            mBehaviour->OnEnable();
+        }
     }
 }
 
 void GameObject::AddComponent(class Component* component)
 {
     mComponents.push_back(component);
-    component->SetTransform(mTransform);
+    component->Init();
 }
 
 void GameObject::RemoveComponent(Component* component)
@@ -60,12 +67,18 @@ void GameObject::RemoveComponent(Component* component)
 void GameObject::Destroy()
 {
     for (Transform* child : mTransform->GetChildren()) {
+        child->GetLocalPosition();
         child->GetOwner()->Destroy();
     }
-    mScene->AddDestroyOject(this);
-    mScene->RemoveGameObject(this);
+    SceneManager::GetCurrentScene()->AddDestroyOject(this);
+    SceneManager::GetCurrentScene()->RemoveGameObject(this);
+
     if (mTransform->GetParent()) {
         mTransform->SetParent(nullptr);
+    }
+
+    if (mBehaviour) {
+        mBehaviour->OnDisable();
     }
 }
 
@@ -83,7 +96,7 @@ void GameObject::Disable()
     }
 }
 
-void GameObject::UpdateChildren(bool isActive)
+void GameObject::UpdateChildrenActive(bool isActive)
 {
     if (mIsActive) {
         if (isActive) {
@@ -93,6 +106,6 @@ void GameObject::UpdateChildren(bool isActive)
         }
     }
     for (Transform* child : mTransform->GetChildren()) {
-        child->GetOwner()->UpdateChildren(isActive);
+        child->GetOwner()->UpdateChildrenActive(isActive);
     }
 }

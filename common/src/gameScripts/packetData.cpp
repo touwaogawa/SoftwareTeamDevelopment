@@ -204,20 +204,20 @@ void CurrentFrameData::LoadPacket(ENetPacket* packet)
 
 PlayerCurrentData::PlayerCurrentData()
     : PacketData(PacketDataType::PlayerCurrentData)
+    , id(-1)
 {
 }
 ENetPacket* PlayerCurrentData::CreatePacket()
 {
-    size_t dataSize = sizeof(mPacketDataType) + sizeof(id) + sizeof(heroCurrentStatus) + sizeof(heroTransform);
+    size_t dataSize = sizeof(mPacketDataType) + sizeof(id) + sizeof(playerState);
     uint8_t* buffer = new uint8_t[dataSize];
     uint8_t* p      = buffer;
     memcpy(p, &mPacketDataType, sizeof(mPacketDataType));
     p += sizeof(mPacketDataType);
     memcpy(p, &id, sizeof(id));
     p += sizeof(id);
-    memcpy(p, &heroCurrentStatus, sizeof(heroCurrentStatus));
-    p += sizeof(heroCurrentStatus);
-    memcpy(p, &heroTransform, sizeof(heroTransform));
+    memcpy(p, &playerState, sizeof(playerState));
+
     ENetPacket* packet = enet_packet_create(buffer, dataSize, ENET_PACKET_FLAG_RELIABLE);
     delete[] buffer;
 
@@ -231,9 +231,7 @@ void PlayerCurrentData::LoadPacket(ENetPacket* packet)
     data += sizeof(mPacketDataType);
     memcpy(&id, data, sizeof(id));
     data += sizeof(id);
-    memcpy(&heroCurrentStatus, data, sizeof(heroCurrentStatus));
-    data += sizeof(heroCurrentStatus);
-    memcpy(&heroTransform, data, sizeof(heroTransform));
+    memcpy(&playerState, data, sizeof(playerState));
 }
 
 StartBattleData::StartBattleData()
@@ -241,6 +239,7 @@ StartBattleData::StartBattleData()
     , coutDownFrame(0)
 {
 }
+
 ENetPacket* StartBattleData::CreatePacket()
 {
     size_t dataSize = sizeof(mPacketDataType) + sizeof(coutDownFrame);
@@ -254,6 +253,7 @@ ENetPacket* StartBattleData::CreatePacket()
 
     return packet;
 }
+
 void StartBattleData::LoadPacket(ENetPacket* packet)
 {
     uint8_t* data = packet->data;

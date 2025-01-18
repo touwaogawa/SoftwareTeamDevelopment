@@ -81,70 +81,58 @@ void HeroMove::Update()
         // }
     } break;
     case HeroState::Walking: {
-        float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().WalkSpeed;
-        float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().WalkSpeed;
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, vel.y, y));
-    } break;
-    case HeroState::StartRunning: {
-        float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().initialDushSpeed;
-        float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().initialDushSpeed;
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, vel.y, y));
-        mHero->SetState(HeroState::Running);
+        Vector2 v = mHero->mCurrentStatus.velocity;
+        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(v.x, vel.y, v.y));
     } break;
     case HeroState::Running: {
-        float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().maxDushSpeed;
-        float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().maxDushSpeed;
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, vel.y, y));
-    } break;
-    case HeroState::StopRunning: {
-        if (mHeroRp3dRigidBody->getLinearVelocity().length() < mHero->GetBaseStatus().initialDushSpeed) {
-            mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(0.0, 0.0, 0.0));
-            mHero->SetState(HeroState::Idle);
-        } else {
-            // 減速
-            mHeroRp3dRigidBody->applyWorldForceAtCenterOfMass(-mHeroRp3dRigidBody->getLinearVelocity());
-        }
+        Vector2 v = mHero->mCurrentStatus.velocity;
+        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(v.x, vel.y, v.y));
     } break;
     case HeroState::RunningAttack: {
-        if (mHero->mActionFrame < 40) {
-            float x = mHero->mCurrentStatus.faceDir.x * mHero->GetBaseStatus().attackSpeed;
-            float y = mHero->mCurrentStatus.faceDir.y * mHero->GetBaseStatus().attackSpeed;
+        if (mHero->mCurrentStatus.actionFrame < 20) {
+            float x = mHero->mCurrentStatus.faceDir.x * 23.0f;
+            float y = mHero->mCurrentStatus.faceDir.y * 23.0f;
             mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, 0.0, y));
         } else {
             mHero->SetState(HeroState::Idle);
         }
     } break;
     case HeroState::PreJump: {
-        // if (mHero->mActionFrame < 2) {
-        //     mTransform->SetLocalScale(Vector3(1.0f, 1.0f - (mHero->mActionFrame * 0.1f), 1.0f));
-        // }
-        // if (mHero->mActionFrame == 2) {
-        //     mTransform->SetLocalScale(Vector3(1.0f, 1.0f, 1.0f));
-        // }
+        if (mHero->mCurrentStatus.actionFrame < 2) {
+            GetTransform()->SetLocalScale(Vector3(1.0f, 1.0f - (mHero->mCurrentStatus.actionFrame * 0.1f), 1.0f));
+        }
+        if (mHero->mCurrentStatus.actionFrame == 2) {
+            GetTransform()->SetLocalScale(Vector3(1.0f, 1.0f, 1.0f));
+        }
     } break;
     case HeroState::BigJump: {
-        // mHeroRp3dRigidBody->applyLocalForceAtCenterOfMass(rp3d::Vector3(0.0, mHero->GetBaseStatus().bigJumpVelocity, 0.0));
-        // mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().bigJumpVelocity, vel.z));
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, 6.0, vel.z));
+
+        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().fullJumpVelocity, vel.z));
         mHero->SetState(HeroState::AirIdle);
     } break;
     case HeroState::SmallJump: {
-        // mHeroRp3dRigidBody->applyWorldForceAtCenterOfMass(rp3d::Vector3(0.0, mHero->GetBaseStatus().smallJumpVelocity, 0.0));
-        // mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().smallJumpVelocity, vel.z));
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, 3.0, vel.z));
+
+        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().shortJumpVelocity, vel.z));
         mHero->SetState(HeroState::AirIdle);
     } break;
     case HeroState::AirIdle: {
-        float x = mHero->mCurrentStatus.moveDir.x * mHero->GetBaseStatus().airMoveSpeed;
-        float y = mHero->mCurrentStatus.moveDir.y * mHero->GetBaseStatus().airMoveSpeed;
-        mHeroRp3dRigidBody->applyWorldForceAtCenterOfMass(rp3d::Vector3(x, 0.0, y));
-        // mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, vel.y, y));
+    } break;
+    case HeroState::AirMove: {
+        Vector2 v = mHero->mCurrentStatus.velocity;
+        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(v.x, vel.y, v.y));
+
+    } break;
+    case HeroState::AirPreJump: {
+        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().doubleJumpVelocity, vel.z));
+        mHero->SetState(HeroState::AirIdle);
+        mHero->mCurrentStatus.airJumpCount++;
+
     } break;
     case HeroState::KnockBack: {
-        if (mHero->mActionFrame == 2) {
+        if (mHero->mCurrentStatus.actionFrame == 2) {
             mHeroRp3dRigidBody->setLinearVelocity(mKnockBackVectorBuffer);
         }
-        if (mHero->mActionFrame >= mHero->mDownFrame) {
+        if (mHero->mCurrentStatus.actionFrame >= mHero->mCurrentStatus.downFrame) {
             mHero->SetState(HeroState::Idle);
         }
     } break;
@@ -153,30 +141,30 @@ void HeroMove::Update()
         mHero->GetPlayer()->SetPlayerState(PlayerState::Defeat);
     } break;
     default:
-        std::cout << "HeroState error" << std::endl;
+        std::cout << "Update HeroState error" << std::endl;
         break;
     }
 
     // 常時処理##############################
-    if (mHero->mStopFrame > 0) {
-        mHero->mStopFrame--;
-    } else if (mHero->mStopFrame == 0) {
+    if (mHero->mCurrentStatus.stopFrame > 0) {
+        mHero->mCurrentStatus.stopFrame--;
+    } else if (mHero->mCurrentStatus.stopFrame == 0) {
         mHeroRp3dRigidBody->setLinearVelocity(mKnockBackVectorBuffer);
-        mHero->mStopFrame--;
+        mHero->mCurrentStatus.stopFrame--;
     } else {
-        mHero->mActionFrame++;
+        mHero->mCurrentStatus.actionFrame++;
     }
-    if (mHero->mDownFrame > 0) {
-        mHero->mDownFrame--;
+    if (mHero->mCurrentStatus.downFrame > 0) {
+        mHero->mCurrentStatus.downFrame--;
     }
 
-    if (mTransform->GetWorldPosition().y < -20.0f) {
+    if (GetTransform()->GetWorldPosition().y < -20.0f) {
         mHero->SetState(HeroState::Death);
         // std::cout << "death" << std::endl;
     }
-    // std::cout << "action: " << mHero->mActionFrame << std::endl;
-    // std::cout << "stop: " << mHero->mStopFrame << std::endl;
-    // std::cout << "down: " << mHero->mDownFrame << std::endl;
+    // std::cout << "action: " << mHero->mCurrentStatus.actionFrame << std::endl;
+    // std::cout << "stop: " << mHero->mCurrentStatus.stopFrame << std::endl;
+    // std::cout << "down: " << mHero->mCurrentStatus.downFrame << std::endl;
 }
 void HeroMove::LateUpdate()
 {
@@ -192,11 +180,7 @@ void HeroMove::OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider
     } break;
     case HeroState::Walking: {
     } break;
-    case HeroState::StartRunning: {
-    } break;
     case HeroState::Running: {
-    } break;
-    case HeroState::StopRunning: {
     } break;
     case HeroState::RunningAttack: {
         if (op->GetName() == "Hero") {
@@ -210,10 +194,70 @@ void HeroMove::OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider
     } break;
     case HeroState::PreJump: {
     } break;
-    case HeroState::AirIdle: {
+    case HeroState::AirIdle:
+    case HeroState::AirMove: {
+    } break;
+    case HeroState::KnockBack: {
+    } break;
+    case HeroState::HitStop: {
+    } break;
+    case HeroState::Death: {
+    } break;
+    default:
+        std::cout << "OnCollisionEnter HeroState error" << std::endl;
+        break;
+    }
+}
+void HeroMove::OnCollisionExit(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair)
+{
+    // GameObject* op = static_cast<GameObject*>(opponent->getBody()->getUserData());
+    switch (mHero->mCurrentStatus.state) {
+    case HeroState::Idle:
+    case HeroState::Walking:
+    case HeroState::Running:
+    case HeroState::RunningAttack:
+    case HeroState::PreJump: {
+    } break;
+    case HeroState::AirIdle:
+    case HeroState::AirMove: {
+    } break;
+    case HeroState::KnockBack: {
+    } break;
+    case HeroState::HitStop: {
+    } break;
+    case HeroState::Death: {
+    } break;
+    default:
+        std::cout << "OnCollisionEnter HeroState error" << std::endl;
+        break;
+    }
+}
+
+void HeroMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair)
+{
+    GameObject* op = static_cast<GameObject*>(opponent->getBody()->getUserData());
+    switch (mHero->mCurrentStatus.state) {
+    case HeroState::Idle: {
+    } break;
+    case HeroState::Walking: {
+    } break;
+    case HeroState::Running: {
+    } break;
+    case HeroState::RunningAttack: {
+
+    } break;
+    case HeroState::PreJump: {
+    } break;
+    case HeroState::AirIdle:
+    case HeroState::AirMove: {
         if (op->GetName() == "Stage") {
-            std::cout << "stage!!" << std::endl;
-            mHero->SetState(HeroState::Idle);
+            // std::cout << "on enter stage!!" << std::endl;
+            mHero->mCurrentStatus.airJumpCount = 0;
+            if (mHero->mCurrentStatus.velocity.Length() > 0) {
+                mHero->SetState(HeroState::Running);
+            } else {
+                mHero->SetState(HeroState::Idle);
+            }
         }
     } break;
     case HeroState::KnockBack: {
@@ -223,29 +267,31 @@ void HeroMove::OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider
     case HeroState::Death: {
     } break;
     default:
-        std::cout << "HeroState error" << std::endl;
+        std::cout << "OnOverlapEnter HeroState error" << std::endl;
         break;
     }
 }
-
-void HeroMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair)
+void HeroMove::OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair)
 {
+    GameObject* op = static_cast<GameObject*>(opponent->getBody()->getUserData());
     switch (mHero->mCurrentStatus.state) {
-    case HeroState::Idle: {
-    } break;
-    case HeroState::Walking: {
-    } break;
-    case HeroState::StartRunning: {
-    } break;
-    case HeroState::Running: {
-    } break;
-    case HeroState::StopRunning: {
-    } break;
-    case HeroState::RunningAttack: {
-    } break;
+    case HeroState::Idle:
+    case HeroState::Walking:
+    case HeroState::Running:
+    case HeroState::RunningAttack:
+        if (op->GetName() == "Stage") {
+            // std::cout << "on exit stage!!" << std::endl;
+            if (mHero->mCurrentStatus.velocity.Length() > 0) {
+                mHero->SetState(HeroState::AirMove);
+            } else {
+                mHero->SetState(HeroState::AirIdle);
+            }
+        }
+        break;
     case HeroState::PreJump: {
     } break;
-    case HeroState::AirIdle: {
+    case HeroState::AirIdle:
+    case HeroState::AirMove: {
     } break;
     case HeroState::KnockBack: {
     } break;
@@ -254,15 +300,15 @@ void HeroMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* 
     case HeroState::Death: {
     } break;
     default:
-        std::cout << "HeroState error" << std::endl;
+        std::cout << "OnCollisionEnter HeroState error" << std::endl;
         break;
     }
 }
 
 void HeroMove::OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector)
 {
-    mHero->mStopFrame      = stopFrame;
-    mKnockBackVectorBuffer = vector;
-    mHero->mDownFrame      = downFrame;
+    mHero->mCurrentStatus.stopFrame = stopFrame;
+    mKnockBackVectorBuffer          = vector;
+    mHero->mCurrentStatus.downFrame = downFrame;
     mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(0.0, 0.0, 0.0));
 }

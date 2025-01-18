@@ -588,7 +588,7 @@ public:
     }
 
     // Invert the matrix - super slow
-    static Matrix4 Invert(const Matrix4& mat);
+    void Invert();
 
     // Get the translation component of the matrix
     Vector3 GetTranslation() const
@@ -623,56 +623,6 @@ public:
         retVal.z = Vector3(mat[2][0], mat[2][1], mat[2][2]).Length();
         return retVal;
     }
-
-    Matrix4 GetRotationPart() const
-    {
-        Matrix4 rot;
-        Vector3 scale = GetScale();
-
-        // スケールを除去して回転行列を計算（列優先対応）
-        for (int i = 0; i < 3; ++i) {
-            rot.mat[0][i] = mat[0][i] / scale.x; // 1列目
-            rot.mat[1][i] = mat[1][i] / scale.y; // 2列目
-            rot.mat[2][i] = mat[2][i] / scale.z; // 3列目
-        }
-
-        // 残りの列（平行移動成分など）をゼロにする
-        for (int i = 0; i < 3; ++i) {
-            rot.mat[i][3] = 0.0f; // 平行移動成分除去
-            rot.mat[3][i] = 0.0f; // 最後の行をゼロに
-        }
-        rot.mat[3][3] = 1.0f; // 最後の要素は1に設定
-
-        return rot;
-    }
-
-    Vector3 GetEulerAngles() const
-    {
-        Matrix4 rotation = GetRotationPart();
-
-        // ピッチ (X軸回りの回転)
-        float pitch = std::asin(-rotation.mat[2][0]);
-
-        // ヨー (Y軸回りの回転)
-        float yaw;
-        if (std::cos(pitch) > 0.0001f) {
-            yaw = std::atan2(rotation.mat[1][0], rotation.mat[0][0]);
-        } else {
-            yaw = std::atan2(-rotation.mat[0][1], rotation.mat[1][1]);
-        }
-
-        // ロール (Z軸回りの回転)
-        float roll;
-        if (std::cos(pitch) > 0.0001f) {
-            roll = std::atan2(rotation.mat[2][1], rotation.mat[2][2]);
-        } else {
-            roll = 0.0f;
-        }
-
-        return Vector3(roll, pitch, yaw);
-    }
-
-    class Quaternion GetRotation() const;
 
     // Create a scale matrix with x, y, and z scales
     static Matrix4 CreateScale(float xScale, float yScale, float zScale)
@@ -837,53 +787,6 @@ public:
         w            = Math::Cos(angle / 2.0f);
     }
 
-    // Convert Euler angles (in radians) to Quaternion
-    explicit Quaternion(float pitch, float yaw, float roll)
-    {
-        // Calculate half angles
-        float halfPitch = pitch * 0.5f;
-        float halfYaw   = yaw * 0.5f;
-        float halfRoll  = roll * 0.5f;
-
-        // Calculate trigonometric values
-        float sinPitch = sin(halfPitch);
-        float cosPitch = cos(halfPitch);
-        float sinYaw   = sin(halfYaw);
-        float cosYaw   = cos(halfYaw);
-        float sinRoll  = sin(halfRoll);
-        float cosRoll  = cos(halfRoll);
-
-        // Compute Quaternion components
-        x = cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll;
-        y = sinYaw * cosPitch * cosRoll - cosYaw * sinPitch * sinRoll;
-        z = cosYaw * cosPitch * sinRoll - sinYaw * sinPitch * cosRoll;
-        w = cosYaw * cosPitch * cosRoll + sinYaw * sinPitch * sinRoll;
-    }
-
-    // Convert Euler angles (in radians) to Quaternion
-    explicit Quaternion(const Vector3& eulerAngle)
-    {
-
-        // Calculate half angles
-        float halfPitch = eulerAngle.x * 0.5f;
-        float halfYaw   = eulerAngle.y * 0.5f;
-        float halfRoll  = eulerAngle.z * 0.5f;
-
-        // Calculate trigonometric values
-        float sinPitch = sin(halfPitch);
-        float cosPitch = cos(halfPitch);
-        float sinYaw   = sin(halfYaw);
-        float cosYaw   = cos(halfYaw);
-        float sinRoll  = sin(halfRoll);
-        float cosRoll  = cos(halfRoll);
-
-        // Compute Quaternion components
-        x = cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll;
-        y = sinYaw * cosPitch * cosRoll - cosYaw * sinPitch * sinRoll;
-        z = cosYaw * cosPitch * sinRoll - sinYaw * sinPitch * cosRoll;
-        w = cosYaw * cosPitch * cosRoll + sinYaw * sinPitch * sinRoll;
-    }
-
     // Directly set the internal components
     void Set(float inX, float inY, float inZ, float inW)
     {
@@ -1002,6 +905,7 @@ public:
 
         return retVal;
     }
+
     static const Quaternion Identity;
 };
 

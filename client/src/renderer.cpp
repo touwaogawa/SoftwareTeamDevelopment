@@ -38,15 +38,15 @@ LightComponent* Renderer::mLightComponent   = nullptr;
 GLuint Renderer::mDepthMapFBO               = 0;
 GLuint Renderer::mDepthMap                  = 0;
 VertexArray* Renderer::mSpriteVerts         = nullptr;
-Vector3 Renderer::mViewPos;
-Matrix4 Renderer::mView;
-Matrix4 Renderer::mProjection;
-Vector3 Renderer::mLightPos;
-Matrix4 Renderer::mLightView;
-Matrix4 Renderer::mLightProjection;
-Vector3 Renderer::mLightColor         = Vector3(1.0f, 1.0f, 1.0f);
-float Renderer::mAmbientLightStrength = 0.8f;
-Vector3 Renderer::mAmbientLightColor  = Vector3(0.53f, 0.81f, 0.92f);
+Vector3 Renderer::mViewPos                  = Vector3(0.0f, 40.0f, -40.0f);
+Matrix4 Renderer::mView                     = Matrix4::CreateLookAt(mViewPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+Matrix4 Renderer::mProjection               = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f), 1920, 1080, 0.1f, 150.0f);
+Vector3 Renderer::mLightPos                 = Vector3(5.0f, 30.0f, 8.0f);
+Matrix4 Renderer::mLightView                = Matrix4::CreateLookAt(mLightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
+Matrix4 Renderer::mLightProjection          = Matrix4::CreateOrtho(45.0f, 45.0f, 1.0f, 80.0f);
+Vector3 Renderer::mLightColor               = Vector3(1.0f, 1.0f, 1.0f) * 0.85f;
+float Renderer::mAmbientLightStrength       = 0.8f;
+Vector3 Renderer::mAmbientLightColor        = Vector3(0.53f, 0.81f, 0.92f);
 
 bool Renderer::Init(float window_w, float window_h)
 {
@@ -157,24 +157,13 @@ void Renderer::UnLoad()
 }
 void Renderer::Draw()
 {
-    if (mCameraComponent == nullptr) {
-        // std::cout << "mCameraComponent == nullptr" << std::endl;
-        mViewPos    = Vector3(0.0f, 40.0f, -40.0f);
-        mView       = Matrix4::CreateLookAt(mViewPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        mProjection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f), mWindowWidth, mWindowHeight, 0.1f, 150.0f);
-    } else {
+    if (mCameraComponent) {
         mViewPos    = mCameraComponent->GetOwner()->GetTransform()->GetWorldPosition();
-        mView       = mCameraComponent->GetOwner()->GetTransform()->GetWorldMatrix();
+        mView       = mCameraComponent->GetView();
         mProjection = mCameraComponent->GetProjection();
     }
 
-    if (mLightComponent == nullptr) {
-        // std::cout << "mLightComponent == nullptr" << std::endl;
-        mLightPos        = Vector3(5.0f, 30.0f, 8.0f);
-        mLightView       = Matrix4::CreateLookAt(mLightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        mLightProjection = Matrix4::CreateOrtho(45.0f, 45.0f, 1.0f, 80.0f);
-        mLightColor      = Vector3(1.0f, 1.0f, 1.0f);
-    } else {
+    if (mLightComponent) {
         mLightPos        = mLightComponent->GetOwner()->GetTransform()->GetWorldPosition();
         mLightView       = mLightComponent->GetOwner()->GetTransform()->GetWorldMatrix();
         mLightProjection = mLightComponent->GetProjection();

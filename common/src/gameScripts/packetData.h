@@ -70,8 +70,7 @@ struct CurrentFrameData : public PacketData {
 
 struct PlayerCurrentData : public PacketData {
     int id;
-    HeroCurrentStatus heroCurrentStatus;
-    Matrix4 heroTransform;
+    PlayerState playerState;
     PlayerCurrentData();
     ENetPacket* CreatePacket() override;
     void LoadPacket(ENetPacket* packet) override;

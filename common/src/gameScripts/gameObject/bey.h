@@ -29,5 +29,5 @@ public:
 
 private:
     BeyBaseStatus mBeyBaseStatus;
-    Hero* mHero;
+    Hero* const mHero;
 };

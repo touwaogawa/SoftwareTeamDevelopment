@@ -22,5 +22,5 @@ public:
 protected:
 private:
     RiderBaseStatus mRiderBaseStatus;
-    Hero* mHero;
+    Hero* const mHero;
 };

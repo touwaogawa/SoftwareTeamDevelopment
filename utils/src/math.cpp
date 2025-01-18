@@ -6,7 +6,7 @@
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
-#include "math.h"
+#include "Math.h"
 
 const Vector2 Vector2::Zero(0.0f, 0.0f);
 const Vector2 Vector2::UnitX(1.0f, 0.0f);
@@ -86,11 +86,10 @@ Vector3 Vector3::Transform(const Vector3& v, const Quaternion& q)
     return retVal;
 }
 
-Matrix4 Matrix4::Invert(const Matrix4& matrix)
+void Matrix4::Invert()
 {
     // Thanks slow math
     // This is a really janky way to unroll everything...
-    Matrix4 newMatrix;
     float tmp[12];
     float src[16];
     float dst[16];
@@ -98,28 +97,28 @@ Matrix4 Matrix4::Invert(const Matrix4& matrix)
 
     // Transpose matrix
     // row 1 to col 1
-    src[0]  = matrix.mat[0][0];
-    src[4]  = matrix.mat[0][1];
-    src[8]  = matrix.mat[0][2];
-    src[12] = matrix.mat[0][3];
+    src[0]  = mat[0][0];
+    src[4]  = mat[0][1];
+    src[8]  = mat[0][2];
+    src[12] = mat[0][3];
 
     // row 2 to col 2
-    src[1]  = matrix.mat[1][0];
-    src[5]  = matrix.mat[1][1];
-    src[9]  = matrix.mat[1][2];
-    src[13] = matrix.mat[1][3];
+    src[1]  = mat[1][0];
+    src[5]  = mat[1][1];
+    src[9]  = mat[1][2];
+    src[13] = mat[1][3];
 
     // row 3 to col 3
-    src[2]  = matrix.mat[2][0];
-    src[6]  = matrix.mat[2][1];
-    src[10] = matrix.mat[2][2];
-    src[14] = matrix.mat[2][3];
+    src[2]  = mat[2][0];
+    src[6]  = mat[2][1];
+    src[10] = mat[2][2];
+    src[14] = mat[2][3];
 
     // row 4 to col 4
-    src[3]  = matrix.mat[3][0];
-    src[7]  = matrix.mat[3][1];
-    src[11] = matrix.mat[3][2];
-    src[15] = matrix.mat[3][3];
+    src[3]  = mat[3][0];
+    src[7]  = mat[3][1];
+    src[11] = mat[3][2];
+    src[15] = mat[3][3];
 
     // Calculate cofactors
     tmp[0]  = src[10] * src[15];
@@ -194,43 +193,9 @@ Matrix4 Matrix4::Invert(const Matrix4& matrix)
     // Set it back
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            newMatrix.mat[i][j] = dst[i * 4 + j];
+            mat[i][j] = dst[i * 4 + j];
         }
     }
-    return newMatrix;
-}
-Quaternion Matrix4::GetRotation() const
-{
-    Matrix4 rotation = GetRotationPart();
-
-    // 列優先行列に対するトレースの計算
-    float t = rotation.mat[0][0] + rotation.mat[1][1] + rotation.mat[2][2];
-    float w, x, y, z;
-
-    if (t > 0.0f) {
-        float s = std::sqrt(t + 1.0f) * 0.5f;
-        w       = s;
-        x       = (rotation.mat[2][1] - rotation.mat[1][2]) * s;
-        y       = (rotation.mat[0][2] - rotation.mat[2][0]) * s;
-        z       = (rotation.mat[1][0] - rotation.mat[0][1]) * s;
-    } else {
-        int i = 0;
-        if (rotation.mat[1][1] > rotation.mat[0][0])
-            i = 1;
-        if (rotation.mat[2][2] > (i == 0 ? rotation.mat[0][0] : rotation.mat[i][i]))
-            i = 2;
-
-        int j = (i + 1) % 3;
-        int k = (i + 2) % 3;
-
-        float s = std::sqrt(rotation.mat[i][i] - rotation.mat[j][j] - rotation.mat[k][k] + 1.0f) * 0.5f;
-        w       = (rotation.mat[k][j] - rotation.mat[j][k]) * s;
-        x       = (rotation.mat[i][j] + rotation.mat[j][i]) * s;
-        y       = (rotation.mat[i][k] + rotation.mat[k][i]) * s;
-        z       = s;
-    }
-
-    return Quaternion::Normalize(Quaternion(x, y, z, w));
 }
 
 Matrix4 Matrix4::CreateFromQuaternion(const class Quaternion& q)
@@ -238,23 +203,23 @@ Matrix4 Matrix4::CreateFromQuaternion(const class Quaternion& q)
     float mat[4][4];
 
     mat[0][0] = 1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z;
-    mat[1][0] = 2.0f * q.x * q.y + 2.0f * q.w * q.z;
-    mat[2][0] = 2.0f * q.x * q.z - 2.0f * q.w * q.y;
-    mat[3][0] = 0.0f;
-
-    mat[0][1] = 2.0f * q.x * q.y - 2.0f * q.w * q.z;
-    mat[1][1] = 1.0f - 2.0f * q.x * q.x - 2.0f * q.z * q.z;
-    mat[2][1] = 2.0f * q.y * q.z + 2.0f * q.w * q.x;
-    mat[3][1] = 0.0f;
-
-    mat[0][2] = 2.0f * q.x * q.z + 2.0f * q.w * q.y;
-    mat[1][2] = 2.0f * q.y * q.z - 2.0f * q.w * q.x;
-    mat[2][2] = 1.0f - 2.0f * q.x * q.x - 2.0f * q.y * q.y;
-    mat[3][2] = 0.0f;
-
+    mat[0][1] = 2.0f * q.x * q.y + 2.0f * q.w * q.z;
+    mat[0][2] = 2.0f * q.x * q.z - 2.0f * q.w * q.y;
     mat[0][3] = 0.0f;
+
+    mat[1][0] = 2.0f * q.x * q.y - 2.0f * q.w * q.z;
+    mat[1][1] = 1.0f - 2.0f * q.x * q.x - 2.0f * q.z * q.z;
+    mat[1][2] = 2.0f * q.y * q.z + 2.0f * q.w * q.x;
     mat[1][3] = 0.0f;
+
+    mat[2][0] = 2.0f * q.x * q.z + 2.0f * q.w * q.y;
+    mat[2][1] = 2.0f * q.y * q.z - 2.0f * q.w * q.x;
+    mat[2][2] = 1.0f - 2.0f * q.x * q.x - 2.0f * q.y * q.y;
     mat[2][3] = 0.0f;
+
+    mat[3][0] = 0.0f;
+    mat[3][1] = 0.0f;
+    mat[3][2] = 0.0f;
     mat[3][3] = 1.0f;
 
     return Matrix4(mat);

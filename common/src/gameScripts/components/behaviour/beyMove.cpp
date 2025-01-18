@@ -11,6 +11,7 @@ BeyMove::BeyMove(Bey* owner)
     , mHero(nullptr)
     , mSpinPower(0.0f)
     , mMinSpinPower(0.0f)
+    , mRotationSpeed(0.0f)
 {
     // std::cout << "beyMove constructor" << std::endl;
 }
@@ -19,8 +20,8 @@ void BeyMove::Start()
 {
     mHero = mBey->GetHero();
     // std::cout << "beyMove start" << std::endl;
-    mSpinPower    = 0.1;
-    mMinSpinPower = 0.1;
+    mSpinPower    = 6.0f;
+    mMinSpinPower = 6.0f;
 
     // if (mTransform->GetParent()) {
     //     std::cout << "Bey has pa from Beymove mTransform" << std::endl;
@@ -34,17 +35,15 @@ namespace {
 }
 void BeyMove::Update()
 {
-
-    if (mHero->mStopFrame <= 0) {
-        Matrix4 mat = Matrix4::CreateRotationY(Math::ToRadians(24));
-        mTransform->TransformationLocalMatrix(mat);
+    mRotationSpeed += mSpinPower;
+    if (mHero->mCurrentStatus.stopFrame <= 0) {
+        GetTransform()->SetWorldRotation(
+            Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(mRotationSpeed)));
     }
     switch (mHero->mCurrentStatus.state) {
     case HeroState::Idle:
     case HeroState::Walking:
-    case HeroState::StartRunning:
     case HeroState::Running:
-    case HeroState::StopRunning:
     case HeroState::RunningAttack: {
         // mTransform->SetWorldEulerAngles(Vector3())
     } break;
@@ -59,7 +58,7 @@ void BeyMove::Update()
     case HeroState::Death: {
     } break;
     default:
-        std::cout << "HeroState error" << std::endl;
+        // std::cout << "HeroState error" << std::endl;
         break;
     }
 }

@@ -25,9 +25,6 @@ public:
     /// @param timeStep //seccond
     virtual void Update(bool& exitFrag, float timeStep_sec);
 
-    void Instantiate(GameObject* original, Transform* parent = nullptr, bool instantiateInWorldSpace = true);
-    void Instantiate(GameObject* original, Matrix4 transform, Transform* parent = nullptr);
-
     void AddGameObject(GameObject* gameObject);
     void RemoveGameObject(GameObject* gameObject);
 

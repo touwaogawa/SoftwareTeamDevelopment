@@ -61,19 +61,18 @@ bool MatchingScene::ProccessNetowork()
         mMatchingState = MatchingState::Waiting;
         break;
     case MatchingState::Waiting: {
-        ENetEvent event;
-        while (enet_host_service(mServer, &event, 0) > 0) {
-            switch (event.type) {
+        while (enet_host_service(mServer, &mENetEvent, 0) > 0) {
+            switch (mENetEvent.type) {
             case ENET_EVENT_TYPE_CONNECT: {
                 std::cout << "A new client connected from "
-                          << event.peer->address.host << ":"
-                          << event.peer->address.port << std::endl;
+                          << mENetEvent.peer->address.host << ":"
+                          << mENetEvent.peer->address.port << std::endl;
                 int newId = mClientID_Peer.size();
                 IDInitData idInitData;
                 idInitData.id         = newId;
-                mClientID_Peer[newId] = event.peer;
+                mClientID_Peer[newId] = mENetEvent.peer;
                 ENetPacket* packet    = idInitData.CreatePacket();
-                if (enet_peer_send(event.peer, 0, packet) < 0) {
+                if (enet_peer_send(mENetEvent.peer, 0, packet) < 0) {
                     std::cerr << "Failed to send packet!" << std::endl;
                 }
                 // enet_host_flush(server);
@@ -81,16 +80,16 @@ bool MatchingScene::ProccessNetowork()
             } break;
             case ENET_EVENT_TYPE_RECEIVE: {
 
-                switch (PacketData::RecognizePacketDatatype(event.packet)) {
+                switch (PacketData::RecognizePacketDatatype(mENetEvent.packet)) {
                 case PacketDataType::MatchingInit: {
                     IDInitData idInitData;
-                    idInitData.LoadPacket(event.packet);
+                    idInitData.LoadPacket(mENetEvent.packet);
                     std::cout << "idInitData.id" << idInitData.id << std::endl;
 
                 } break;
                 case PacketDataType::PlayerInfo: {
                     PlayerInfoData playerInfoData;
-                    playerInfoData.LoadPacket(event.packet);
+                    playerInfoData.LoadPacket(mENetEvent.packet);
                     int id = playerInfoData.playerInfo.id;
                     std::cout << "playerInfoData.playerInfo.id" << id << std::endl;
                     mPlayerInfos[id] = playerInfoData.playerInfo;
@@ -116,7 +115,7 @@ bool MatchingScene::ProccessNetowork()
                     std::cout << "default data" << std::endl;
                     break;
                 }
-                enet_packet_destroy(event.packet); // パケットの解放
+                enet_packet_destroy(mENetEvent.packet); // パケットの解放
             } break;
             case ENET_EVENT_TYPE_DISCONNECT:
                 std::cout << "A client disconnected." << std::endl;

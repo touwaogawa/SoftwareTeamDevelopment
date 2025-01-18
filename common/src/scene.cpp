@@ -29,7 +29,7 @@ void Scene::Update(bool& exitFrag, float timeStep_sec)
 
     // std::cout << "object update" << std::endl;
     for (GameObject* gameObject : mGameObjects) {
-        // std::cout << "object update in" << std::endl;
+        // std::cout << "object update : " << gameObject->GetName() << std::endl;
         if (!gameObject->GetTransform()->GetParent())
             UpdategameScriptsFromRoot(gameObject);
         // if (gameObject->GetTransform()->GetParent())
@@ -53,42 +53,42 @@ void Scene::Update(bool& exitFrag, float timeStep_sec)
     mDestroyObjects.clear();
 }
 
-void Scene::Instantiate(GameObject* original, Transform* parent, bool instantiateInWorldSpace)
-{
-    if (original) {
-        original->SetScene(this);
-        AddGameObject(original);
-        original->GetTransform()->SetParent(parent, instantiateInWorldSpace);
-        Behaviour* bhv = original->GetBehaviour();
-        if (bhv) {
-            bhv->Awake();
-            if (original->GetIsActive() || bhv->GetEnabled()) {
-                bhv->OnEnable();
-            }
-        }
-    }
-}
-void Scene::Instantiate(GameObject* original, Matrix4 transform, Transform* parent)
-{
-    if (original) {
-        original->SetScene(this);
-        AddGameObject(original);
-        original->GetTransform()->SetWorldMatrix(transform);
-        original->GetTransform()->SetParent(parent);
-        Behaviour* bhv = original->GetBehaviour();
-        if (bhv) {
-            bhv->Awake();
-            if (original->GetIsActive() || bhv->GetEnabled()) {
-                bhv->OnEnable();
-            }
-        }
-    }
-}
+// GameObject& Scene::Instantiate(GameObject original, Transform* parent, bool instantiateInWorldSpace)
+// {
+//     GameObject* clone = new GameObject(original.GetName(), original.GetTag(), original.GetIsActive());
+//     clone->SetScene(this);
+//     AddGameObject(clone);
+//     clone->GetTransform()->SetParent(parent, instantiateInWorldSpace);
+//     Behaviour* bhv = clone->GetBehaviour();
+//     if (bhv) {
+//         bhv->Awake();
+//         if (clone->GetIsActive() || bhv->GetEnabled()) {
+//             bhv->OnEnable();
+//         }
+//     }
+//     return *clone;
+// }
+// GameObject& Scene::Instantiate(GameObject original, Vector3 position, Quaternion rotation, Transform* parent)
+// {
+//     GameObject* clone = new GameObject(original.GetName(), original.GetTag(), original.GetIsActive());
+//     clone->SetScene(this);
+//     AddGameObject(clone);
+//     clone->GetTransform()->SetWorldPosition(position);
+//     clone->GetTransform()->SetParent(parent);
+//     Behaviour* bhv = clone->GetBehaviour();
+//     if (bhv) {
+//         bhv->Awake();
+//         if (clone->GetIsActive() || bhv->GetEnabled()) {
+//             bhv->OnEnable();
+//         }
+//     }
+//     return *clone;
+// }
 
 void Scene::AddGameObject(GameObject* gameObject)
 {
     mGameObjects.push_back(gameObject);
-    // std::cout << "ro num : " << mRootObjects.size() << std::endl;
+    // std::cout << "gemobjects num : " << mGameObjects.size() << std::endl;
 }
 
 void Scene::RemoveGameObject(GameObject* gameObject)
@@ -128,6 +128,8 @@ void Scene::StartgameScriptsFromRoot(GameObject* rootObject)
 }
 void Scene::UpdategameScriptsFromRoot(GameObject* rootObject)
 {
+    // std::cout << "name : " << rootObject->GetName() << std::endl;
+
     if (rootObject->GetIsActive()) {
         // std::cout << "active" << std::endl;
         Behaviour* bhv = rootObject->GetBehaviour();

@@ -7,16 +7,21 @@ public:
     explicit Component(GameObject* owner)
         : mOwner(owner)
         , mTransform(nullptr)
+        , mIsInitialized(false)
     {
     }
+    void Init();
     virtual ~Component() = default;
-    GameObject* GetOwner() { return mOwner; }
-    void SetTransform(Transform* transform) { mTransform = transform; }
+    GameObject* const GetOwner() { return mOwner; }
+    Transform* const GetTransform() const { return mTransform; }
 
     virtual void Enable()  = 0;
     virtual void Disable() = 0;
 
 protected:
-    GameObject* mOwner;
+    GameObject* const mOwner;
+
+private:
     Transform* mTransform;
+    bool mIsInitialized;
 };
