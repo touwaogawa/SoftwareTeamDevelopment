@@ -26,7 +26,7 @@ bool TitleScene::Load()
     CameraComponent* c   = camera->GetComponent<CameraComponent>();
     c->Use();
     // std::cout << "aa" << std::endl;
-    camera->SetBehaviour(new TitleCameraMove(camera));
+    camera->SetBehaviour(new TitleCameraMove(camera, c));
     // std::cout << "aa" << std::endl;
 
     // ロゴ
@@ -42,7 +42,7 @@ bool TitleScene::Load()
 
     // stage
     // SimpleMeshModel* stage =
-    new SimpleMeshModel("../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
+    new Stage(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
 
     // colosseum
     SimpleMeshModel* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
@@ -63,8 +63,8 @@ bool TitleScene::Load()
     // Instantiate(bill, mat4);
 
     // std::cout << "aa" << std::endl;
-    // PlayerInfo playerInfo(0, "name", RiderType::BaseHuman, BeyType::Hexagram);
-    // mPlayer = new Player_C(this, playerInfo, &currentFrame);
+    PlayerInfo playerInfo(-1, "name", RiderType::BaseHuman, BeyType::Hexagram);
+    new Player(playerInfo, "title");
 
     return true;
 }

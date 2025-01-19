@@ -95,7 +95,7 @@ void HeroMove::Update()
             if (mHero->mCurrentStatus.actionFrame == 0) {
                 float x        = mHero->mCurrentStatus.faceDir.x * 14.5f;
                 float y        = mHero->mCurrentStatus.faceDir.y * 14.5f;
-                HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.7f, Vector3(x, 12.0f * 0.3, y), 10.0f, attackTime, mHero->mCurrentStatus.actionFrame);
+                HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.7f, Vector3(x, 10.0f, y), 10.0f, attackTime, mHero->mCurrentStatus.actionFrame);
                 hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, 1.7f, 0.0f));
                 hitBox->GetTransform()->SetParent(GetTransform(), false);
             }
@@ -117,31 +117,110 @@ void HeroMove::Update()
         }
     } break;
     case HeroState::PreFallAttack: {
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            mHero->SetState(HeroState::FallAttack);
+        }
     } break;
     case HeroState::FallAttack: {
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 0) {
+                mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(0.0f, -13.0f, 0.0f));
+                HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.0f, Vector3(0.0f, -1.0f, 0.0f), 3.5f, 15, mHero->mCurrentStatus.actionFrame);
+                hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.5f, 0.0f));
+                hitBox->GetTransform()->SetParent(GetTransform(), false);
+            } else if (mHero->mCurrentStatus.actionFrame < 150) {
+                if (mHero->mCurrentStatus.onGround) {
+                    mHero->SetState(HeroState::AfterFallAttack);
+                }
+                if (mHero->mCurrentStatus.actionFrame % 20 == 0) {
+                    HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.0f, Vector3(0.0f, -1.0f, 0.0f), 3.5f, 7, mHero->mCurrentStatus.actionFrame);
+                    hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.5f, 0.0f));
+                    hitBox->GetTransform()->SetParent(GetTransform(), false);
+                }
+            } else {
+                mHero->SetState(HeroState::AfterFallAttack);
+                break;
+            }
+        }
     } break;
     case HeroState::AfterFallAttack: {
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 10) {
+                if (mHero->mCurrentStatus.onGround) {
+                    mHero->SetState(HeroState::Idle);
+                } else {
+                    mHero->SetState(HeroState::AirIdle);
+                }
+            }
+        }
     } break;
     case HeroState::PreAirFrontAttack: {
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            mHero->SetState(HeroState::AirFrontAttack);
+        }
     } break;
     case HeroState::AirFrontAttack: {
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 0) {
+                mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, 1.0f, vel.z));
+            }
+            if (mHero->mCurrentStatus.actionFrame == 15) {
+                HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.4f, Vector3(0.0f, -4.0f, 0.0f), 4.5f, 12, mHero->mCurrentStatus.actionFrame);
+                hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, -0.5f, 0.0f));
+                hitBox->GetTransform()->SetParent(mHero->GetBey()->GetTransform(), false);
+            }
+            if (mHero->mCurrentStatus.actionFrame == 20) {
+                mHero->SetState(HeroState::AfterAirFrontAttack);
+            }
+        }
     } break;
     case HeroState::AfterAirFrontAttack: {
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 4) {
+                if (mHero->mCurrentStatus.onGround) {
+                    mHero->SetState(HeroState::Idle);
+                } else {
+                    mHero->SetState(HeroState::AirIdle);
+                }
+            }
+        }
     } break;
     case HeroState::PreAirBackAttack: {
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            mHero->SetState(HeroState::AirBackAttack);
+        }
     } break;
     case HeroState::AirBackAttack: {
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 0) {
+                mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, 1.0f, vel.z));
+            }
+            if (mHero->mCurrentStatus.actionFrame == 6) {
+                float x        = mHero->mCurrentStatus.faceDir.x * 8.5f;
+                float y        = mHero->mCurrentStatus.faceDir.y * 8.5f;
+                HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.2f, Vector3(x, 3.0f, y), 2.5f, 10.5, mHero->mCurrentStatus.actionFrame);
+                hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
+                hitBox->GetTransform()->SetParent(mHero->GetBey()->GetTransform(), false);
 
+                hitBox = new HitBox(mHero, mHero->GetTag(), 0.5f, Vector3(x, 3.0f, y), 2.5f, 10.5, mHero->mCurrentStatus.actionFrame);
+                hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, -0.7f, 0.0f));
+                hitBox->GetTransform()->SetParent(mHero->GetBey()->GetTransform(), false);
+            }
+            if (mHero->mCurrentStatus.actionFrame == 12) {
+                mHero->SetState(HeroState::AfterAirBackAttack);
+            }
+        }
     } break;
     case HeroState::AfterAirBackAttack: {
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 4) {
+                if (mHero->mCurrentStatus.onGround) {
+                    mHero->SetState(HeroState::Idle);
+                } else {
+                    mHero->SetState(HeroState::AirIdle);
+                }
+            }
+        }
     } break;
     case HeroState::PreJump: {
     } break;
@@ -389,10 +468,10 @@ void HeroMove::OnDamage(float damage, int stopFrame, int knockbackTime, rp3d::Ve
     mHero->mCurrentStatus.damageSum += damage;
     mHero->SetState(HeroState::KnockBack);
     float vectorPower = vector.lengthSquare();
-    if (vectorPower < 20 * 20) {
+    if (vectorPower < 40 * 40) {
         Audio::PlayChunk("../assets/sounds/se/軽いキック1.mp3");
 
-    } else if (vectorPower < 30 * 30) {
+    } else if (vectorPower < 70 * 70) {
         Audio::PlayChunk("../assets/sounds/se/重いパンチ1.mp3");
 
     } else {

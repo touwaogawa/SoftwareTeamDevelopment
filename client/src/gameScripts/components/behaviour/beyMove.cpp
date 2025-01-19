@@ -55,6 +55,7 @@ void BeyMove::Update()
 
     } break;
     case HeroState::FallAttack: {
+        mSpinPower = 0.0f;
 
     } break;
     case HeroState::AfterFallAttack: {

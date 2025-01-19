@@ -32,7 +32,9 @@ const Matrix4 CameraComponent::GetView()
         // std::cout << "mUseTarget" << std::endl;
     } else {
         // std::cout << "!mUseTarget" << std::endl;
-        return GetTransform()->GetWorldMatrix();
+        Matrix4 view = GetTransform()->GetWorldMatrix();
+        view.Invert();
+        return view;
     }
 }
 

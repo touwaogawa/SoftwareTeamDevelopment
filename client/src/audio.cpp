@@ -109,6 +109,7 @@ Mix_Chunk* Audio::GetMixChunk(const std::string& fileName)
             mMix_Chunks.emplace(fileName, chunk);
         } else {
             Mix_FreeChunk(chunk);
+            std::cout << "mMix chunk null : " << fileName << std::endl;
             chunk = nullptr;
         }
     }

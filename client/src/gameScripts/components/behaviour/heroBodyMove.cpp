@@ -67,6 +67,18 @@ void HeroBodyMove::Update()
         GetTransform()->SetWorldRotation(resultQ);
     } break;
     case HeroState::PreRunningAttack: {
+        Vector2 faceDir = mHero->mCurrentStatus.faceDir;
+        float angle     = Math::Atan2(faceDir.x, -faceDir.y);
+        Quaternion q    = Quaternion(Vector3(0.0f, 1.0f, 0.0f), -angle);
+        Quaternion resultQ;
+        float slerpTime = 20.0f;
+        if (mHero->mCurrentStatus.actionFrame < slerpTime) {
+            Quaternion preQ = GetTransform()->GetLocalRotation();
+            resultQ         = Quaternion::Slerp(preQ, q, (mHero->mCurrentStatus.actionFrame + 1.0f) / slerpTime);
+        } else {
+            resultQ = q;
+        }
+        GetTransform()->SetWorldRotation(resultQ);
     } break;
     case HeroState::RunningAttack: {
     } break;
@@ -85,6 +97,15 @@ void HeroBodyMove::Update()
 
     } break;
     case HeroState::AirFrontAttack: {
+        if (mHero->mCurrentStatus.actionFrame < 10) {
+            Quaternion rotation = Quaternion::Concatenate(Quaternion(Vector3(1.0f, 0.0f, 0.0f), Math::ToRadians(-15.0f)), GetTransform()->GetLocalRotation());
+            GetTransform()->SetLocalRotation(rotation);
+
+        } else if (mHero->mCurrentStatus.actionFrame < 18) {
+            Quaternion rotation = Quaternion::Concatenate(Quaternion(Vector3(1.0f, 0.0f, 0.0f), Math::ToRadians(-25.0f)), GetTransform()->GetLocalRotation());
+            GetTransform()->SetLocalRotation(rotation);
+        } else if (mHero->mCurrentStatus.actionFrame < 18) {
+        }
 
     } break;
     case HeroState::AfterAirFrontAttack: {
@@ -94,7 +115,12 @@ void HeroBodyMove::Update()
 
     } break;
     case HeroState::AirBackAttack: {
-
+        if (mHero->mCurrentStatus.actionFrame < 6) {
+            Quaternion target   = Quaternion(Vector3(1.0f, 0.0f, 0.0f), Math::ToRadians(90.0f));
+            Quaternion trot     = Quaternion::Slerp(Quaternion::Identity, target, mHero->mCurrentStatus.actionFrame / 6.0f);
+            Quaternion rotation = Quaternion::Concatenate(trot, GetTransform()->GetLocalRotation());
+            GetTransform()->SetLocalRotation(rotation);
+        }
     } break;
     case HeroState::AfterAirBackAttack: {
 

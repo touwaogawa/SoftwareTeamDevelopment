@@ -8,6 +8,8 @@
 #include "../../component/cameraComponent.h"
 #include "../../component/meshRenderer.h"
 #include "../components/behaviour/battleCameraMove.h"
+#include "../components/behaviour/battleColosseumMove.h"
+#include "../components/behaviour/battleStartMove.h"
 #include "../components/behaviour/effect/faceDirMove.h"
 #include "../components/behaviour/playerMove.h"
 #include "../gameObject/player.h"
@@ -127,6 +129,7 @@ bool BattleScene::Load()
     SimpleMeshModel* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
     colosseum->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
     colosseum->GetTransform()->SetWorldPosition(Vector3(0.0f, -40.0f, 0.0f));
+    colosseum->SetBehaviour(new BattleColosseumMove(colosseum));
 
     mPhysics->SetDynamicTransform();
 
@@ -146,6 +149,20 @@ void BattleScene::Update(bool& exitFrag, float timeStep)
     ProccessInput();
     switch (mBattleState) {
     case BattleState::CountDown: {
+        if (currentFrame == 0) {
+            Renderer::CameraShakeStart(60 * 4, 0.1f);
+        }
+        if (currentFrame == 60 * 4 + 50) {
+            SimpleSprite* startBattle = new SimpleSprite("../assets/textures/battleScene/letsGo.png");
+            startBattle->SetBehaviour(new BattleStartMove(startBattle));
+            Audio::PlayChunk("../assets/sounds/se/火炎魔法3.mp3");
+        }
+        if (currentFrame == 60 * 5) {
+            Audio::SetMusicVolume(0.25);
+            Audio::PlayMusic("../assets/sounds/bgm/Comet_Trails.mp3");
+            SetNextBattleState(BattleState::Battle);
+        }
+        Scene::Update(exitFrag, timeStep);
     } break;
     case BattleState::Battle: {
         while (true) {
@@ -258,10 +275,8 @@ bool BattleScene::ProccessNetowork()
     switch (mBattleState) {
     case BattleState::CountDown:
         // std::cout << "BattleScene ContDown" << std::endl;
-        std::cout << "my Id " << mMyPlayerID << std::endl;
-        Audio::SetMusicVolume(0.25);
-        Audio::PlayMusic("../assets/sounds/bgm/Comet_Trails.mp3");
-        SetNextBattleState(BattleState::Battle);
+        // std::cout << "my Id " << mMyPlayerID << std::endl;
+
         break;
     case BattleState::Battle: {
         // std::cout << "battle state battle" << std::endl;

@@ -50,7 +50,7 @@ void HitBoxMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider
 
         rp3d::Vector3 hitVector(mHitVector.x, mHitVector.y, mHitVector.z);
         hitVector *= (1.0f + hero->mCurrentStatus.damageSum * 0.01f);
-        int stopFrame = static_cast<int>(10 + Math::Clamp(static_cast<int>(hitVector.length() * 0.05), 0, 50));
+        int stopFrame = static_cast<int>(7 + Math::Clamp(static_cast<int>(hitVector.length() * 0.05), 0, 50));
         heroMove->OnDamage(mDamage, stopFrame, knockbackTime, hitVector);
 
         // 自分の処理

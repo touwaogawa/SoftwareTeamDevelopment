@@ -3,7 +3,6 @@
 uniform mat4 view;  
 uniform mat4 projection;  
 uniform mat4 model;
-uniform vec3 scale;
 uniform bool isSpherical;
 
 layout(location = 0) in vec3 position;  // 頂点位置

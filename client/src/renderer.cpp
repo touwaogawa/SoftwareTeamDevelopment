@@ -47,9 +47,10 @@ Matrix4 Renderer::mProjection               = Matrix4::CreatePerspectiveFOV(Math
 Vector3 Renderer::mLightPos                 = Vector3(5.0f, 30.0f, 8.0f);
 Matrix4 Renderer::mLightView                = Matrix4::CreateLookAt(mLightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
 Matrix4 Renderer::mLightProjection          = Matrix4::CreateOrtho(45.0f, 45.0f, 1.0f, 80.0f);
-Vector3 Renderer::mLightColor               = Vector3(0.9f, 0.9f, 0.8f);
-float Renderer::mAmbientLightStrength       = 0.8f;
-Vector3 Renderer::mAmbientLightColor        = Vector3(0.53f, 0.81f, 0.92f);
+// Vector3 Renderer::mLightColor               = Vector3(0.9f, 0.9f, 0.8f);
+Vector3 Renderer::mLightColor         = Vector3(0.4f, 0.9f, 0.8f);
+float Renderer::mAmbientLightStrength = 0.8f;
+Vector3 Renderer::mAmbientLightColor  = Vector3(0.53f, 0.81f, 0.92f);
 
 bool Renderer::Init(float window_w, float window_h)
 {
@@ -178,8 +179,8 @@ void Renderer::Draw()
     }
 
     // std::cout << "Draw" << std::endl;
-    glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
-    // glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
+    // glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
+    glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // std::cout << "draw 1" << std::endl;
     Draw3DObjects();
@@ -486,10 +487,10 @@ void Renderer::CreateSpriteVerts()
 void Renderer::CameraShake(int frame, float power)
 {
     if (mCameraComponent) {
-        float value = static_cast<float>(frame) * 0.3f;
+        float value = static_cast<float>(frame) * Math::Pi;
         float x     = Math::Clamp(Math::Sqrt(value), 0.0f, power * 1.0f) * Math::Sin(value);
-        float y     = Math::Clamp(Math::Sqrt(value), 0.0f, power * 2.0f) * Math::Cos(value + 1);
-        float z     = Math::Clamp(Math::Sqrt(value), 0.0f, power * 0.2f) * Math::Sin(value + 2);
+        float y     = Math::Clamp(Math::Sqrt(value), 0.0f, power * 2.0f) * Math::Cos(value + 0.1);
+        float z     = Math::Clamp(Math::Sqrt(value), 0.0f, power * 0.2f) * Math::Sin(value + 0.2);
         mCameraComponent->SetOffset(Vector3(x, y, z));
     }
 }

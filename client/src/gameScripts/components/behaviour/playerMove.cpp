@@ -200,6 +200,10 @@ void PlayerMove::BattleUpdate()
             mHero->SetState(HeroState::AirMove);
             break;
         }
+        if (com.attack1 && !preCom.attack1) {
+            mHero->SetState(HeroState::PreFallAttack);
+            break;
+        }
         if (com.jump && !preCom.jump) {
             if (mHero->mCurrentStatus.airJumpCount == 0) {
                 mHero->SetState(HeroState::AirPreJump);
@@ -219,7 +223,16 @@ void PlayerMove::BattleUpdate()
             if (velocity.Length() > maxAirSpeed) {
                 velocity = Vector2::Normalize(velocity) * maxAirSpeed;
             }
-
+            //
+            if (com.attack1 && !preCom.attack1) {
+                if (Vector2::Dot(com.moveAxis, mHero->mCurrentStatus.faceDir) > 0) {
+                    mHero->SetState(HeroState::PreAirFrontAttack);
+                    break;
+                } else {
+                    mHero->SetState(HeroState::PreAirBackAttack);
+                    break;
+                }
+            }
             if (com.jump && !preCom.jump) {
                 if (mHero->mCurrentStatus.airJumpCount == 0) {
                     mHero->SetState(HeroState::AirPreJump);
