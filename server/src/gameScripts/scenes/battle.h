@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../../common/src/gameScripts/gameObject/player.h"
+#include "../../../../common/src/gameScripts/playerInfo.h"
 #include "../../../../common/src/scene.h"
 #include <enet/enet.h>
 #include <map>

@@ -1,6 +1,5 @@
 #include "battle.h"
 #include "../../../../common/src/component/transform.h"
-#include "../../../../common/src/gameScripts/gameObject/safeArea.h"
 #include "../../../../common/src/gameScripts/packetData.h"
 #include "../../../../common/src/physics.h"
 #include "../../../../common/src/sceneManager.h"
@@ -17,6 +16,7 @@
 #include "../gameObject/player.h"
 #include "../gameObject/playerUI.h"
 #include "../gameObject/rider.h"
+#include "../gameObject/safeArea.h"
 #include "../gameObject/simpleBillbourd.h"
 #include "../gameObject/simpleCamera.h"
 #include "../gameObject/simpleMeshModel.h"
@@ -60,17 +60,41 @@ bool BattleScene::Load()
         // std::cout << "i " << i << std::endl;
         // std::cout << "playerid " << mPlayerInfos[i].id << std::endl;
         Player* player = new Player(mPlayerInfos[i], tag);
-        player->SetBehaviour(new PlayerMove_C(player));
         mPlayers.push_back(player);
 
-        // hero
-        Hero* hero = new Hero(player, mPlayerInfos[i].heroInfo, mPhysics, tag);
-        hero->SetBehaviour(new HeroMove_C(hero));
+        Hero* hero = player->GetHero();
+        Vector3 heroPos;
         float r = 13.0f;
-        float x = r * Math::Sin(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id);
-        float z = r * Math::Cos(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id);
-        hero->GetTransform()->SetWorldPosition(Vector3(x, 0.0f, z));
-        hero->GetTransform()->SetParent(player->GetTransform());
+        switch (mPlayerNum) {
+        case 1: {
+            heroPos = Vector3(0.0f, 0.0f, 0.0f);
+        } break;
+        case 2: {
+
+            float x = r * Math::Cos(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id + Math::Pi);
+            float z = r * Math::Sin(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id + Math::Pi);
+            heroPos = Vector3(x, 0.0f, z);
+        } break;
+        case 3: {
+            float x = r * Math::Cos(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id + Math::PiOver2);
+            float z = r * Math::Sin(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id + Math::PiOver2);
+            heroPos = Vector3(x, 0.0f, z);
+
+        } break;
+        case 4: {
+            float x = r * Math::Cos(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id + (Math::Pi + Math::PiOver2) * 0.5f);
+            float z = r * Math::Sin(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id + (Math::Pi + Math::PiOver2) * 0.5f);
+            heroPos = Vector3(x, 0.0f, z);
+
+        } break;
+        default: {
+            float x = r * Math::Cos(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id - Math::PiOver2);
+            float z = r * Math::Sin(Math::TwoPi / mPlayerNum * mPlayerInfos[i].id - Math::PiOver2);
+            heroPos = Vector3(x, 0.0f, z);
+
+        } break;
+        }
+        hero->GetTransform()->SetWorldPosition(heroPos);
 
         // player name
         std::string namefile       = "../assets/textures/battleScene/player" + std::to_string(mPlayerInfos[i].id + 1) + ".png";
@@ -81,16 +105,6 @@ bool BattleScene::Load()
 
         // camera
         bcm->AddHero(hero);
-
-        // rider
-        // std::cout << "mPlayerInfos[" << i << "].id" << mPlayerInfos[i].id << std::endl;
-        Rider_C* rider = new Rider_C(hero, mPlayerInfos[i].heroInfo.riderType, tag, mPlayerInfos[i].id);
-        rider->SetBehaviour(new RiderMove_C(rider));
-        rider->GetTransform()->SetParent(hero->GetTransform(), false);
-        // bey
-        Bey_C* bey = new Bey_C(hero, mPlayerInfos[i].heroInfo.beyType, tag);
-        bey->SetBehaviour(new BeyMove_C(bey));
-        bey->GetTransform()->SetParent(hero->GetTransform(), false);
 
         // playerUi
         PlayerUI* playerUI = new PlayerUI(mPlayerInfos[i].id);

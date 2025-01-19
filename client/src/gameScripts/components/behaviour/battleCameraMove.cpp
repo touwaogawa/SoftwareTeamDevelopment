@@ -1,11 +1,11 @@
 #include "battleCameraMove.h"
 #include "../../../../../common/src/component/transform.h"
 #include "../../../../../common/src/gameObject.h"
-#include "../../../../../common/src/gameScripts/gameObject/hero.h"
-#include "../../../../../common/src/gameScripts/gameObject/player.h"
 #include "../../../../../utils/src/math.h"
 #include "../../../component/cameraComponent.h"
 #include "../../../renderer.h"
+#include "../../gameObject/hero.h"
+#include "../../gameObject/player.h"
 #include "../../scene/battle.h"
 #include <vector>
 

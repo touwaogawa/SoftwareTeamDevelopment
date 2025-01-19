@@ -1,6 +1,6 @@
 #pragma once
 #include "commandData.h"
-#include "gameObject/player.h"
+#include "playerInfo.h"
 #include <cstring>
 #include <enet/enet.h>
 #include <iostream>

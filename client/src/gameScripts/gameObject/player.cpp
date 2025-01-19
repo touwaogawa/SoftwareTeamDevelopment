@@ -1,8 +1,16 @@
 #include "player.h"
+#include "../../../../common/src/component/transform.h"
 #include "../components/behaviour/playerMove.h"
 #include "hero.h"
 #include <iostream>
-Player_C::Player_C(PlayerInfo playerInfo, const std::string& tag)
-    : Player(playerInfo, tag)
+
+Player::Player(PlayerInfo playerInfo, const std::string& tag)
+    : GameObject("Player", tag)
+    , mPlayerInfo(playerInfo)
+    , mPlayrState(PlayerState::Battle)
+    , mHero(new Hero(this, playerInfo.heroInfo, tag))
 {
+    // std::cout << "player constructor" << std::endl;
+    SetBehaviour(new PlayerMove(this, mHero));
+    mHero->GetTransform()->SetParent(GetTransform());
 }

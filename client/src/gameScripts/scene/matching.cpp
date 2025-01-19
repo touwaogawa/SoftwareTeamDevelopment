@@ -1,9 +1,5 @@
 #include "matching.h"
 #include "../../../../common/src/component/transform.h"
-#include "../../../../common/src/gameScripts/gameObject/bey.h"
-#include "../../../../common/src/gameScripts/gameObject/hero.h"
-#include "../../../../common/src/gameScripts/gameObject/player.h"
-#include "../../../../common/src/gameScripts/gameObject/rider.h"
 #include "../../../../common/src/gameScripts/packetData.h"
 #include "../../../../common/src/physics.h"
 #include "../../../../common/src/sceneManager.h"
@@ -14,7 +10,7 @@
 #include "../components/behaviour/heroMove.h"
 #include "../components/behaviour/playerMove.h"
 #include "../components/behaviour/riderMove.h"
-#include "../gameObject/bey.h"
+#include "../gameObject/player.h"
 #include "../gameObject/rider.h"
 #include "../gameObject/simpleCamera.h"
 #include "../gameObject/simpleMeshModel.h"
@@ -59,23 +55,8 @@ bool MatchingScene::Load()
     std::string tag = "Player";
     // player
     mPlayer = new Player(playerInfo, tag);
-    // mPlayer->SetBehaviour(new PlayerMove_C(mPlayer));
+    mPlayer->GetHero()->GetTransform()->SetWorldPosition(Vector3(5.0f, 0.0f, 0.0f));
 
-    // hero
-    Hero* hero = new Hero(mPlayer, playerInfo.heroInfo, mPhysics, tag);
-    hero->SetBehaviour(new HeroMove_C(hero));
-    hero->GetTransform()->SetParent(mPlayer->GetTransform());
-    hero->GetTransform()->SetWorldPosition(Vector3(5.0f, 0.0f, 0.0f));
-
-    // rider
-    Rider_C* rider = new Rider_C(hero, playerInfo.heroInfo.riderType, tag, -1);
-    rider->SetBehaviour(new RiderMove_C(rider));
-    rider->GetTransform()->SetParent(hero->GetTransform(), false);
-
-    // bey
-    Bey_C* bey = new Bey_C(hero, playerInfo.heroInfo.beyType, tag);
-    bey->SetBehaviour(new BeyMove_C(bey));
-    bey->GetTransform()->SetParent(hero->GetTransform(), false);
     // ##########################################################
 
     // 接続中の文字

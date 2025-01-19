@@ -1,12 +1,12 @@
 #include "rider.h"
 #include "../../component/meshRenderer.h"
 #include "../components/behaviour/riderMove.h"
+#include "hero.h"
 #include <iostream>
-#include <string>
-Rider_C::Rider_C(Hero* hero, RiderType riderType, const std::string& tag, int playerID)
-    : Rider(hero, riderType, tag)
+Rider::Rider(Hero* hero, RiderType riderType, const std::string& tag, int playerID)
+    : GameObject("Rider", tag)
+    , mHero(hero)
 {
-    // std::cout << "Rider_C constructer" << std::endl;
     std::string texture;
     switch (riderType) {
     case RiderType::BaseHuman:
@@ -35,4 +35,20 @@ Rider_C::Rider_C(Hero* hero, RiderType riderType, const std::string& tag, int pl
         std::cout << "RiderType error" << std::endl;
         break;
     }
+
+    switch (riderType) {
+    case RiderType::BaseHuman:
+        mRiderBaseStatus = {
+            50.0f
+        };
+        break;
+    default:
+        std::cout << "RiderType error" << std::endl;
+        mRiderBaseStatus = {
+            50.0f
+        };
+        break;
+    }
+    // std::cout << "rider constructor" << std::endl;
+    SetBehaviour(new RiderMove(this, mHero));
 }

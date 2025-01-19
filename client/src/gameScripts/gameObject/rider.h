@@ -1,12 +1,22 @@
 #pragma once
-#include "../../../../common/src/gameScripts/gameObject/rider.h"
+#include "../../../../common/src/gameObject.h"
+#include "../../../../common/src/gameScripts/riderInfo.h"
 #include <string>
 
+class RiderMove;
 class Hero;
-class Rider_C : public Rider {
+
+struct RiderBaseStatus {
+    float mass = 50.0f; // 質量
+};
+
+class Rider : public GameObject {
 public:
-    Rider_C(Hero* hero, RiderType riderType, const std::string& tag, int playerID);
-    ~Rider_C() override = default;
+    Rider(Hero* hero, RiderType riderType, const std::string& tag, int playerID);
+    ~Rider() override = default;
+    Hero* const GetHero() const { return mHero; }
 
 private:
+    RiderBaseStatus mRiderBaseStatus;
+    Hero* const mHero;
 };

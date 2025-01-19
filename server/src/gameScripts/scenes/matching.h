@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../../common/src/gameScripts/gameObject/player.h"
+#include "../../../../common/src/gameScripts/playerInfo.h"
 #include "../../../../common/src/scene.h"
 #include <enet/enet.h>
 #include <map>
@@ -22,14 +22,18 @@ public:
 
 private:
     MatchingState mMatchingState;
-    ENetEvent mENetEvent;
-    bool ProccessInput();
-    bool ProccessNetowork();
+    const int mPlayerNum;
+    int mStartCount;
 
     ENetAddress mAddress;
     ENetHost* mServer;
+
+    ENetEvent mENetEvent;
+
     std::map<int, ENetPeer*> mClientID_Peer;
-    int mPlayerNum;
+
     std::vector<PlayerInfo> mPlayerInfos;
-    int mStartCount;
+
+    bool ProccessInput();
+    bool ProccessNetowork();
 };

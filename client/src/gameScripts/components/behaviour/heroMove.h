@@ -1,14 +1,30 @@
 #pragma once
-#include "../../../../../common/src/gameScripts/components/behaviour/heroMove.h"
+#include "../../../../../common/src/component/behaviour.h"
+#include "../../../../../utils/src/math.h"
+#include <reactphysics3d/reactphysics3d.h>
 
+class Vector2;
 class Hero;
-class HeroMove_C : public HeroMove {
+class HeroMove : public Behaviour {
 public:
-    HeroMove_C(Hero* owner);
-    ~HeroMove_C() override = default;
+    explicit HeroMove(Hero* owner);
+    virtual ~HeroMove() override = default;
 
-    void OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector) override;
-    void HitOther(int stopFrame, float power) override;
+    void Start() override;
+    void Update() override;
+    void LateUpdate() override;
+
+    void OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair) override;
+    void OnCollisionExit(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair) override;
+
+    void OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair) override;
+    void OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair) override;
+
+    virtual void OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector);
+    virtual void HitOther(int stopFrame, float power);
 
 private:
+    Hero* const mHero;
+    rp3d::RigidBody* mHeroRp3dRigidBody;
+    rp3d::Vector3 mKnockBackVectorBuffer;
 };
