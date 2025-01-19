@@ -46,7 +46,7 @@ bool MatchingScene::Load()
 
     // stage
     // Stage_C* stage =
-    new Stage_C(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
+    new Stage(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
 
     // colosseum
     GameObject* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
@@ -68,7 +68,7 @@ bool MatchingScene::Load()
     hero->GetTransform()->SetWorldPosition(Vector3(5.0f, 0.0f, 0.0f));
 
     // rider
-    Rider_C* rider = new Rider_C(hero, playerInfo.heroInfo.riderType, tag);
+    Rider_C* rider = new Rider_C(hero, playerInfo.heroInfo.riderType, tag, -1);
     rider->SetBehaviour(new RiderMove_C(rider));
     rider->GetTransform()->SetParent(hero->GetTransform(), false);
 

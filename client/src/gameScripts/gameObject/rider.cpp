@@ -24,10 +24,12 @@ Rider_C::Rider_C(Hero* hero, RiderType riderType, const std::string& tag, int pl
             texture = "../assets/textures/humanColor_yellow.png";
         } break;
         default: {
-            std::cout << "rider : playerID error" << std::endl;
+            texture = "../assets/textures/humanColor.png";
+            // std::cout << "rider : playerID error" << std::endl;
         }
         }
         AddComponent(new MeshRenderer(this, "../assets/models/BaseHuman.obj", texture));
+
         break;
     default:
         std::cout << "RiderType error" << std::endl;

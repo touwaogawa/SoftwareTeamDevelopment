@@ -12,7 +12,18 @@ enum class HeroState {
     Idle,
     Walking,
     Running,
+    PreRunningAttack, //
     RunningAttack,
+    AfterRunningAttack,
+    PreFallAttack, //
+    FallAttack,
+    AfterFallAttack,
+    PreAirFrontAttack, //
+    AirFrontAttack,
+    AfterAirFrontAttack,
+    PreAirBackAttack, //
+    AirBackAttack,
+    AfterAirBackAttack,
     PreJump,
     BigJump,
     SmallJump,
@@ -20,7 +31,6 @@ enum class HeroState {
     AirMove,
     AirPreJump,
     KnockBack,
-    HitStop,
     Death,
     HeroStateNum
 

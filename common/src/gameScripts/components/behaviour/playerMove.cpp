@@ -105,7 +105,7 @@ void PlayerMove::BattleUpdate()
             }
 
             if (com.attack1 && !preCom.attack1) {
-                mHero->SetState(HeroState::RunningAttack);
+                mHero->SetState(HeroState::PreRunningAttack);
                 break;
             }
             if (com.jump && !preCom.jump) {
@@ -133,7 +133,7 @@ void PlayerMove::BattleUpdate()
             }
             // #################
             if (com.attack1 && !preCom.attack1) {
-                mHero->SetState(HeroState::RunningAttack);
+                mHero->SetState(HeroState::PreRunningAttack);
                 break;
             }
             if (com.jump && !preCom.jump) {
@@ -144,7 +144,38 @@ void PlayerMove::BattleUpdate()
             mHero->SetState(HeroState::Idle);
         }
         break;
+    case HeroState::PreRunningAttack: {
+    } break;
     case HeroState::RunningAttack: {
+    } break;
+    case HeroState::AfterRunningAttack: {
+    } break;
+    case HeroState::PreFallAttack: {
+
+    } break;
+    case HeroState::FallAttack: {
+
+    } break;
+    case HeroState::AfterFallAttack: {
+
+    } break;
+    case HeroState::PreAirFrontAttack: {
+
+    } break;
+    case HeroState::AirFrontAttack: {
+
+    } break;
+    case HeroState::AfterAirFrontAttack: {
+
+    } break;
+    case HeroState::PreAirBackAttack: {
+
+    } break;
+    case HeroState::AirBackAttack: {
+
+    } break;
+    case HeroState::AfterAirBackAttack: {
+
     } break;
     case HeroState::PreJump: {
         if (com.moveAxis.Length()) {
@@ -199,8 +230,6 @@ void PlayerMove::BattleUpdate()
         }
     } break;
     case HeroState::KnockBack: {
-    } break;
-    case HeroState::HitStop: {
     } break;
     case HeroState::Death: {
     } break;

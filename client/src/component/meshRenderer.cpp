@@ -17,8 +17,8 @@ MeshRenderer::MeshRenderer(GameObject* owner, const std::string& objFileName, co
     , mTextureIndex(0)
     , mIsEffect(isEffect)
 {
-    mMesh = Renderer::GetMesh(objFileName);
-    mMesh->SetTexture(Renderer::GetTexture(textureFileName));
+    mMesh         = Renderer::GetMesh(objFileName);
+    mTextureIndex = mMesh->SetTexture(Renderer::GetTexture(textureFileName));
     if (mIsEffect) {
         Renderer::AddEffectRenderer(this);
     } else {

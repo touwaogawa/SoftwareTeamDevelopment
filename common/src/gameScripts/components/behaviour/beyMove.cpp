@@ -11,7 +11,6 @@ BeyMove::BeyMove(Bey* owner)
     , mHero(nullptr)
     , mSpinPower(0.0f)
     , mMinSpinPower(0.0f)
-    , mRotationSpeed(0.0f)
 {
     // std::cout << "beyMove constructor" << std::endl;
 }
@@ -35,23 +34,57 @@ namespace {
 }
 void BeyMove::Update()
 {
-    mRotationSpeed += mSpinPower;
     switch (mHero->mCurrentStatus.state) {
     case HeroState::Idle:
-    case HeroState::Walking:
-    case HeroState::Running:
+        mSpinPower = 6.0f;
         break;
+    case HeroState::Walking:
+        mSpinPower = 6.0f;
+        break;
+    case HeroState::Running:
+        mSpinPower = 6.0f;
+        break;
+    case HeroState::PreRunningAttack: {
+        mSpinPower += 3.0f;
+    } break;
     case HeroState::RunningAttack: {
-        mRotationSpeed += 4.0f;
+    } break;
+    case HeroState::AfterRunningAttack: {
+        mSpinPower -= 1.0f;
+    } break;
+    case HeroState::PreFallAttack: {
+
+    } break;
+    case HeroState::FallAttack: {
+
+    } break;
+    case HeroState::AfterFallAttack: {
+
+    } break;
+    case HeroState::PreAirFrontAttack: {
+
+    } break;
+    case HeroState::AirFrontAttack: {
+
+    } break;
+    case HeroState::AfterAirFrontAttack: {
+
+    } break;
+    case HeroState::PreAirBackAttack: {
+
+    } break;
+    case HeroState::AirBackAttack: {
+
+    } break;
+    case HeroState::AfterAirBackAttack: {
+
     } break;
     case HeroState::PreJump: {
     } break;
     case HeroState::AirIdle: {
     } break;
     case HeroState::KnockBack: {
-        mRotationSpeed -= 1.0f;
-    } break;
-    case HeroState::HitStop: {
+        mSpinPower = 10.0f;
     } break;
     case HeroState::Death: {
     } break;
@@ -60,8 +93,8 @@ void BeyMove::Update()
         break;
     }
     if (mHero->mCurrentStatus.stopFrame <= 0) {
-        GetTransform()->SetLocalRotation(
-            Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(mRotationSpeed)));
+        Quaternion rotation = Quaternion::Concatenate(GetTransform()->GetWorldRotation(), Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(mSpinPower)));
+        GetTransform()->SetLocalRotation(rotation);
     }
 }
 void BeyMove::LateUpdate()

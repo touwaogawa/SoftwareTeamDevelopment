@@ -63,6 +63,7 @@ void HeroMove::Update()
     rp3d::Vector3 vel = mHeroRp3dRigidBody->getLinearVelocity();
     switch (mHero->mCurrentStatus.state) {
     case HeroState::Idle: {
+
         // rp3d::Vector3 vel = mHeroRp3dRigidBody->getLinearVelocity();
         // if (vel.length() < 0.5) {
         //     mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(0.0, 0.0, 0.0));
@@ -78,12 +79,19 @@ void HeroMove::Update()
         Vector2 v = mHero->mCurrentStatus.velocity;
         mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(v.x, vel.y, v.y));
     } break;
+    case HeroState::PreRunningAttack: {
+
+        if (mHero->mCurrentStatus.actionFrame >= 5) {
+            mHero->SetState(HeroState::RunningAttack);
+        }
+    } break;
     case HeroState::RunningAttack: {
         int attackTime = 20;
         if (mHero->mCurrentStatus.actionFrame == 0 && mHero->mCurrentStatus.stopFrame < 0) {
-            float x        = mHero->mCurrentStatus.faceDir.x * 5.0f;
-            float y        = mHero->mCurrentStatus.faceDir.y * 5.0f;
-            HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.7f, Vector3(x, 7.0f, y), 10.0f, attackTime, mHero->mCurrentStatus.actionFrame);
+            float x        = mHero->mCurrentStatus.faceDir.x * 7.5f;
+            float y        = mHero->mCurrentStatus.faceDir.y * 7.5f;
+            HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.7f, Vector3(x, 12.0f, y), 10.0f, attackTime, mHero->mCurrentStatus.actionFrame);
+            hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, 1.7f, 0.0f));
             hitBox->GetTransform()->SetParent(GetTransform(), false);
         }
         if (mHero->mCurrentStatus.actionFrame < attackTime) {
@@ -92,8 +100,40 @@ void HeroMove::Update()
             mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, 0.0, y));
         } else {
 
+            mHero->SetState(HeroState::AfterRunningAttack);
+        }
+    } break;
+    case HeroState::AfterRunningAttack: {
+        if (mHero->mCurrentStatus.actionFrame >= 5) {
             mHero->SetState(HeroState::Idle);
         }
+    } break;
+    case HeroState::PreFallAttack: {
+
+    } break;
+    case HeroState::FallAttack: {
+
+    } break;
+    case HeroState::AfterFallAttack: {
+
+    } break;
+    case HeroState::PreAirFrontAttack: {
+
+    } break;
+    case HeroState::AirFrontAttack: {
+
+    } break;
+    case HeroState::AfterAirFrontAttack: {
+
+    } break;
+    case HeroState::PreAirBackAttack: {
+
+    } break;
+    case HeroState::AirBackAttack: {
+
+    } break;
+    case HeroState::AfterAirBackAttack: {
+
     } break;
     case HeroState::PreJump: {
         if (mHero->mCurrentStatus.actionFrame < 2) {
@@ -128,14 +168,12 @@ void HeroMove::Update()
     } break;
     case HeroState::KnockBack: {
         if (mHero->mCurrentStatus.actionFrame == 0) {
-        }
-        if (mHero->mCurrentStatus.actionFrame == 1) {
-            // mHeroRp3dRigidBody->setAngularLockAxisFactor(rp3d::Vector3(1.0f, 1.0f, 1.0f));
+        } else if (mHero->mCurrentStatus.actionFrame == 1) {
             mHeroRp3dRigidBody->setLinearVelocity(mKnockBackVectorBuffer);
-            // mHeroRp3dRigidBody->setAngularVelocity(mKnockBackVectorBuffer);
+        } else {
         }
-        if (mHero->mCurrentStatus.actionFrame >= mHero->mCurrentStatus.downFrame) {
-            mHeroRp3dRigidBody->setAngularLockAxisFactor(rp3d::Vector3(0.0f, 0.0f, 0.0f));
+        if (0 < mHero->mCurrentStatus.downFrame) {
+        } else {
             mHero->SetState(HeroState::Idle);
         }
     } break;
@@ -199,16 +237,12 @@ void HeroMove::OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider
             // std::cout << "on enter stage!!" << std::endl;
             mHero->mCurrentStatus.airJumpCount = 0;
             mHero->SetState(HeroState::Idle);
-            mHeroRp3dRigidBody->setTransform(rp3d::Transform(mHeroRp3dRigidBody->getTransform().getPosition(), rp3d::Quaternion::identity()));
-            mHeroRp3dRigidBody->setAngularLockAxisFactor(rp3d::Vector3(0, 0, 0));
         }
-    } break;
-    case HeroState::HitStop: {
     } break;
     case HeroState::Death: {
     } break;
     default:
-        std::cout << "OnCollisionEnter HeroState error" << std::endl;
+        // std::cout << "OnCollisionEnter HeroState error" << std::endl;
         break;
     }
 }
@@ -227,12 +261,10 @@ void HeroMove::OnCollisionExit(const rp3d::Collider* self, const rp3d::Collider*
     } break;
     case HeroState::KnockBack: {
     } break;
-    case HeroState::HitStop: {
-    } break;
     case HeroState::Death: {
     } break;
     default:
-        std::cout << "OnCollisionEnter HeroState error" << std::endl;
+        // std::cout << "OnCollisionEnter HeroState error" << std::endl;
         break;
     }
 }
@@ -266,12 +298,10 @@ void HeroMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* 
     } break;
     case HeroState::KnockBack: {
     } break;
-    case HeroState::HitStop: {
-    } break;
     case HeroState::Death: {
     } break;
     default:
-        std::cout << "OnOverlapEnter HeroState error" << std::endl;
+        // std::cout << "OnOverlapEnter HeroState error" << std::endl;
         break;
     }
 }
@@ -299,12 +329,10 @@ void HeroMove::OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* o
     } break;
     case HeroState::KnockBack: {
     } break;
-    case HeroState::HitStop: {
-    } break;
     case HeroState::Death: {
     } break;
     default:
-        std::cout << "OnCollisionEnter HeroState error" << std::endl;
+        // std::cout << "OnCollisionEnter HeroState error" << std::endl;
         break;
     }
 
@@ -317,7 +345,7 @@ void HeroMove::OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* o
 
 void HeroMove::OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector)
 {
-    // std::cout << "on damage stopframe: " << stopFrame << std::endl;
+    std::cout << "on damage stopframe: " << stopFrame << std::endl;
     mHero->mCurrentStatus.stopFrame = stopFrame;
     mKnockBackVectorBuffer          = vector;
     mHero->mCurrentStatus.downFrame = downFrame;
@@ -326,7 +354,7 @@ void HeroMove::OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector)
 
 void HeroMove::HitOther(int stopFrame, float power)
 {
-    // std::cout << "hit other stopframe: " << stopFrame << std::endl;
+    std::cout << "hit other stopframe: " << stopFrame << std::endl;
     mHero->mCurrentStatus.stopFrame = stopFrame;
     mKnockBackVectorBuffer          = mHeroRp3dRigidBody->getLinearVelocity();
 }

@@ -372,10 +372,10 @@ void Renderer::DrawEffects()
         meshRenderer->Draw(mEffectShader);
     }
 }
+
 void Renderer::DrawBillbourds()
 {
     glEnable(GL_DEPTH_TEST);
-    // glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glDepthMask(GL_FALSE);
     glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
@@ -391,6 +391,12 @@ void Renderer::DrawBillbourds()
 
     // 各メッシュ
     mSpriteVerts->Bind();
+    // ソート
+    std::sort(mBillbourdRenderers.begin(), mBillbourdRenderers.end(), [](BillbourdRenderer* a, BillbourdRenderer* b) {
+        float alen = (a->GetTransform()->GetWorldPosition() - mViewPos).Length();
+        float blen = (b->GetTransform()->GetWorldPosition() - mViewPos).Length();
+        return alen > blen;
+    });
     for (auto billBourd : mBillbourdRenderers) {
         // std::cout << "billBourd Ren" << std::endl;
         if (billBourd->GetVisible()) {

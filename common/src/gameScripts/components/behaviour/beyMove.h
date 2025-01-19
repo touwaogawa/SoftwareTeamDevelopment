@@ -17,5 +17,4 @@ private:
     Hero* mHero;
     float mSpinPower;
     float mMinSpinPower;
-    float mRotationSpeed;
 };

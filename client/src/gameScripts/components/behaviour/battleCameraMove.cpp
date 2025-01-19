@@ -45,7 +45,7 @@ void BattleCameraMove::LateUpdate()
             centerPos.z /= num;
         }
 
-        centerPos.y += 5.0f;
+        centerPos.y += 3.0f;
 
         float maxDistance = 0.0f;
 
@@ -57,7 +57,7 @@ void BattleCameraMove::LateUpdate()
             }
         }
 
-        float fov = 40.f + (maxDistance - 10.0f) * 0.5f;
+        float fov = 26.f + (maxDistance - 9.0f) * 0.7f;
 
         CameraComponent* cc = mOwner->GetComponent<CameraComponent>();
         if (cc) {

@@ -59,8 +59,10 @@ void RiderMove::Update()
     case HeroState::AirIdle: {
     } break;
     case HeroState::KnockBack: {
-    } break;
-    case HeroState::HitStop: {
+        if (mHero->mCurrentStatus.stopFrame <= 0) {
+            Quaternion rotation = Quaternion::Concatenate(GetTransform()->GetWorldRotation(), Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(10.0f)));
+            GetTransform()->SetLocalRotation(rotation);
+        }
     } break;
     case HeroState::Death: {
     } break;

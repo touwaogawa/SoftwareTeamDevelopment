@@ -42,6 +42,7 @@ void HitBoxMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider
         if (hero->mCurrentStatus.state == HeroState::KnockBack) {
             return;
         }
+        // std::cout << "hit" << std::endl;
 
         HeroMove* heroMove = static_cast<HeroMove*>(hero->GetBehaviour());
         int stopFrame      = static_cast<int>(10 + Math::Sqrt(mDamage));
