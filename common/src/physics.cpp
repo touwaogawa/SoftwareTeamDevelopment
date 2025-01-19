@@ -12,7 +12,7 @@ Physics::Physics()
     settings.defaultVelocitySolverNbIterations = 20;
     settings.defaultPositionSolverNbIterations = 20;
     settings.isSleepingEnabled                 = false;
-    settings.gravity                           = rp3d::Vector3(0, -9.81, 0);
+    settings.gravity                           = rp3d::Vector3(0, -30.81, 0);
 
     // Create the physics world with your settings
     mPhysicsWorld    = mPhysicsCommon.createPhysicsWorld(settings);
@@ -185,6 +185,6 @@ void MyEventListener::onTrigger(const rp3d::OverlapCallback::CallbackData& callb
             std::cout << "rp3d::CollisionCallback::ContactPair::EventType error" << std::endl;
             break;
         }
-        std::cout << "trigger" << std::endl;
+        // std::cout << "trigger" << std::endl;
     }
 }

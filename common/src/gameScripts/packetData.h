@@ -1,6 +1,6 @@
 #pragma once
 #include "commandData.h"
-#include "gameObject/player.h"
+#include "playerInfo.h"
 #include <cstring>
 #include <enet/enet.h>
 #include <iostream>
@@ -14,7 +14,7 @@ enum class PacketDataType : uint8_t {
     CurrentFrame,
     PlayerCurrentData,
     INVALID,
-    GameEnd,
+    PlayerDisConnected,
     PacketDataTypeNum
 };
 
@@ -57,22 +57,6 @@ struct BattleCommandData : public PacketData {
     CommandData commandData;
 
     BattleCommandData();
-    ENetPacket* CreatePacket() override;
-    void LoadPacket(ENetPacket* packet) override;
-};
-struct CurrentFrameData : public PacketData {
-    int currentFrame;
-
-    CurrentFrameData();
-    ENetPacket* CreatePacket() override;
-    void LoadPacket(ENetPacket* packet) override;
-};
-
-struct PlayerCurrentData : public PacketData {
-    int id;
-    HeroCurrentStatus heroCurrentStatus;
-    Matrix4 heroTransform;
-    PlayerCurrentData();
     ENetPacket* CreatePacket() override;
     void LoadPacket(ENetPacket* packet) override;
 };

@@ -1,11 +1,11 @@
 #include "battleCameraMove.h"
 #include "../../../../../common/src/component/transform.h"
 #include "../../../../../common/src/gameObject.h"
-#include "../../../../../common/src/gameScripts/gameObject/hero.h"
-#include "../../../../../common/src/gameScripts/gameObject/player.h"
 #include "../../../../../utils/src/math.h"
 #include "../../../component/cameraComponent.h"
 #include "../../../renderer.h"
+#include "../../gameObject/hero.h"
+#include "../../gameObject/player.h"
 #include "../../scene/battle.h"
 #include <vector>
 
@@ -17,6 +17,7 @@ BattleCameraMove::BattleCameraMove(GameObject* owner)
 
 void BattleCameraMove::Start()
 {
+    GetTransform()->SetWorldPosition(Vector3(0.0f, 35.0f, -30.f));
 }
 void BattleCameraMove::Update()
 {
@@ -30,17 +31,22 @@ void BattleCameraMove::LateUpdate()
 {
     if (mAliiveHeroes.size() > 0) {
 
+        // 全プレイヤーの重心
         Vector3 centerPos(0.0f, 0.0f, 0.0f);
         int num = 0;
         for (Hero* hero : mAliiveHeroes) {
             centerPos += hero->GetTransform()->GetWorldPosition();
             num++;
         }
+        // y軸の追従は減らす
+        centerPos.y *= 0.3f;
         if (num > 0) {
             centerPos.x /= num;
             centerPos.y /= num;
             centerPos.z /= num;
         }
+
+        centerPos.y += 3.0f;
 
         float maxDistance = 0.0f;
 
@@ -52,7 +58,7 @@ void BattleCameraMove::LateUpdate()
             }
         }
 
-        float fov = 40.f + (maxDistance - 10.0f) * 0.5f;
+        float fov = 40.5f + (maxDistance - 9.0f) * 0.5f;
 
         CameraComponent* cc = mOwner->GetComponent<CameraComponent>();
         if (cc) {
@@ -60,21 +66,21 @@ void BattleCameraMove::LateUpdate()
             cc->SetProjection(proj);
         }
         Vector3 vecFromCenter = centerPos - Vector3(0.0f, 0.0f, 0.0f);
-        Vector3 targetpos;
+        Vector3 targetpos; // 正中線
         if (vecFromCenter.Length() > mMaxFromCenter) {
+            // 重心が範囲外
             targetpos = mMaxFromCenter * Vector3::Normalize(vecFromCenter);
         } else {
+            // 重心が範囲内
             targetpos = centerPos;
         }
-        Matrix4 view = Matrix4::CreateLookAt(Vector3(0.0f, 40.0f, -40.f), targetpos, Vector3(0.0f, 1.0f, 0.0f));
-        mOwner->GetTransform()->SetWorldMatrix(view);
+        cc->SetTarget(targetpos);
     } else {
         CameraComponent* cc = mOwner->GetComponent<CameraComponent>();
         Matrix4 proj        = Matrix4::CreatePerspectiveFOV(Math::ToRadians(40.0f), Renderer::GetWindowWidth(), Renderer::GetWindowHeight(), 1.0f, 150.0f);
         cc->SetProjection(proj);
 
-        Matrix4 view = Matrix4::CreateLookAt(Vector3(0.0f, 40.0f, -40.f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-        mOwner->GetTransform()->SetWorldMatrix(view);
+        cc->SetTarget(Vector3(0.0f, 0.0f, 0.0f));
     }
 }
 

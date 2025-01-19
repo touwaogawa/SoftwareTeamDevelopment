@@ -49,11 +49,13 @@ void Game::RunLoop()
     SceneManager::LoadScene(new TitleScene());
     bool gameFrag = true;
     while (gameFrag) {
-        if (!Renderer::Load()) {
-            std::cout << "Failed Renderer Load" << std::endl;
+        if (!SceneManager::AdoptSceneChange()) {
             break;
         }
-        SceneManager::AdoptSceneChange();
+        if (!Renderer::Load()) {
+            // std::cout << "Failed Renderer Load" << std::endl;
+            break;
+        }
         // std::cout << "AdoptSceneChange" << std::endl;
         SceneManager::GetCurrentScene()->Start();
         // std::cout << "scene start" << std::endl;
@@ -65,7 +67,8 @@ void Game::RunLoop()
                 return;
             }
             // std::cout << "game loop 3 " << std::endl;
-            SceneManager::GetCurrentScene()->Update(gameFrag, Time::GetTimeStep());
+            // SceneManager::GetCurrentScene()->Update(gameFrag, Time::GetTimeStep());
+            SceneManager::GetCurrentScene()->Update(gameFrag, Time::GetStaticTimeStepSecond());
             // std::cout << "game loop 4 " << std::endl;
             Renderer::Draw();
             // std::cout << "game loop 5 " << std::endl;

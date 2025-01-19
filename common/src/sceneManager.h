@@ -13,11 +13,11 @@ public:
     static bool GetiIsChanged();
 
     /// @brief Adopt the next scene
-    static void AdoptSceneChange();
+    static bool AdoptSceneChange();
 
     /// @brief Return the current scene
     /// @return The pointer of the current scene
-    static Scene* GetCurrentScene() { return mCurrentScene; }
+    static Scene* const GetCurrentScene() { return mCurrentScene; }
 
 private:
     static Scene* mCurrentScene;

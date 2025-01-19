@@ -23,13 +23,18 @@ public:
 
     static void AddMeshRenderer(class MeshRenderer* meshRenderer);
     static void RemoveMeshRenderer(class MeshRenderer* meshRenderer);
+
     static void AddEffectRenderer(class MeshRenderer* meshRenderer);
     static void RemoveEffectRenderer(class MeshRenderer* meshRenderer);
 
     static void AddSpriteRenderer(class SpriteRenderer* spriteRenderer);
     static void RemoveSpriteRenderer(class SpriteRenderer* spriteRenderer);
+
     static void AddBillbourdRenderer(class BillbourdRenderer* billbourdRenderer);
     static void RemoveBillbourdRenderer(class BillbourdRenderer* billbourdRenderer);
+
+    static void AddBillbourdRenderer_add(class BillbourdRenderer* billbourdRenderer_add);
+    static void RemoveBillbourdRenderer_add(class BillbourdRenderer* billbourdRenderer_add);
 
     static void SetCameraComponent(CameraComponent* cameraComponent) { mCameraComponent = cameraComponent; }
     static CameraComponent* GetCameraComponent() { return mCameraComponent; }
@@ -40,7 +45,7 @@ public:
     static float GetWindowWidth() { return mWindowWidth; }
     static float GetWindowHeight() { return mWindowHeight; }
 
-    static void CameraShake(int frame);
+    static void CameraShakeStart(int frame, float power);
 
 private:
     static SDL_Window* mWindow;
@@ -63,8 +68,11 @@ private:
     static std::vector<class MeshRenderer*> mEffectRenderers;
     static std::vector<class SpriteRenderer*> mSpriteRenderers;
     static std::vector<class BillbourdRenderer*> mBillbourdRenderers;
+    static std::vector<class BillbourdRenderer*> mBillbourdRenderers_add;
 
     // カメラ情報
+    static int mCameraShakeFrame;
+    static float mCameraShakePower;
     static CameraComponent* mCameraComponent;
     static LightComponent* mLightComponent;
 
@@ -92,4 +100,6 @@ private:
     static void DrawBillbourds();
     static void DrawSprites();
     static void CreateSpriteVerts();
+
+    static void CameraShake(int frame, float power);
 };

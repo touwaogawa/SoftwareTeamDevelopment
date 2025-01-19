@@ -22,13 +22,18 @@ bool SceneManager::GetiIsChanged()
     }
     return mIsChanged;
 }
-void SceneManager::AdoptSceneChange()
+bool SceneManager::AdoptSceneChange()
 {
-    mCurrentScene = mNextScene;
-    // std::cout << "m next scene: " << mCurrentScene->GetName() << std::endl;
-    if (!mCurrentScene->Load()) {
-        // std::cout << "Failed Scene load : " << mCurrentScene->GetName() << std::endl;
+    if (mNextScene) {
+        mCurrentScene = mNextScene;
+        // std::cout << "m next scene: " << mCurrentScene->GetName() << std::endl;
+        if (!mCurrentScene->Load()) {
+            // std::cout << "Failed Scene load : " << mCurrentScene->GetName() << std::endl;
+        }
+        // std::cout << "m next scene: " << mCurrentScene->GetName() << std::endl;
+        mIsChanged = false;
+        return true;
+    } else {
+        return false;
     }
-    // std::cout << "m next scene: " << mCurrentScene->GetName() << std::endl;
-    mIsChanged = false;
 }

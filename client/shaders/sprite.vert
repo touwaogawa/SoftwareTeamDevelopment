@@ -24,6 +24,6 @@ void main()
 	gl_Position = pos * model * viewProjection;
 
 	// Pass along the texture coordinate to frag shader
-	// TexCoord = inTexCoord + frameIndex * frameSize;
-	TexCoord = inTexCoord * frameSize + frameIndex;
+	TexCoord = (inTexCoord + frameIndex) * frameSize;
+	// TexCoord = inTexCoord * frameSize + frameIndex;
 }

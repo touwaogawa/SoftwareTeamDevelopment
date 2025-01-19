@@ -8,6 +8,5 @@ SimpleBillbourd::SimpleBillbourd(const std::string& fileName)
 {
     // Billbourd
     BillbourdRenderer* Billbourd = new BillbourdRenderer(this, fileName);
-    Billbourd->SetTexture(Renderer::GetTexture(fileName));
     AddComponent(Billbourd);
 }

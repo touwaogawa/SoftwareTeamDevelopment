@@ -1,4 +1,5 @@
 #include "title.h"
+#include "../../../../common/src/component/transform.h"
 #include "../../../../common/src/sceneManager.h"
 #include "../../../../utils/src/input.h"
 #include "../../component/cameraComponent.h"
@@ -20,37 +21,33 @@ TitleScene::TitleScene()
 bool TitleScene::Load()
 {
 
+    // camera
+    SimpleCamera* camera = new SimpleCamera();
+    CameraComponent* c   = camera->GetComponent<CameraComponent>();
+    c->Use();
+    // std::cout << "aa" << std::endl;
+    camera->SetBehaviour(new TitleCameraMove(camera, c));
+    // std::cout << "aa" << std::endl;
+
     // ロゴ
-    GameObject* titleui = new SimpleSprite("../assets/textures/titleScene/title.png");
-    Instantiate(titleui);
+    // SimpleSprite* titleui =
+    new SimpleSprite("../assets/textures/titleScene/title.png");
 
     // press any button
-    GameObject* pressAnyButton = new SimpleSprite("../assets/textures/titleScene/PressAnyButton.png");
-    pressAnyButton->SetBehaviour(new PressAnyButtonMove(pressAnyButton));
-    Matrix4 mat = Matrix4::CreateScale(Vector3(0.6f, 0.6f, 0.6f));
-    mat *= Matrix4::CreateTranslation(Vector3(0.0f, -350.0f, 0.0f));
-    Instantiate(pressAnyButton, mat);
+    SimpleSprite* pressAnyButton = new SimpleSprite("../assets/textures/titleScene/PressAnyButton.png");
 
-    // camera
-    GameObject* camera = new SimpleCamera();
-    CameraComponent* c = camera->GetComponent<CameraComponent>();
-    c->Use();
-    Matrix4 mat1;
-    // std::cout << "aa" << std::endl;
-    camera->SetBehaviour(new TitleCameraMove(camera));
-    // std::cout << "aa" << std::endl;
-    Instantiate(camera, mat1);
-    // std::cout << "aa" << std::endl;
+    pressAnyButton->SetBehaviour(new PressAnyButtonMove(pressAnyButton));
+    pressAnyButton->GetTransform()->SetWorldScale(Vector3(0.6f, 0.6f, 0.6f));
+    pressAnyButton->GetTransform()->SetWorldPosition(Vector3(0.0f, -350.0f, 0.0f));
 
     // stage
-    GameObject* stage = new SimpleMeshModel("../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
-    Instantiate(stage);
+    // SimpleMeshModel* stage =
+    new Stage(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
 
     // colosseum
-    GameObject* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
-    Matrix4 mat2          = Matrix4::CreateScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
-    mat2 *= Matrix4::CreateTranslation(Vector3(0.0f, -40.0f, 0.0f));
-    Instantiate(colosseum, mat2);
+    SimpleMeshModel* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
+    colosseum->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
+    colosseum->GetTransform()->SetWorldPosition(Vector3(0.0f, -40.0f, 0.0f));
 
     // effect
     // GameObject* effect = new SimpleEffect("../assets/models/square.obj", "../assets/textures/silver.png");
@@ -66,8 +63,8 @@ bool TitleScene::Load()
     // Instantiate(bill, mat4);
 
     // std::cout << "aa" << std::endl;
-    // PlayerInfo playerInfo(0, "name", RiderType::BaseHuman, BeyType::Hexagram);
-    // mPlayer = new Player_C(this, playerInfo, &currentFrame);
+    PlayerInfo playerInfo(-1, "name", RiderType::BaseHuman, BeyType::Hexagram);
+    new Player(playerInfo, "title");
 
     return true;
 }

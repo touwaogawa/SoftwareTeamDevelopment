@@ -1,15 +1,32 @@
 #pragma once
-#include "../../../../../common/src/gameScripts/components/behaviour/playerMove.h"
-
+#include "../../../../../common/src/component/behaviour.h"
+#include "../../../../../utils/src/math.h"
 class Player;
-class PlayerMove_C : public PlayerMove {
+class Hero;
+
+class PlayerMove : public Behaviour {
 public:
-    PlayerMove_C(Player* owner);
-    ~PlayerMove_C() override = default;
+    explicit PlayerMove(Player* owner, Hero* hero);
+    virtual ~PlayerMove() override = default;
+
+    void Start() override;
+    void Update() override;
+    void LateUpdate() override;
+
+    virtual void DefeatedAction1() { }
+    virtual void DefeatedAction2() { }
+    void DefeatedAction3();
+    virtual void DefeatedAction3Normal() { }
+    virtual void DefeatedAction3Special() { }
 
 private:
-    void DefeatedAction1() override;
-    void DefeatedAction2() override;
-    void DefeatedAction3Normal() override;
-    void DefeatedAction3Special() override;
+    Player* const mPlayer;
+    Hero* const mHero;
+    int mCommandDelay;
+    Vector2 mMoveAxisNorm;
+    float mStickDeadZone;
+
+    void InitUpdate();
+    void BattleUpdate();
+    void DefeatedUpdate();
 };

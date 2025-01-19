@@ -46,6 +46,6 @@ void RigidBody::UpdateTransform()
     //           << "y: " << pos.y
     //           << "z: " << pos.z
     //           << std::endl;
-    mOwner->GetTransform()->SetWorldPosition(static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
+    mOwner->GetTransform()->SetWorldPosition(Vector3(static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z)));
     mOwner->GetTransform()->SetWorldRotation(Quaternion(static_cast<float>(q.x), static_cast<float>(q.y), static_cast<float>(q.z), static_cast<float>(q.w)));
 }

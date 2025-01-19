@@ -47,7 +47,9 @@ void Game::RunLoop(int playerNum)
     bool gameFrag = true;
     while (gameFrag) {
         bool sceneFrag = true;
-        SceneManager::AdoptSceneChange();
+        if (!SceneManager::AdoptSceneChange()) {
+            break;
+        }
         // std::cout << "0" << std::endl;
         SceneManager::GetCurrentScene()->Start();
         while (sceneFrag) {
@@ -58,7 +60,9 @@ void Game::RunLoop(int playerNum)
                 return;
             }
             // std::cout << "3" << std::endl;
-            SceneManager::GetCurrentScene()->Update(gameFrag, Time::GetTimeStep());
+            // std::cout << "time step: " << Time::GetTimeStep() << std::endl;
+            // SceneManager::GetCurrentScene()->Update(gameFrag, Time::GetTimeStep());
+            SceneManager::GetCurrentScene()->Update(gameFrag, Time::GetStaticTimeStepSecond());
             // std::cout << "4" << std::endl;
             Time::UpdateFrame();
             // std::cout << "5" << std::endl;

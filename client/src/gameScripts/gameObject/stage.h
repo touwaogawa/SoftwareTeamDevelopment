@@ -1,11 +1,14 @@
 #pragma once
-#include "../../../../common/src/gameScripts/gameObject/stage.h"
+#include "../../../../common/src/gameObject.h"
+#include "../../../../utils/src/math.h"
 #include <string>
+
 class Physics;
-class Stage_C : public Stage {
+class Stage : public GameObject {
 public:
-    Stage_C(Physics* physics,
-        const std::string& meshFileName  = "../assets/models/Stage.obj",
-        const std::string& imageFileName = "../assets/textures/simpleTile.png", bool isConvex = true);
-    ~Stage_C() override = default;
+    Stage(Physics* physics, const std::string& meshFileName, const std::string& textureFileName);
+    ~Stage() override = default;
+
+private:
+    std::vector<Vector3> LoadObjFile(const std::string& fileName);
 };

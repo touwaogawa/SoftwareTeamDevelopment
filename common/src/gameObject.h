@@ -10,10 +10,10 @@ class Component;
 class GameObject {
 public:
     /// @brief constructor of the class GameObject
-    /// @param scene
-    /// @param parent
-    /// @param behaviour
-    explicit GameObject(const std::string& name = "GameObject", const std::string& tag = "Default", bool isActive = true);
+    /// @param name
+    /// @param tag
+    /// @param isActive
+    GameObject(const std::string& name = "GameObject", const std::string& tag = "Default", bool isActive = true);
 
     /// Destructor
     virtual ~GameObject();
@@ -26,13 +26,11 @@ public:
 
     /// @brief return the Scene in which this class exists
     /// @return
-    Scene* GetScene() const { return mScene; }
-    void SetScene(Scene* scene) { mScene = scene; }
     /// @brief return the Transform Component attached to this GameObject
-    Transform* GetTransform() const { return mTransform; }
+    Transform* const GetTransform() const { return mTransform; }
 
     /// @brief Return the Behaviour Component attached to this GameObject
-    Behaviour* GetBehaviour() const { return mBehaviour; }
+    Behaviour* const GetBehaviour() const { return mBehaviour; }
 
     void SetBehaviour(Behaviour* behaviour);
 
@@ -40,7 +38,7 @@ public:
     /// @tparam T
     /// @return Returns the specified component if it exists; otherwise, returns nullptr
     template <typename T>
-    T* GetComponent()
+    T* const GetComponent()
     {
         for (Component* comp : mComponents) {
             T* casted = dynamic_cast<T*>(comp);
@@ -65,16 +63,18 @@ public:
 
 protected:
     std::vector<Component*> mComponents;
-    Transform* mTransform;
+    Transform* const mTransform;
     Behaviour* mBehaviour;
     bool mIsActive;
-
-    Scene* mScene;
 
 private:
     const std::string mName;
     const std::string mTag;
+
+    static std::vector<GameObject*> mGameObjects;
+    static std::vector<GameObject*> mDestroyObjects;
+
     void Enable();
     void Disable();
-    void UpdateChildren(bool isActive);
+    void UpdateChildrenActive(bool isActive);
 };

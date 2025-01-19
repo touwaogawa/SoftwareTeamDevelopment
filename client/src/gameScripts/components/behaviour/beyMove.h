@@ -1,11 +1,20 @@
 #pragma once
-#include "../../../../../common/src/gameScripts/components/behaviour/beyMove.h"
+#include "../../../../../common/src/component/behaviour.h"
 
 class Bey;
-class BeyMove_C : public BeyMove {
+class Hero;
+class BeyMove : public Behaviour {
 public:
-    explicit BeyMove_C(Bey* owner);
-    ~BeyMove_C() override = default;
+    explicit BeyMove(Bey* owner, Hero* hero);
+    virtual ~BeyMove() override = default;
+
+    void Start() override;
+    void Update() override;
+    void LateUpdate() override;
 
 private:
+    Bey* const mBey;
+    Hero* const mHero;
+    float mSpinPower;
+    float mMinSpinPower;
 };
