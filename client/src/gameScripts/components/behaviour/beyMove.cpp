@@ -92,7 +92,7 @@ void BeyMove::Update()
         break;
     }
     if (mHero->mCurrentStatus.stopFrame <= 0) {
-        Quaternion rotation = Quaternion::Concatenate(GetTransform()->GetWorldRotation(), Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(mSpinPower)));
+        Quaternion rotation = Quaternion::Concatenate(GetTransform()->GetLocalRotation(), Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(mSpinPower)));
         GetTransform()->SetLocalRotation(rotation);
     }
 }

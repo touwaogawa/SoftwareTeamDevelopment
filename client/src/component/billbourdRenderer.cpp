@@ -6,7 +6,7 @@
 #include "../texture.h"
 #include <iostream>
 
-BillbourdRenderer::BillbourdRenderer(GameObject* owner, const std::string& imageFileName, bool isSpherical)
+BillbourdRenderer::BillbourdRenderer(GameObject* owner, const std::string& imageFileName, bool isSpherical, bool isAdd)
     : Component(owner)
     , mTexWidth(0)
     , mTexHeight(0)
@@ -16,8 +16,13 @@ BillbourdRenderer::BillbourdRenderer(GameObject* owner, const std::string& image
     , mUseCustomColor(false)
     , mCustomColor(Vector3(1.0f, 0.0f, 1.0f))
     , mIsSpherical(isSpherical)
+    , mIsAdd(isAdd)
 {
-    Renderer::AddBillbourdRenderer(this);
+    if (mIsAdd) {
+        Renderer::AddBillbourdRenderer_add(this);
+    } else {
+        Renderer::AddBillbourdRenderer(this);
+    }
 
     SetTexture(Renderer::GetTexture(imageFileName));
 }
@@ -25,7 +30,11 @@ BillbourdRenderer::BillbourdRenderer(GameObject* owner, const std::string& image
 BillbourdRenderer::~BillbourdRenderer()
 {
     // std::cout << "~Billbourd" << std::endl;
-    Renderer::RemoveBillbourdRenderer(this);
+    if (mIsAdd) {
+        Renderer::RemoveBillbourdRenderer_add(this);
+    } else {
+        Renderer::RemoveBillbourdRenderer(this);
+    }
 }
 
 void BillbourdRenderer::Draw(Shader* shader)
@@ -75,9 +84,17 @@ void BillbourdRenderer::SetTexture(Texture* texture)
 
 void BillbourdRenderer::Enable()
 {
-    Renderer::AddBillbourdRenderer(this);
+    if (mIsAdd) {
+        Renderer::AddBillbourdRenderer_add(this);
+    } else {
+        Renderer::AddBillbourdRenderer(this);
+    }
 }
 void BillbourdRenderer::Disable()
 {
-    Renderer::RemoveBillbourdRenderer(this);
+    if (mIsAdd) {
+        Renderer::RemoveBillbourdRenderer_add(this);
+    } else {
+        Renderer::RemoveBillbourdRenderer(this);
+    }
 }

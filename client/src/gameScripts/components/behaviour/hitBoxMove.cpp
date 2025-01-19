@@ -45,13 +45,16 @@ void HitBoxMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider
         // std::cout << "hit" << std::endl;
 
         HeroMove* heroMove = static_cast<HeroMove*>(hero->GetBehaviour());
-        int stopFrame      = static_cast<int>(10 + Math::Sqrt(mDamage));
-        int downFrame      = static_cast<int>(60 + mDamage * 3);
+
+        int knockbackTime = static_cast<int>(10 + (10 * (hero->mCurrentStatus.damageSum * 0.01f)));
+
         rp3d::Vector3 hitVector(mHitVector.x, mHitVector.y, mHitVector.z);
-        heroMove->OnDamage(stopFrame, downFrame, hitVector);
+        hitVector *= (1.0f + hero->mCurrentStatus.damageSum * 0.01f);
+        int stopFrame = static_cast<int>(10 + Math::Clamp(static_cast<int>(hitVector.length() * 0.05), 0, 50));
+        heroMove->OnDamage(mDamage, stopFrame, knockbackTime, hitVector);
 
         // 自分の処理
         HeroMove* ownerHeroMove = static_cast<HeroMove*>(mOwnerHero->GetBehaviour());
-        ownerHeroMove->HitOther(stopFrame, static_cast<float>(hitVector.length()));
+        ownerHeroMove->HitOther(stopFrame);
     }
 }

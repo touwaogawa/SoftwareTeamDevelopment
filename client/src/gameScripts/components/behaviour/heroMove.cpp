@@ -4,6 +4,7 @@
 #include "../../../../../utils/src/math.h"
 #include "../../../audio.h"
 #include "../../../renderer.h"
+#include "../../gameObject/effect/jumpCircleEffect.h"
 #include "../../gameObject/hero.h"
 #include "../../gameObject/hitBox.h"
 #include "../../gameObject/player.h"
@@ -63,6 +64,7 @@ void HeroMove::Update()
 {
     // show(mOwner->GetTransform());
     rp3d::Vector3 vel = mHeroRp3dRigidBody->getLinearVelocity();
+
     switch (mHero->mCurrentStatus.state) {
     case HeroState::Idle: {
 
@@ -89,25 +91,29 @@ void HeroMove::Update()
     } break;
     case HeroState::RunningAttack: {
         int attackTime = 20;
-        if (mHero->mCurrentStatus.actionFrame == 0 && mHero->mCurrentStatus.stopFrame < 0) {
-            float x        = mHero->mCurrentStatus.faceDir.x * 7.5f;
-            float y        = mHero->mCurrentStatus.faceDir.y * 7.5f;
-            HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.7f, Vector3(x, 12.0f, y), 10.0f, attackTime, mHero->mCurrentStatus.actionFrame);
-            hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, 1.7f, 0.0f));
-            hitBox->GetTransform()->SetParent(GetTransform(), false);
-        }
-        if (mHero->mCurrentStatus.actionFrame < attackTime) {
-            float x = mHero->mCurrentStatus.faceDir.x * 20.0f;
-            float y = mHero->mCurrentStatus.faceDir.y * 20.0f;
-            mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, 0.0, y));
-        } else {
-
-            mHero->SetState(HeroState::AfterRunningAttack);
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 0) {
+                float x        = mHero->mCurrentStatus.faceDir.x * 14.5f;
+                float y        = mHero->mCurrentStatus.faceDir.y * 14.5f;
+                HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.7f, Vector3(x, 12.0f * 0.3, y), 10.0f, attackTime, mHero->mCurrentStatus.actionFrame);
+                hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, 1.7f, 0.0f));
+                hitBox->GetTransform()->SetParent(GetTransform(), false);
+            }
+            if (mHero->mCurrentStatus.actionFrame < attackTime) {
+                float x = mHero->mCurrentStatus.faceDir.x * 20.0f;
+                float y = mHero->mCurrentStatus.faceDir.y * 20.0f;
+                mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(x, 0.0, y));
+            } else {
+                mHero->SetState(HeroState::AfterRunningAttack);
+            }
         }
     } break;
     case HeroState::AfterRunningAttack: {
-        if (mHero->mCurrentStatus.actionFrame >= 5) {
+        if (mHero->mCurrentStatus.actionFrame >= 10) {
             mHero->SetState(HeroState::Idle);
+            // std::cout << "AfterRunningAttack -> idle" << std::endl;
+
+            break;
         }
     } break;
     case HeroState::PreFallAttack: {
@@ -138,45 +144,85 @@ void HeroMove::Update()
 
     } break;
     case HeroState::PreJump: {
-        if (mHero->mCurrentStatus.actionFrame < 2) {
-            GetTransform()->SetLocalScale(Vector3(1.0f, 1.0f - (mHero->mCurrentStatus.actionFrame * 0.1f), 1.0f));
-        }
-        if (mHero->mCurrentStatus.actionFrame == 2) {
-            GetTransform()->SetLocalScale(Vector3(1.0f, 1.0f, 1.0f));
-        }
     } break;
     case HeroState::BigJump: {
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 0) {
+                new JumpCircleEffect(GetTransform()->GetWorldPosition());
+                Audio::PlayChunk("../assets/sounds/se/「とう！」.mp3");
+                mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().fullJumpVelocity, vel.z));
+            } else if (mHero->mCurrentStatus.actionFrame < 4) {
 
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().fullJumpVelocity, vel.z));
-        mHero->SetState(HeroState::AirIdle);
+            } else if ((mHero->mCurrentStatus.actionFrame == 4)) {
+                mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, vel.y * 0.7f, vel.z));
+                if (mHero->mCurrentStatus.velocity.LengthSq() > 0) {
+                    mHero->SetState(HeroState::AirMove);
+                } else {
+                    mHero->SetState(HeroState::AirIdle);
+                }
+            }
+        }
     } break;
     case HeroState::SmallJump: {
+        if (mHero->mCurrentStatus.stopFrame < 0) {
 
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().shortJumpVelocity, vel.z));
-        mHero->SetState(HeroState::AirIdle);
+            new JumpCircleEffect(GetTransform()->GetWorldPosition());
+            Audio::PlayChunk("../assets/sounds/se/「とう！」.mp3");
+            mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().shortJumpVelocity, vel.z));
+            if (mHero->mCurrentStatus.velocity.LengthSq() > 0) {
+                mHero->SetState(HeroState::AirMove);
+            } else {
+                mHero->SetState(HeroState::AirIdle);
+            }
+        }
     } break;
     case HeroState::AirIdle: {
+        if (mHero->mCurrentStatus.onGround) {
+            // std::cout << "airidle -> idle" << std::endl;
+            mHero->SetState(HeroState::Idle);
+        }
     } break;
     case HeroState::AirMove: {
-        Vector2 v = mHero->mCurrentStatus.velocity;
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(v.x, vel.y, v.y));
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            Vector2 v = mHero->mCurrentStatus.velocity;
+            mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(v.x, vel.y, v.y));
+            if (mHero->mCurrentStatus.onGround) {
+                mHero->SetState(HeroState::Running);
+                break;
+            }
+        }
     } break;
     case HeroState::AirPreJump: {
-        mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().doubleJumpVelocity, vel.z));
-        mHero->SetState(HeroState::AirIdle);
-        mHero->mCurrentStatus.airJumpCount++;
-
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            new JumpCircleEffect(GetTransform()->GetWorldPosition());
+            Audio::PlayChunk("../assets/sounds/se/「とう！」.mp3");
+            mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().doubleJumpVelocity, vel.z));
+            mHero->mCurrentStatus.airJumpCount++;
+            mHero->SetState(HeroState::AirIdle);
+            break;
+        }
     } break;
     case HeroState::KnockBack: {
-        if (mHero->mCurrentStatus.actionFrame == 0) {
-        } else if (mHero->mCurrentStatus.actionFrame == 1) {
-            mHeroRp3dRigidBody->setLinearVelocity(mKnockBackVectorBuffer);
-        } else {
-        }
-        if (0 < mHero->mCurrentStatus.downFrame) {
-        } else {
-            mHero->SetState(HeroState::Idle);
+        if (mHero->mCurrentStatus.stopFrame < 0) {
+            if (mHero->mCurrentStatus.actionFrame == 0) {
+                mHeroRp3dRigidBody->setLinearVelocity(mKnockBackVectorBuffer);
+            }
+            if (mHero->mCurrentStatus.knockbackTime == 6) {
+                rp3d::Vector3 minimizedVec = mHeroRp3dRigidBody->getLinearVelocity();
+                minimizedVec.normalize();
+                minimizedVec *= 3.0f;
+                mHeroRp3dRigidBody->setLinearVelocity(minimizedVec);
+            }
+            if (mHero->mCurrentStatus.knockbackTime <= 0) {
+
+                if (mHero->mCurrentStatus.onGround) {
+                    mHero->SetState(HeroState::Idle);
+                    break;
+                } else {
+                    mHero->SetState(HeroState::AirIdle);
+                    break;
+                }
+            }
         }
     } break;
     case HeroState::Death: {
@@ -203,8 +249,8 @@ void HeroMove::Update()
         mHero->mCurrentStatus.stopFrame--;
     } else {
         mHero->mCurrentStatus.actionFrame++;
-        if (mHero->mCurrentStatus.downFrame > 0) {
-            mHero->mCurrentStatus.downFrame--;
+        if (mHero->mCurrentStatus.knockbackTime > 0) {
+            mHero->mCurrentStatus.knockbackTime--;
         }
     }
     // std::cout << "action: " << mHero->mCurrentStatus.actionFrame << std::endl;
@@ -220,6 +266,7 @@ void HeroMove::LateUpdate()
 void HeroMove::OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::CollisionCallback::ContactPair& pair)
 {
     GameObject* op = static_cast<GameObject*>(opponent->getBody()->getUserData());
+
     switch (mHero->mCurrentStatus.state) {
     case HeroState::Idle: {
     } break;
@@ -235,11 +282,6 @@ void HeroMove::OnCollisionEnter(const rp3d::Collider* self, const rp3d::Collider
     case HeroState::AirMove: {
     } break;
     case HeroState::KnockBack: {
-        if (op->GetName() == "Stage") {
-            // std::cout << "on enter stage!!" << std::endl;
-            mHero->mCurrentStatus.airJumpCount = 0;
-            mHero->SetState(HeroState::Idle);
-        }
     } break;
     case HeroState::Death: {
     } break;
@@ -288,15 +330,6 @@ void HeroMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* 
     } break;
     case HeroState::AirIdle:
     case HeroState::AirMove: {
-        if (op->GetName() == "Stage") {
-            // std::cout << "on enter stage!!" << std::endl;
-            mHero->mCurrentStatus.airJumpCount = 0;
-            if (mHero->mCurrentStatus.velocity.Length() > 0) {
-                mHero->SetState(HeroState::Running);
-            } else {
-                mHero->SetState(HeroState::Idle);
-            }
-        }
     } break;
     case HeroState::KnockBack: {
     } break;
@@ -305,6 +338,11 @@ void HeroMove::OnOverlapEnter(const rp3d::Collider* self, const rp3d::Collider* 
     default:
         // std::cout << "OnOverlapEnter HeroState error" << std::endl;
         break;
+    }
+    if (op->GetName() == "Stage") {
+        // std::cout << "on overlap enter stage!!" << std::endl;
+        mHero->mCurrentStatus.airJumpCount = 0;
+        mHero->mCurrentStatus.onGround     = true;
     }
 }
 void HeroMove::OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* opponent, const rp3d::OverlapCallback::OverlapPair& pair)
@@ -315,14 +353,6 @@ void HeroMove::OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* o
     case HeroState::Walking:
     case HeroState::Running:
     case HeroState::RunningAttack:
-        if (op->GetName() == "Stage") {
-            // std::cout << "on exit stage!!" << std::endl;
-            if (mHero->mCurrentStatus.velocity.Length() > 0) {
-                mHero->SetState(HeroState::AirMove);
-            } else {
-                mHero->SetState(HeroState::AirIdle);
-            }
-        }
         break;
     case HeroState::PreJump: {
     } break;
@@ -338,6 +368,11 @@ void HeroMove::OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* o
         break;
     }
 
+    if (op->GetName() == "Stage") {
+        // std::cout << "on overlap exit stage!!" << std::endl;
+        mHero->mCurrentStatus.onGround = false;
+    }
+
     if (mHero->mCurrentStatus.state != HeroState::Death) {
         if (op->GetName() == "SafeArea") {
             mHero->SetState(HeroState::Death);
@@ -345,20 +380,32 @@ void HeroMove::OnOverlapExit(const rp3d::Collider* self, const rp3d::Collider* o
     }
 }
 
-void HeroMove::OnDamage(int stopFrame, int downFrame, rp3d::Vector3 vector)
+void HeroMove::OnDamage(float damage, int stopFrame, int knockbackTime, rp3d::Vector3 vector)
 {
-    std::cout << "on damage stopframe: " << stopFrame << std::endl;
-    mHero->mCurrentStatus.stopFrame = stopFrame;
-    mKnockBackVectorBuffer          = vector;
-    mHero->mCurrentStatus.downFrame = downFrame;
+    // std::cout << "on damage stopframe: " << stopFrame << std::endl;
+    mKnockBackVectorBuffer              = vector;
+    mHero->mCurrentStatus.stopFrame     = stopFrame;
+    mHero->mCurrentStatus.knockbackTime = knockbackTime;
+    mHero->mCurrentStatus.damageSum += damage;
     mHero->SetState(HeroState::KnockBack);
-    Audio::PlayChunk("../assets/sounds/se/軽いキック1.mp3");
+    float vectorPower = vector.lengthSquare();
+    if (vectorPower < 20 * 20) {
+        Audio::PlayChunk("../assets/sounds/se/軽いキック1.mp3");
+
+    } else if (vectorPower < 30 * 30) {
+        Audio::PlayChunk("../assets/sounds/se/重いパンチ1.mp3");
+
+    } else {
+        Audio::PlayChunk("../assets/sounds/se/重いパンチ2.mp3");
+        Audio::PlayChunk("../assets/sounds/se/金属バットで打つ1.mp3");
+        Audio::PlayChunk("../assets/sounds/se/「ぐああっ！」.mp3");
+    }
+    Renderer::CameraShakeStart(stopFrame / 2, vectorPower);
 }
 
-void HeroMove::HitOther(int stopFrame, float power)
+void HeroMove::HitOther(int stopFrame)
 {
-    std::cout << "hit other stopframe: " << stopFrame << std::endl;
+    // std::cout << "hit other stopframe: " << stopFrame << std::endl;
     mHero->mCurrentStatus.stopFrame = stopFrame;
     mKnockBackVectorBuffer          = mHeroRp3dRigidBody->getLinearVelocity();
-    Renderer::CameraShakeStart(stopFrame / 2, power);
 }

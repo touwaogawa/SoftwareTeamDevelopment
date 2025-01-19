@@ -14,7 +14,7 @@ TitleCameraMove::TitleCameraMove(GameObject* owner)
 void TitleCameraMove::Start()
 {
     Transform* transform = mOwner->GetTransform();
-    transform->SetWorldPosition(Vector3(0.0f, 40.0f, -40.0f));
+    transform->SetWorldPosition(Vector3(0.0f, 35.0f, -40.0f));
 
     Audio::SetMusicVolume(0.4);
     Audio::FadeInMusic("../assets/sounds/bgm/Who_Is_the_Champion.mp3", 1000);

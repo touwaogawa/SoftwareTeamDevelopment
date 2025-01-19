@@ -17,6 +17,7 @@ BattleCameraMove::BattleCameraMove(GameObject* owner)
 
 void BattleCameraMove::Start()
 {
+    GetTransform()->SetWorldPosition(Vector3(0.0f, 35.0f, -30.f));
 }
 void BattleCameraMove::Update()
 {
@@ -57,7 +58,7 @@ void BattleCameraMove::LateUpdate()
             }
         }
 
-        float fov = 26.f + (maxDistance - 9.0f) * 0.7f;
+        float fov = 40.5f + (maxDistance - 9.0f) * 0.5f;
 
         CameraComponent* cc = mOwner->GetComponent<CameraComponent>();
         if (cc) {

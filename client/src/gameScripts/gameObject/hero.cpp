@@ -119,6 +119,5 @@ Hero::Hero(Player* player, HeroInfo heroInfo, const std::string& tag)
     mHeroBody->GetTransform()->SetParent(GetTransform(), false);
 
     mRider->GetTransform()->SetParent(mHeroBody->GetTransform(), false);
-
     mBey->GetTransform()->SetParent(mHeroBody->GetTransform(), false);
 }

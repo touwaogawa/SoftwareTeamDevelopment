@@ -11,6 +11,10 @@ layout(location = 2) in vec2 texcoord;  // テクスチャ座標
 
 out vec2 TexCoord;  // フラグメントシェーダに渡すテクスチャ座標
 
+uniform vec2 frameSize;   // アトラス内の1フレームのサイズ (幅, 高さ)
+uniform vec2 frameIndex;  // 表示するフレームのインデックス (x, y)
+
+
 void main()
 {
     mat4 modelView = model * view;
@@ -40,5 +44,6 @@ void main()
 
     gl_Position = P * projection;
 
-    TexCoord = texcoord;
+    // TexCoord = texcoord * frameSize + frameIndex;
+    TexCoord = (texcoord + frameIndex) * frameSize;
 }

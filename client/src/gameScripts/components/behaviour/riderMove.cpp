@@ -18,7 +18,6 @@ RiderMove::RiderMove(Rider* owner, Hero* hero)
 void RiderMove::Start()
 {
     // std::cout << "riderMove start" << std::endl;
-    mHero = mRider->GetHero();
     dir_x = 0.0f;
     dir_y = 0.0f;
 
@@ -45,14 +44,6 @@ void RiderMove::Update()
     case HeroState::Walking:
     case HeroState::Running:
     case HeroState::RunningAttack: {
-        if (mHero->mCurrentStatus.stopFrame <= 0) {
-            Vector2 faceDir = mHero->mCurrentStatus.faceDir;
-            if (faceDir.Length() > 0.0f) {
-                float angle  = Math::Atan2(faceDir.x, -faceDir.y);
-                Quaternion q = Quaternion(Vector3(0.0f, 1.0f, 0.0f), -angle);
-                GetTransform()->SetWorldRotation(q);
-            }
-        }
     } break;
     case HeroState::PreJump: {
     } break;
@@ -60,7 +51,7 @@ void RiderMove::Update()
     } break;
     case HeroState::KnockBack: {
         if (mHero->mCurrentStatus.stopFrame <= 0) {
-            Quaternion rotation = Quaternion::Concatenate(GetTransform()->GetWorldRotation(), Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(10.0f)));
+            Quaternion rotation = Quaternion::Concatenate(GetTransform()->GetLocalRotation(), Quaternion(Vector3(0.0f, -1.0f, 0.0f), Math::ToRadians(10.0f)));
             GetTransform()->SetLocalRotation(rotation);
         }
     } break;

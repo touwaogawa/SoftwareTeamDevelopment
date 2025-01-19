@@ -26,6 +26,7 @@ void PlayerMove::Start()
     // std::cout << "playerMove start" << std::endl;
     mHero->SetState(HeroState::Idle);
     GetTransform()->SetWorldRotation(Quaternion::Identity);
+    // std::cout << "face dir" << mHero->mCurrentStatus.faceDir.Length() << std::endl;
 }
 namespace {
 
@@ -68,11 +69,12 @@ void PlayerMove::BattleUpdate()
     CommandData preCom = mPlayer->GetPreCommandData();
     mMoveAxisNorm      = com.moveAxis;
     if (mMoveAxisNorm.Length()) {
-        Vector2::Normalize(mMoveAxisNorm);
+        mMoveAxisNorm.Normalize();
     }
     switch (mHero->mCurrentStatus.state) {
         // std::cout << "mHero->mCurrentStatus.state" << std::endl;
     case HeroState::Idle:
+        // std::cout << "idle" << std::endl;
         if (com.moveAxis.Length() > mStickDeadZone) {
             if (com.moveAxis.Length() - preCom.moveAxis.Length() < 0.3) {
                 // 弱く倒す
@@ -90,8 +92,9 @@ void PlayerMove::BattleUpdate()
     case HeroState::Walking:
         // std::cout << "walk" << std::endl;
         if (com.moveAxis.Length() > mStickDeadZone) {
-            mHero->mCurrentStatus.faceDir = mMoveAxisNorm;
-
+            if (mMoveAxisNorm.Length() > 0) {
+                mHero->mCurrentStatus.faceDir = mMoveAxisNorm;
+            }
             Vector2& velocity  = mHero->mCurrentStatus.velocity;
             float maxWalkSpeed = mHero->GetBaseStatus().maxWalkSpeed;
 
@@ -117,9 +120,11 @@ void PlayerMove::BattleUpdate()
         }
         break;
     case HeroState::Running:
+        // std::cout << "running" << std::endl;
         if (com.moveAxis.Length() > mStickDeadZone) {
-            mHero->mCurrentStatus.faceDir = mMoveAxisNorm;
-
+            if (mMoveAxisNorm.Length() > 0) {
+                mHero->mCurrentStatus.faceDir = mMoveAxisNorm;
+            }
             Vector2& velocity  = mHero->mCurrentStatus.velocity;
             float maxDushSpeed = mHero->GetBaseStatus().maxDushSpeed;
 
@@ -177,9 +182,6 @@ void PlayerMove::BattleUpdate()
 
     } break;
     case HeroState::PreJump: {
-        if (com.moveAxis.Length()) {
-            mHero->mCurrentStatus.faceDir = Vector2::Normalize(com.moveAxis);
-        }
         if (mHero->mCurrentStatus.actionFrame >= 3) {
             if (com.jump) {
                 // 大ジャンプ
@@ -235,6 +237,7 @@ void PlayerMove::BattleUpdate()
     default:
         break;
     }
+    // std::cout << "air j cout" << mHero->mCurrentStatus.airJumpCount << std::endl;
     // std::cout << "run command6" << std::endl;
 }
 void PlayerMove::DefeatedUpdate()

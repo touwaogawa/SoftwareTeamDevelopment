@@ -33,6 +33,7 @@ std::vector<MeshRenderer*> Renderer::mMeshRenderers;
 std::vector<MeshRenderer*> Renderer::mEffectRenderers;
 std::vector<SpriteRenderer*> Renderer::mSpriteRenderers;
 std::vector<BillbourdRenderer*> Renderer::mBillbourdRenderers;
+std::vector<BillbourdRenderer*> Renderer::mBillbourdRenderers_add;
 int Renderer::mCameraShakeFrame             = 0;
 float Renderer::mCameraShakePower           = 1.0f;
 CameraComponent* Renderer::mCameraComponent = nullptr;
@@ -46,7 +47,7 @@ Matrix4 Renderer::mProjection               = Matrix4::CreatePerspectiveFOV(Math
 Vector3 Renderer::mLightPos                 = Vector3(5.0f, 30.0f, 8.0f);
 Matrix4 Renderer::mLightView                = Matrix4::CreateLookAt(mLightPos, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
 Matrix4 Renderer::mLightProjection          = Matrix4::CreateOrtho(45.0f, 45.0f, 1.0f, 80.0f);
-Vector3 Renderer::mLightColor               = Vector3(1.0f, 1.0f, 1.0f) * 0.85f;
+Vector3 Renderer::mLightColor               = Vector3(0.9f, 0.9f, 0.8f);
 float Renderer::mAmbientLightStrength       = 0.8f;
 Vector3 Renderer::mAmbientLightColor        = Vector3(0.53f, 0.81f, 0.92f);
 
@@ -294,6 +295,29 @@ void Renderer::RemoveBillbourdRenderer(BillbourdRenderer* billbourdRenderer)
     mBillbourdRenderers.erase(end, mBillbourdRenderers.end());
 }
 
+// add
+void Renderer::AddBillbourdRenderer_add(BillbourdRenderer* billbourdRenderer_add)
+{
+    int myDrawOrder = billbourdRenderer_add->GetDrawOrder();
+    auto iter       = mBillbourdRenderers_add.begin();
+    for (;
+         iter != mBillbourdRenderers_add.end();
+         ++iter) {
+        if (myDrawOrder < (*iter)->GetDrawOrder()) {
+            break;
+        }
+    }
+
+    // Inserts element before position of iterator
+    mBillbourdRenderers_add.insert(iter, billbourdRenderer_add);
+}
+void Renderer::RemoveBillbourdRenderer_add(BillbourdRenderer* billbourdRenderer_add)
+{
+    // std::cout << "Remove Billbourd" << std::endl;
+    auto end = std::remove(mBillbourdRenderers_add.begin(), mBillbourdRenderers_add.end(), billbourdRenderer_add);
+    mBillbourdRenderers_add.erase(end, mBillbourdRenderers_add.end());
+}
+
 void Renderer::CameraShakeStart(int frame, float power)
 {
     mCameraShakeFrame = frame;
@@ -304,7 +328,6 @@ void Renderer::Draw3DObjects()
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
-    // glBlendFunc(GL_ONE, GL_ZERO);
 
     // デプス取得----------------------
     mDepthShader->Use();
@@ -378,8 +401,6 @@ void Renderer::DrawBillbourds()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glDepthMask(GL_FALSE);
-    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
     glViewport(0, 0, mWindowWidth, mWindowHeight);
 
@@ -389,8 +410,28 @@ void Renderer::DrawBillbourds()
     mBillbourdShader->SetMatrixUniform("view", mView);
     // mBillbourdShader->SetVector3Uniform("viewPos", mViewPos);
 
-    // 各メッシュ
+    // メッシュ
     mSpriteVerts->Bind();
+
+    // 加算ブレンド
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glBlendEquation(GL_FUNC_ADD);
+    // ソート
+    std::sort(mBillbourdRenderers_add.begin(), mBillbourdRenderers_add.end(), [](BillbourdRenderer* a, BillbourdRenderer* b) {
+        float alen = (a->GetTransform()->GetWorldPosition() - mViewPos).Length();
+        float blen = (b->GetTransform()->GetWorldPosition() - mViewPos).Length();
+        return alen > blen;
+    });
+    for (auto billBourd : mBillbourdRenderers_add) {
+        // std::cout << "billBourd Ren" << std::endl;
+        if (billBourd->GetVisible()) {
+            billBourd->Draw(mBillbourdShader);
+        }
+    }
+
+    // アルファ
+    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
     // ソート
     std::sort(mBillbourdRenderers.begin(), mBillbourdRenderers.end(), [](BillbourdRenderer* a, BillbourdRenderer* b) {
         float alen = (a->GetTransform()->GetWorldPosition() - mViewPos).Length();

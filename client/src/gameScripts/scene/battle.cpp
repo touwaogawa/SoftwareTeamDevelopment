@@ -8,19 +8,16 @@
 #include "../../component/cameraComponent.h"
 #include "../../component/meshRenderer.h"
 #include "../components/behaviour/battleCameraMove.h"
-#include "../components/behaviour/beyMove.h"
-#include "../components/behaviour/heroMove.h"
+#include "../components/behaviour/effect/faceDirMove.h"
 #include "../components/behaviour/playerMove.h"
-#include "../components/behaviour/riderMove.h"
-#include "../gameObject/bey.h"
 #include "../gameObject/player.h"
 #include "../gameObject/playerUI.h"
-#include "../gameObject/rider.h"
 #include "../gameObject/safeArea.h"
 #include "../gameObject/simpleBillbourd.h"
 #include "../gameObject/simpleCamera.h"
+#include "../gameObject/simpleEffect.h"
 #include "../gameObject/simpleMeshModel.h"
-#include "../gameObject/simplesprite.h"
+#include "../gameObject/simpleSprite.h"
 #include "../gameObject/stage.h"
 #include <enet/enet.h>
 #include <iostream>
@@ -114,8 +111,16 @@ bool BattleScene::Load()
         playerUI->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 0.2f);
         playerUI->GetTransform()->SetWorldPosition(Vector3(uipos_x, uipos_y, 0.0f));
     }
+    // my player
     mPlayer = mPlayers[mMyPlayerID];
 
+    // face dir
+    SimpleEffect* faceDir = new SimpleEffect("../assets/models/square.obj", "../assets/textures/battleScene/faceDir.png");
+    faceDir->SetBehaviour(new FaceDirMove(faceDir, mPlayer->GetHero()));
+    faceDir->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.1f, 0.0f));
+    faceDir->GetTransform()->SetParent(mPlayer->GetHero()->GetTransform(), false);
+
+    // stage
     mStage = new Stage(mPhysics, "../assets/models/Stage.obj", "../assets/textures/simpleTile.png");
 
     // colosseum

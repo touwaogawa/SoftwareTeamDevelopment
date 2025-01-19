@@ -2,6 +2,7 @@
 #include "../../../../../common/src/component/transform.h"
 #include "../../../../../utils/src/math.h"
 #include "../../gameObject/HeroBody.h"
+#include "../../gameObject/effect/knockbackSmokeEffect.h"
 #include "../../gameObject/hero.h"
 #include <iostream>
 
@@ -19,13 +20,52 @@ void HeroBodyMove::Start()
 
 void HeroBodyMove::Update()
 {
+    if (mHero->mCurrentStatus.stopFrame > 0) {
+        return;
+    }
     switch (mHero->mCurrentStatus.state) {
-    case HeroState::Idle:
-        break;
-    case HeroState::Walking:
-        break;
-    case HeroState::Running:
-        break;
+    case HeroState::Idle: {
+        Vector2 faceDir = mHero->mCurrentStatus.faceDir;
+        float angle     = Math::Atan2(faceDir.x, -faceDir.y);
+        Quaternion q    = Quaternion(Vector3(0.0f, 1.0f, 0.0f), -angle);
+        Quaternion resultQ;
+        float slerpTime = 20.0f;
+        if (mHero->mCurrentStatus.actionFrame < slerpTime) {
+            Quaternion preQ = GetTransform()->GetLocalRotation();
+            resultQ         = Quaternion::Slerp(preQ, q, (mHero->mCurrentStatus.actionFrame + 1.0f) / slerpTime);
+        } else {
+            resultQ = q;
+        }
+        GetTransform()->SetWorldRotation(resultQ);
+    } break;
+    case HeroState::Walking: {
+        Vector2 faceDir = mHero->mCurrentStatus.faceDir;
+        float angle     = Math::Atan2(faceDir.x, -faceDir.y);
+        Quaternion q    = Quaternion(Vector3(0.0f, 1.0f, 0.0f), -angle);
+        Quaternion resultQ;
+        float slerpTime = 20.0f;
+        if (mHero->mCurrentStatus.actionFrame < slerpTime) {
+            Quaternion preQ = GetTransform()->GetLocalRotation();
+            resultQ         = Quaternion::Slerp(preQ, q, (mHero->mCurrentStatus.actionFrame + 1.0f) / slerpTime);
+        } else {
+            resultQ = q;
+        }
+        GetTransform()->SetWorldRotation(resultQ);
+    } break;
+    case HeroState::Running: {
+        Vector2 faceDir = mHero->mCurrentStatus.faceDir;
+        float angle     = Math::Atan2(faceDir.x, -faceDir.y);
+        Quaternion q    = Quaternion(Vector3(0.0f, 1.0f, 0.0f), -angle);
+        Quaternion resultQ;
+        float slerpTime = 20.0f;
+        if (mHero->mCurrentStatus.actionFrame < slerpTime) {
+            Quaternion preQ = GetTransform()->GetLocalRotation();
+            resultQ         = Quaternion::Slerp(preQ, q, (mHero->mCurrentStatus.actionFrame + 1.0f) / slerpTime);
+        } else {
+            resultQ = q;
+        }
+        GetTransform()->SetWorldRotation(resultQ);
+    } break;
     case HeroState::PreRunningAttack: {
     } break;
     case HeroState::RunningAttack: {
@@ -62,8 +102,44 @@ void HeroBodyMove::Update()
     case HeroState::PreJump: {
     } break;
     case HeroState::AirIdle: {
+        Vector2 faceDir = mHero->mCurrentStatus.faceDir;
+        float angle     = Math::Atan2(faceDir.x, -faceDir.y);
+        Quaternion q    = Quaternion(Vector3(0.0f, 1.0f, 0.0f), -angle);
+        Quaternion resultQ;
+        float slerpTime = 20.0f;
+        if (mHero->mCurrentStatus.actionFrame < slerpTime) {
+            Quaternion preQ = GetTransform()->GetLocalRotation();
+            resultQ         = Quaternion::Slerp(preQ, q, (mHero->mCurrentStatus.actionFrame + 1.0f) / slerpTime);
+        } else {
+            resultQ = q;
+        }
+        GetTransform()->SetWorldRotation(resultQ);
+    } break;
+    case HeroState::AirMove: {
+        Vector2 faceDir = mHero->mCurrentStatus.faceDir;
+        float angle     = Math::Atan2(faceDir.x, -faceDir.y);
+        Quaternion q    = Quaternion(Vector3(0.0f, 1.0f, 0.0f), -angle);
+        Quaternion resultQ;
+        float slerpTime = 20.0f;
+        if (mHero->mCurrentStatus.actionFrame < slerpTime) {
+            Quaternion preQ = GetTransform()->GetLocalRotation();
+            resultQ         = Quaternion::Slerp(preQ, q, (mHero->mCurrentStatus.actionFrame + 1.0f) / slerpTime);
+        } else {
+            resultQ = q;
+        }
+        GetTransform()->SetWorldRotation(resultQ);
     } break;
     case HeroState::KnockBack: {
+        if (!mHero->mCurrentStatus.onGround) {
+            Quaternion rotation = Quaternion::Concatenate(Quaternion(Vector3(1.0f, 0.0f, 0.0f), Math::ToRadians(10.0f)), GetTransform()->GetLocalRotation());
+            GetTransform()->SetLocalRotation(rotation);
+        }
+        if (mHero->mCurrentStatus.knockbackTime > 6) {
+            if (mHero->mCurrentStatus.knockbackTime % 3 == 0) {
+                new KnockbackSmokeEffect(GetTransform()->GetWorldPosition());
+                // std::cout << "mHero->mCurrentStatus.knockbackTime % 3 == 0" << std::endl;
+            }
+        }
     } break;
     case HeroState::Death: {
     } break;

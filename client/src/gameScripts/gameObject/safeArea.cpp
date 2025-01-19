@@ -18,7 +18,7 @@ SafeArea::SafeArea()
     rp3d::Transform offset(position, rotation);
 
     // collider
-    rp3d::CapsuleShape* shape = pCommon.createCapsuleShape(30.0f, 15.0f);
+    rp3d::CapsuleShape* shape = pCommon.createCapsuleShape(45.0f, 20.0f);
     rp3d::Collider* collider  = rprb->addCollider(shape, offset);
     collider->setIsTrigger(true);
     // ignore collision

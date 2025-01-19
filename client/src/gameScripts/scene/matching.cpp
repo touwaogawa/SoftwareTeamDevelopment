@@ -47,11 +47,11 @@ bool MatchingScene::Load()
     // colosseum
     GameObject* colosseum = new SimpleMeshModel("../assets/models/colosseum.obj", "../assets/textures/sand.png");
     colosseum->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f) * 4.0f);
-    colosseum->GetTransform()->SetWorldPosition(Vector3(0.0f, -40.0f, 0.0f));
+    colosseum->GetTransform()->SetWorldPosition(Vector3(0.0f, -20.0f, 0.0f));
 
     // Player##########################################################
 
-    PlayerInfo playerInfo(0, "aa", RiderType::BaseHuman, BeyType::Shuriken);
+    PlayerInfo playerInfo(-1, "aa", RiderType::BaseHuman, BeyType::Shuriken);
     std::string tag = "Player";
     // player
     mPlayer = new Player(playerInfo, tag);

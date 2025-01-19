@@ -82,7 +82,8 @@ void Transform::SetWorldRotation(Quaternion rotation)
         Quaternion inverseQ = mParent->mWorldRotation;
         inverseQ.Normalize();
         inverseQ.Conjugate();
-        mLocalRotation = Quaternion::Concatenate(inverseQ, mWorldRotation);
+        // mLocalRotation = Quaternion::Concatenate(inverseQ, mWorldRotation);
+        mLocalRotation = Quaternion::Concatenate(mWorldRotation, inverseQ);
 
     } else {
         mLocalRotation = mWorldRotation;
@@ -156,7 +157,8 @@ void Transform::SetLocalRotation(Quaternion rotation)
     mLocalRotation = rotation;
 
     if (mParent) {
-        mWorldRotation = Quaternion::Concatenate(mParent->mWorldRotation, mLocalRotation);
+        // mWorldRotation = Quaternion::Concatenate(mParent->mWorldRotation, mLocalRotation);
+        mWorldRotation = Quaternion::Concatenate(mLocalRotation, mParent->mWorldRotation);
 
     } else {
         mWorldRotation = mLocalRotation;
@@ -221,7 +223,8 @@ void Transform::UpdateWorldScale()
 }
 void Transform::UpdateWorldRotation()
 {
-    mWorldRotation = Quaternion::Concatenate(mParent->mWorldRotation, mLocalRotation);
+    // mWorldRotation = Quaternion::Concatenate(mParent->mWorldRotation, mLocalRotation);
+    mWorldRotation = Quaternion::Concatenate(mLocalRotation, mParent->mWorldRotation);
     for (auto& child : mChildren) {
         child->UpdateWorldRotation();
     }

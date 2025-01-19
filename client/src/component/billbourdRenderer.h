@@ -9,7 +9,7 @@ class Texture;
 class Shader;
 class BillbourdRenderer : public Component {
 public:
-    BillbourdRenderer(GameObject* owner, const std::string& imageFileName, bool isSpherical = true);
+    BillbourdRenderer(GameObject* owner, const std::string& imageFileName, bool isSpherical = true, bool isAdd = false);
 
     ~BillbourdRenderer() override;
 
@@ -48,4 +48,5 @@ private:
     bool mUseCustomColor;
     Vector3 mCustomColor;
     const bool mIsSpherical;
+    const bool mIsAdd;
 };

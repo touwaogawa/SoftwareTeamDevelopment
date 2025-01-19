@@ -13,8 +13,8 @@ public:
     void LateUpdate() override;
 
 private:
-    Rider* mRider;
-    Hero* mHero;
+    Rider* const mRider;
+    Hero* const mHero;
     float dir_x;
     float dir_y;
 };

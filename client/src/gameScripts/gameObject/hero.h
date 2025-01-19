@@ -57,13 +57,15 @@ struct HeroBaseStatus {
 };
 
 struct HeroCurrentStatus {
-    HeroState state  = HeroState::Idle;     // 現在の状態
-    Vector2 faceDir  = Vector2(0.0f, 0.0f); // 顔の方向(Normalized or 0)
-    Vector2 velocity = Vector2(0.0f, 0.0f);
-    int actionFrame  = 0;
-    int stopFrame    = 0;
-    int downFrame    = 0;
-    int airJumpCount = 0;
+    HeroState state   = HeroState::Idle;      // 現在の状態
+    Vector2 faceDir   = Vector2(0.0f, -1.0f); // 顔の方向(Normalized or 0)
+    Vector2 velocity  = Vector2(0.0f, 0.0f);
+    int actionFrame   = 0;
+    int stopFrame     = 0;
+    int knockbackTime = 0;
+    int airJumpCount  = 0;
+    bool onGround     = true;
+    float damageSum   = 0.0f;
 };
 
 class Hero : public GameObject {
@@ -76,7 +78,7 @@ public:
     void SetState(HeroState heroState)
     {
         mCurrentStatus.state       = heroState;
-        mCurrentStatus.actionFrame = 0;
+        mCurrentStatus.actionFrame = -1;
     }
     HeroState GetState() const { return mCurrentStatus.state; }
 
