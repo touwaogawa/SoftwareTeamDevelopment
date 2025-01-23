@@ -56,7 +56,7 @@ bool Renderer::Init(float window_w, float window_h)
 {
     mWindowWidth  = window_w;
     mWindowHeight = window_h;
-    mWindow       = SDL_CreateWindow("OpenGL Cube", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, static_cast<int>(mWindowWidth), static_cast<int>(mWindowHeight), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    mWindow       = SDL_CreateWindow("Bey Smash", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, static_cast<int>(mWindowWidth), static_cast<int>(mWindowHeight), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!mWindow) {
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         return false;
@@ -67,6 +67,7 @@ bool Renderer::Init(float window_w, float window_h)
         std::cout << "OpenGL context could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         return false;
     }
+
     return true;
 }
 

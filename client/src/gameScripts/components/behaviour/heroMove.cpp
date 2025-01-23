@@ -85,7 +85,7 @@ void HeroMove::Update()
     } break;
     case HeroState::PreRunningAttack: {
 
-        if (mHero->mCurrentStatus.actionFrame >= 5) {
+        if (mHero->mCurrentStatus.actionFrame >= 20) {
             mHero->SetState(HeroState::RunningAttack);
         }
     } break;
@@ -109,7 +109,7 @@ void HeroMove::Update()
         }
     } break;
     case HeroState::AfterRunningAttack: {
-        if (mHero->mCurrentStatus.actionFrame >= 10) {
+        if (mHero->mCurrentStatus.actionFrame >= 25) {
             mHero->SetState(HeroState::Idle);
             // std::cout << "AfterRunningAttack -> idle" << std::endl;
 
@@ -196,8 +196,8 @@ void HeroMove::Update()
                 mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, 1.0f, vel.z));
             }
             if (mHero->mCurrentStatus.actionFrame == 6) {
-                float x        = mHero->mCurrentStatus.faceDir.x * 8.5f;
-                float y        = mHero->mCurrentStatus.faceDir.y * 8.5f;
+                float x        = -mHero->mCurrentStatus.faceDir.x * 8.5f;
+                float y        = -mHero->mCurrentStatus.faceDir.y * 8.5f;
                 HitBox* hitBox = new HitBox(mHero, mHero->GetTag(), 1.2f, Vector3(x, 3.0f, y), 2.5f, 10.5, mHero->mCurrentStatus.actionFrame);
                 hitBox->GetTransform()->SetLocalPosition(Vector3(0.0f, 0.0f, 0.0f));
                 hitBox->GetTransform()->SetParent(mHero->GetBey()->GetTransform(), false);
@@ -250,15 +250,20 @@ void HeroMove::Update()
             mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(vel.x, mHero->GetBaseStatus().shortJumpVelocity, vel.z));
             if (mHero->mCurrentStatus.velocity.LengthSq() > 0) {
                 mHero->SetState(HeroState::AirMove);
+                break;
             } else {
                 mHero->SetState(HeroState::AirIdle);
+                break;
             }
         }
     } break;
     case HeroState::AirIdle: {
         if (mHero->mCurrentStatus.onGround) {
             // std::cout << "airidle -> idle" << std::endl;
-            mHero->SetState(HeroState::Idle);
+            if (mHero->mCurrentStatus.actionFrame > 0) {
+                mHero->SetState(HeroState::Idle);
+                break;
+            }
         }
     } break;
     case HeroState::AirMove: {
@@ -266,8 +271,10 @@ void HeroMove::Update()
             Vector2 v = mHero->mCurrentStatus.velocity;
             mHeroRp3dRigidBody->setLinearVelocity(rp3d::Vector3(v.x, vel.y, v.y));
             if (mHero->mCurrentStatus.onGround) {
-                mHero->SetState(HeroState::Running);
-                break;
+                if (mHero->mCurrentStatus.actionFrame > 0) {
+                    mHero->SetState(HeroState::Running);
+                    break;
+                }
             }
         }
     } break;

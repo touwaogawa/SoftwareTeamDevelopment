@@ -36,8 +36,8 @@ Hero::Hero(Player* player, HeroInfo heroInfo, const std::string& tag)
         heroBaseStatus.airFriction        = 4.0f;  // 空中抵抗
         heroBaseStatus.maxFallSpeed       = 3.0f;  // 最大落下速度
         heroBaseStatus.fastFallSpeed      = 5.0f;  // 急降下速度
-        heroBaseStatus.fullJumpVelocity   = 17.0f; // 大ジャンプ初速度
-        heroBaseStatus.shortJumpVelocity  = 6.0f;  // 小ジャンプ初速度
+        heroBaseStatus.fullJumpVelocity   = 25.0f; // 大ジャンプ初速度
+        heroBaseStatus.shortJumpVelocity  = 10.0f; // 小ジャンプ初速度
         heroBaseStatus.doubleJumpVelocity = 17.0f; // 2段ジャンプ初速
     } break;
     case BeyType::Hexagram: {
