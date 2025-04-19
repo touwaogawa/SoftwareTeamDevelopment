@@ -18,3 +18,6 @@ cd server
 //client
 cd client
 ./main
+
+# 備考
+VMware上でUbuntuの仮想マシンを実行し、OpenGLのバージョンが4.1でのみ動作確認ができています。
